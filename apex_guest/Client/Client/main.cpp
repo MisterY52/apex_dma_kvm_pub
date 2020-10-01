@@ -18,6 +18,8 @@ typedef struct player
 
 bool use_nvidia = true;
 bool active = true;
+bool ready = false;
+extern visuals v;
 int spectators = 1; //write
 int allied_spectators = 1; //write
 int aim = 0; //read
@@ -27,11 +29,12 @@ bool item_glow = false;
 bool aiming = false; //read
 uint64_t g_Base = 0; //write
 float max_dist = 200.0f*40.0f; //read
+float smooth = 12.0f;
 
 bool valid = false; //write
 bool next = false; //read write
 
-uint64_t add[12];
+uint64_t add[13];
 
 bool k_f5 = 0;
 bool k_f6 = 0;
@@ -45,87 +48,63 @@ bool IsKeyDown(int vk)
 
 player players[100];
 
-void render(void* ovv)
+void Overlay::RenderEsp()
 {
 	next = false;
 	if (g_Base != 0 && esp)
 	{
 		memset(players, 0, sizeof(players));
-		Overlay* ov = (Overlay*)ovv;
-		Direct dx = ov->CurrentDirectX;
 		while (!next && esp)
 		{
 			std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		}
 		if (next && valid)
 		{
+			ImGui::SetNextWindowPos(ImVec2(0, 0));
+			ImGui::SetNextWindowSize(ImVec2((float)getWidth(), (float)getHeight()));
+			ImGui::Begin("##esp", (bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoBringToFrontOnFocus);
+
 			for (int i = 0; i < 100; i++)
 			{
-				if (players[i].width > 0)
+				if (players[i].health > 0)
 				{
-					std::wstring distance = std::to_wstring(players[i].dist / 39.62);
-					distance = distance.substr(0, distance.find('.')) + L"m(" + std::to_wstring(players[i].entity_team) + L")";
-
-					if (players[i].visible)
+					std::string distance = std::to_string(players[i].dist / 39.62);
+					distance = distance.substr(0, distance.find('.')) + "m(" + std::to_string(players[i].entity_team) + ")";
+					
+					if (v.box)
 					{
-						if (players[i].dist < 1600.0f)
-							dx.DrawBox2((int)players[i].boxMiddle, (int)players[i].h_y, (int)players[i].width, (int)players[i].height, 255, 0, 0, 255); //BOX
+						if (players[i].visible)
+						{
+							if (players[i].dist < 1600.0f)
+								DrawBox(RED, players[i].boxMiddle, players[i].h_y, players[i].width, players[i].height); //BOX
+							else
+								DrawBox(ORANGE, players[i].boxMiddle, players[i].h_y, players[i].width, players[i].height); //BOX
+						}
 						else
-							dx.DrawBox2((int)players[i].boxMiddle, (int)players[i].h_y, (int)players[i].width, (int)players[i].height, 255, 165, 0, 255); //BOX
-					}
-					else
-					{
-						dx.DrawBox2((int)players[i].boxMiddle, (int)players[i].h_y, (int)players[i].width, (int)players[i].height, 255, 255, 255, 255); //white if player not visible
+						{
+							DrawBox(WHITE, players[i].boxMiddle, players[i].h_y, players[i].width, players[i].height); //white if player not visible
+						}
 					}
 
-					dx.DrawLine((float)(ov->getWidth() / 2), (float)ov->getHeight(), players[i].b_x, players[i].b_y, 255, 0, 0, 255); //LINE FROM MIDDLE SCREEN
-					if (players[i].knocked)
-						dx.DrawString((int)players[i].boxMiddle, (int)(players[i].b_y + 1), 255, 255, 0, 0, distance.c_str());  //DISTANCE
-					else
-						dx.DrawString((int)players[i].boxMiddle, (int)(players[i].b_y + 1), 255, 0, 255, 0, distance.c_str());  //DISTANCE
+					if(v.line)
+						DrawLine(ImVec2((float)(getWidth() / 2), (float)getHeight()), ImVec2(players[i].b_x, players[i].b_y), BLUE, 1); //LINE FROM MIDDLE SCREEN
 
-					int r = 0, g = 0, b = 0;
-					if (players[i].health > 75 && players[i].health <= 100)
+					if (v.distance)
 					{
-						r = 0;
-						g = 200;
-						b = 0;
+						if (players[i].knocked)
+							String(ImVec2(players[i].boxMiddle, (players[i].b_y + 1)), RED, distance.c_str());  //DISTANCE
+						else
+							String(ImVec2(players[i].boxMiddle, (players[i].b_y + 1)), GREEN, distance.c_str());  //DISTANCE
 					}
-					else if (players[i].health > 50 && players[i].health <= 75)
-					{
-						r = 255;
-						g = 215;
-						b = 0;
-					}
-					else
-					{
-						r = 255;
-						g = 0;
-						b = 0;
-					}
-					dx.Fill((int)(players[i].b_x - (players[i].width / 2.0f) - 4), (int)(players[i].b_y - players[i].height), 3, (int)((players[i].height / 100.0f) * (float)players[i].health), r, g, b, 255);
 
-					if (players[i].shield > 75 && players[i].shield <= 125)
-					{
-						r = 0;
-						g = 200;
-						b = 0;
-					}
-					else if (players[i].shield > 50 && players[i].shield <= 75)
-					{
-						r = 255;
-						g = 215;
-						b = 0;
-					}
-					else
-					{
-						r = 255;
-						g = 0;
-						b = 0;
-					}
-					dx.Fill((int)(players[i].b_x + (players[i].width / 2.0f) + 1), (int)(players[i].b_y - players[i].height), 3, (int)((players[i].height / 100.0f) * (float)players[i].shield), r, g, b, 255);
+					if (v.healthbar)
+						ProgressBar((players[i].b_x - (players[i].width / 2.0f) - 4), (players[i].b_y - players[i].height), 3, players[i].height, players[i].health, 100); //health bar
+					if (v.shieldbar)
+						ProgressBar((players[i].b_x + (players[i].width / 2.0f) + 1), (players[i].b_y - players[i].height), 3, players[i].height, players[i].shield, 125); //shield bar	
 				}
 			}
+
+			ImGui::End();
 		}
 	}
 }
@@ -144,9 +123,9 @@ int main(int argc, char** argv)
 	add[9] = (uintptr_t)&valid;
 	add[10] = (uintptr_t)&max_dist;
 	add[11] = (uintptr_t)&item_glow;
+	add[12] = (uintptr_t)&smooth;
 	printf("add offset: 0x%I64x\n", (uint64_t)&add[0] - (uint64_t)GetModuleHandle(NULL));
 	Overlay ov1 = Overlay();
-	ov1.SetRender(render);
 	ov1.Start();
 	printf("Waiting for host process...\n");
 	while (spectators == 1)
@@ -158,8 +137,12 @@ int main(int argc, char** argv)
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
-	if(active)
+	if (active)
+	{
+		ready = true;
 		printf("Ready\n");
+	}
+		
 	while (active)
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -253,9 +236,10 @@ int main(int argc, char** argv)
 		else
 			aiming = false;
 	}
+	ready = false;
 	ov1.Clear();
 	if(!use_nvidia)
-		system("taskkill /F /T /IM overlay.exe"); //custom overlay process name
+		system("taskkill /F /T /IM overlay_ap.exe"); //custom overlay process name
 	return 0;
 }
 

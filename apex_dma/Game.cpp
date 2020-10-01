@@ -1,5 +1,6 @@
 #include "prediction.h"
 extern bool firing_range;
+float smooth = 12.0f;
 
 uint64_t Entity::Observing(WinProcess& mem, uint64_t entitylist)
 {
@@ -222,8 +223,6 @@ QAngle CalculateBestBoneAim(WinProcess& mem, Entity& from, uintptr_t t, float ma
 	{
 		return QAngle(0, 0, 0);
 	}
-
-	double smooth = 12.0f;
 
 	Math::NormalizeAngles(Delta);
 
