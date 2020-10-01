@@ -32,6 +32,7 @@ bool esp = false;
 bool item_glow = false;
 int safe_level = 0;
 bool aiming = false;
+extern float smooth;
 
 bool actions_t = false;
 bool esp_t = false;
@@ -504,6 +505,8 @@ static void set_vars(WinProcess& mem, uint64_t add_addr)
 	uint64_t valid_addr = mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*9);
 	uint64_t max_dist_addr = mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*10);
 	uint64_t item_glow_addr = mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*11);
+	uint64_t smooth_addr = mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*12);
+
 	if(mem.Read<int>(spec_addr)!=1)
 	{
 		printf("Incorrect values read. Restart the client or check if the offset is correct. Quitting.\n");
@@ -529,6 +532,7 @@ static void set_vars(WinProcess& mem, uint64_t add_addr)
 			aiming = mem.Read<bool>(aiming_addr);
 			max_dist = mem.Read<float>(max_dist_addr);
 			item_glow = mem.Read<bool>(item_glow_addr);
+			smooth = mem.Read<float>(smooth_addr);
 
 			if(esp && next)
 			{
@@ -604,7 +608,7 @@ __attribute__((constructor))
 static void init()
 {
 	FILE* out = stdout;
-	const char* cl_proc = "client.exe";
+	const char* cl_proc = "client_ap.exe";
 	const char* ap_proc = "r5apex.exe";
 
 	pid_t pid;
@@ -632,7 +636,7 @@ static void init()
 		bool apex_found = false;
 		bool client_found = false;
 		//Client "add" offset
-		uint64_t add_off = 0xBA80;
+		uint64_t add_off = 0x41a60;
 		
 		while(active)
 		{
