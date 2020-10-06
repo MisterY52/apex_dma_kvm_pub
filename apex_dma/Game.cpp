@@ -1,6 +1,7 @@
 #include "prediction.h"
 extern bool firing_range;
 float smooth = 12.0f;
+bool aim_no_recoil = true;
 
 uint64_t Entity::Observing(WinProcess& mem, uint64_t entitylist)
 {
@@ -93,6 +94,27 @@ Vector Entity::GetViewAnglesV()
 	return *(Vector*)(buffer + OFFSET_VIEWANGLES);
 }
 
+bool Entity::isGlowing()
+{
+	return *(int*)(buffer + OFFSET_GLOW_ENABLE) == 7;
+}
+
+void Entity::enableGlow(WinProcess& mem)
+{
+	mem.Write<int>(ptr + OFFSET_GLOW_T1, 16256);
+	mem.Write<int>(ptr + OFFSET_GLOW_T2, 1193322764);
+	mem.Write<int>(ptr + OFFSET_GLOW_ENABLE, 7);
+	mem.Write<int>(ptr + OFFSET_GLOW_THROUGH_WALLS, 2);
+}
+
+void Entity::disableGlow(WinProcess& mem)
+{
+	mem.Write<int>(ptr + OFFSET_GLOW_T1, 0);
+	mem.Write<int>(ptr + OFFSET_GLOW_T2, 0);
+	mem.Write<int>(ptr + OFFSET_GLOW_ENABLE, 2);
+	mem.Write<int>(ptr + OFFSET_GLOW_THROUGH_WALLS, 5);
+}
+
 void Entity::SetViewAngles(WinProcess& mem, SVector angles)
 {
 	mem.Write<SVector>(ptr + OFFSET_VIEWANGLES, angles);
@@ -115,7 +137,7 @@ QAngle Entity::GetRecoil()
 
 bool Item::isItem()
 {
-	return *(int*)(buffer + OFFSET_ITEM_GLOW) >= 1358917120 && *(int*)(buffer + OFFSET_ITEM_GLOW) <= 1646297344;
+	return *(int*)(buffer + OFFSET_ITEM_GLOW) >= 1358917120 && *(int*)(buffer + OFFSET_ITEM_GLOW) <= 1696628992;
 }
 
 bool Item::isGlowing()
@@ -215,7 +237,8 @@ QAngle CalculateBestBoneAim(WinProcess& mem, Entity& from, uintptr_t t, float ma
 	QAngle ViewAngles = from.GetViewAngles();
 	QAngle SwayAngles = from.GetSwayAngles();
 	//remove sway and recoil
-	CalculatedAngles-=SwayAngles-ViewAngles;
+	if(aim_no_recoil)
+		CalculatedAngles-=SwayAngles-ViewAngles;
 	Math::NormalizeAngles(CalculatedAngles);
 	QAngle Delta = CalculatedAngles - ViewAngles;
 	double fov = Math::GetFov(SwayAngles, CalculatedAngles);

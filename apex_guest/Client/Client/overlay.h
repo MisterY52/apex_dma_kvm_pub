@@ -11,7 +11,6 @@
 #include <cwchar>
 #include <thread>
 #include <string>
-#include <codecvt>
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_dx9.h"
 #include "imgui/imgui_impl_win32.h"
@@ -24,11 +23,6 @@
 #define BLUE ImColor(0, 0, 255)
 #define ORANGE ImColor(255, 165, 0)
 #define WHITE ImColor(255, 255, 255)
-
-struct Process_Informations
-{
-	HWND overlayHWND;
-};
 
 typedef struct visuals
 {
@@ -59,6 +53,5 @@ public:
 	void String(ImVec2 pos, ImColor color, const char* text);
 private:
 	bool running;
-	Process_Informations proc;
+	HWND overlayHWND;
 };
-
