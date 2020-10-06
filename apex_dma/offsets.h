@@ -28,7 +28,7 @@
 #define OFFSET_BULLET_SPEED         0x1e0c
 #define OFFSET_BULLET_SCALE         0x1e14
 
-#define OFFSET_ITEM_GLOW            0x2A8
+#define OFFSET_ITEM_GLOW            0x2A8 //m_highlightFunctionBits
 
 #define OFFSET_GLOW_T1              0x262 //16256 = enabled, 0 = disabled 
 #define OFFSET_GLOW_T2              0x2c4 //1193322764 = enabled, 0 = disabled 

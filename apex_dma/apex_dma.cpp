@@ -218,7 +218,7 @@ void DoActions(WinProcess& mem)
 					case 1:
 						if (spectators > 0)
 						{
-							if(!player_glow && Target.isGlowing())
+							if(Target.isGlowing())
 							{
 								Target.disableGlow(mem);
 							}
@@ -228,7 +228,7 @@ void DoActions(WinProcess& mem)
 					case 2:
 						if (spectators+allied_spectators > 0)
 						{
-							if(!player_glow && Target.isGlowing())
+							if(Target.isGlowing())
 							{
 								Target.disableGlow(mem);
 							}
