@@ -226,12 +226,14 @@ void Overlay::ClickThrough(bool v)
 	if (v)
 	{
 		nv_edit = nv_default_in_game | WS_VISIBLE;
-		SetWindowLong(overlayHWND, GWL_EXSTYLE, nv_ex_edit);
+		if (GetWindowLong(overlayHWND, GWL_EXSTYLE) != nv_ex_edit)
+			SetWindowLong(overlayHWND, GWL_EXSTYLE, nv_ex_edit);
 	}
 	else
 	{
 		nv_edit = nv_default | WS_VISIBLE;
-		SetWindowLong(overlayHWND, GWL_EXSTYLE, nv_ex_edit_menu);
+		if (GetWindowLong(overlayHWND, GWL_EXSTYLE) != nv_ex_edit_menu)
+			SetWindowLong(overlayHWND, GWL_EXSTYLE, nv_ex_edit_menu);
 	}
 }
 
@@ -288,14 +290,14 @@ DWORD Overlay::CreateOverlay()
 		{
 			if (GetWindowLong(overlayHWND, GWL_STYLE) != nv_edit)
 				SetWindowLong(overlayHWND, GWL_STYLE, nv_edit);
-			if (GetWindowLong(overlayHWND, GWL_EXSTYLE) != nv_ex_edit)
-				SetWindowLong(overlayHWND, GWL_EXSTYLE, nv_ex_edit);
 			if (show_menu)
 			{
 				ClickThrough(false);
 			}
 			else
 			{
+				if (GetWindowLong(overlayHWND, GWL_EXSTYLE) != nv_ex_edit)
+					SetWindowLong(overlayHWND, GWL_EXSTYLE, nv_ex_edit);
 				ClickThrough(true);
 			}
 		}
