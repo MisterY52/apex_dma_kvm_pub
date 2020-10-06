@@ -26,15 +26,17 @@ int aim = 0; //read
 bool esp = false; //read
 int safe_level = 0; //read
 bool item_glow = false;
+bool player_glow = false;
+bool aim_no_recoil = true;
 bool aiming = false; //read
 uint64_t g_Base = 0; //write
-float max_dist = 200.0f*40.0f; //read
+float max_dist = 200.0f * 40.0f; //read
 float smooth = 12.0f;
 
 bool valid = false; //write
 bool next = false; //read write
 
-uint64_t add[13];
+uint64_t add[15];
 
 bool k_f5 = 0;
 bool k_f6 = 0;
@@ -70,7 +72,7 @@ void Overlay::RenderEsp()
 				{
 					std::string distance = std::to_string(players[i].dist / 39.62);
 					distance = distance.substr(0, distance.find('.')) + "m(" + std::to_string(players[i].entity_team) + ")";
-					
+
 					if (v.box)
 					{
 						if (players[i].visible)
@@ -86,7 +88,7 @@ void Overlay::RenderEsp()
 						}
 					}
 
-					if(v.line)
+					if (v.line)
 						DrawLine(ImVec2((float)(getWidth() / 2), (float)getHeight()), ImVec2(players[i].b_x, players[i].b_y), BLUE, 1); //LINE FROM MIDDLE SCREEN
 
 					if (v.distance)
@@ -123,7 +125,9 @@ int main(int argc, char** argv)
 	add[9] = (uintptr_t)&valid;
 	add[10] = (uintptr_t)&max_dist;
 	add[11] = (uintptr_t)&item_glow;
-	add[12] = (uintptr_t)&smooth;
+	add[12] = (uintptr_t)&player_glow;
+	add[13] = (uintptr_t)&aim_no_recoil;
+	add[14] = (uintptr_t)&smooth;
 	printf("add offset: 0x%I64x\n", (uint64_t)&add[0] - (uint64_t)GetModuleHandle(NULL));
 	Overlay ov1 = Overlay();
 	ov1.Start();
@@ -142,7 +146,7 @@ int main(int argc, char** argv)
 		ready = true;
 		printf("Ready\n");
 	}
-		
+
 	while (active)
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -238,7 +242,7 @@ int main(int argc, char** argv)
 	}
 	ready = false;
 	ov1.Clear();
-	if(!use_nvidia)
+	if (!use_nvidia)
 		system("taskkill /F /T /IM overlay_ap.exe"); //custom overlay process name
 	return 0;
 }

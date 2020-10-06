@@ -30,6 +30,8 @@ int toRead = 100;
 int aim = false;
 bool esp = false;
 bool item_glow = false;
+bool player_glow = false;
+extern bool aim_no_recoil;
 int safe_level = 0;
 bool aiming = false;
 extern float smooth;
@@ -176,6 +178,15 @@ void DoActions(WinProcess& mem)
 						continue;
 					}
 
+					if(player_glow && !Target.isGlowing())
+					{
+						Target.enableGlow(mem);
+					}
+					else if(!player_glow && Target.isGlowing())
+					{
+						Target.disableGlow(mem);
+					}
+
 					ProcessPlayer(mem, LPlayer, Target, entitylist, c);
 					c++;
 				}
@@ -193,8 +204,49 @@ void DoActions(WinProcess& mem)
 					{
 						continue;
 					}
-
+					
 					ProcessPlayer(mem, LPlayer, Target, entitylist, i);
+
+					int entity_team = Target.getTeamId();
+					if (entity_team == team_player)
+					{
+						continue;
+					}
+
+					switch (safe_level)
+					{
+					case 1:
+						if (spectators > 0)
+						{
+							if(!player_glow && Target.isGlowing())
+							{
+								Target.disableGlow(mem);
+							}
+							continue;
+						}
+						break;
+					case 2:
+						if (spectators+allied_spectators > 0)
+						{
+							if(!player_glow && Target.isGlowing())
+							{
+								Target.disableGlow(mem);
+							}
+							continue;
+						}
+						break;
+					default:
+						break;
+					}
+
+					if(player_glow && !Target.isGlowing())
+					{
+						Target.enableGlow(mem);
+					}
+					else if(!player_glow && Target.isGlowing())
+					{
+						Target.disableGlow(mem);
+					}
 				}
 			}
 			spectators = tmp_spec;
@@ -505,7 +557,9 @@ static void set_vars(WinProcess& mem, uint64_t add_addr)
 	uint64_t valid_addr = mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*9);
 	uint64_t max_dist_addr = mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*10);
 	uint64_t item_glow_addr = mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*11);
-	uint64_t smooth_addr = mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*12);
+	uint64_t player_glow_addr = mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*12);
+	uint64_t aim_no_recoil_addr = mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*13);
+	uint64_t smooth_addr = mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*14);
 
 	if(mem.Read<int>(spec_addr)!=1)
 	{
@@ -532,6 +586,8 @@ static void set_vars(WinProcess& mem, uint64_t add_addr)
 			aiming = mem.Read<bool>(aiming_addr);
 			max_dist = mem.Read<float>(max_dist_addr);
 			item_glow = mem.Read<bool>(item_glow_addr);
+			player_glow = mem.Read<bool>(player_glow_addr);
+			aim_no_recoil = mem.Read<bool>(aim_no_recoil_addr);
 			smooth = mem.Read<float>(smooth_addr);
 
 			if(esp && next)

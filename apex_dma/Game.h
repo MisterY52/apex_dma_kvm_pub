@@ -29,6 +29,7 @@ public:
 	int getTeamId();
 	int getHealth();
 	int getShield();
+	bool isGlowing();
 	Vector getAbsVelocity();
 	QAngle GetSwayAngles();
 	QAngle GetViewAngles();
@@ -36,6 +37,8 @@ public:
 	QAngle GetRecoil();
 	Vector GetViewAnglesV();
 
+	void enableGlow(WinProcess& mem);
+	void disableGlow(WinProcess& mem);
 	void SetViewAngles(WinProcess& mem, SVector angles);
 	void SetViewAngles(WinProcess& mem, QAngle& angles);
 	Vector getBonePosition(WinProcess& mem, int id);

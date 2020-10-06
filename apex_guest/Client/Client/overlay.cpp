@@ -3,6 +3,8 @@
 extern int aim;
 extern bool esp;
 extern bool item_glow;
+extern bool player_glow;
+extern bool aim_no_recoil;
 extern bool ready;
 extern bool use_nvidia;
 extern int safe_level;
@@ -42,10 +44,10 @@ BOOL CALLBACK EnumWindowsCallback(HWND hwnd, LPARAM lParam)
 	{
 		if (wcscmp(L"CEF-OSC-WIDGET", className) == 0) //Nvidia overlay
 		{
-			Process_Informations* proc = (Process_Informations*)lParam;
+			HWND* w = (HWND*)lParam;
 			if (GetWindowLong(hwnd, GWL_STYLE) != nv_default && GetWindowLong(hwnd, GWL_STYLE) != nv_default_in_game)
 				return TRUE;
-			proc->overlayHWND = hwnd;
+			*w = hwnd;
 			return TRUE;
 		}
 	}
@@ -53,8 +55,8 @@ BOOL CALLBACK EnumWindowsCallback(HWND hwnd, LPARAM lParam)
 	{
 		if (wcscmp(L"overlay", className) == 0) //Custom overlay
 		{
-			Process_Informations* proc = (Process_Informations*)lParam;
-			proc->overlayHWND = hwnd;
+			HWND* w = (HWND*)lParam;
+			*w = hwnd;
 			return TRUE;
 		}
 	}
@@ -114,7 +116,7 @@ void Overlay::RenderMenu()
 		all_spec_disable = false;
 	}
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
-	ImGui::SetNextWindowSize(ImVec2(490, 240));
+	ImGui::SetNextWindowSize(ImVec2(490, 250));
 	ImGui::Begin("##title", (bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar);
 	if (ImGui::BeginTabBar("Tab"))
 	{
@@ -147,6 +149,8 @@ void Overlay::RenderMenu()
 			{
 				ImGui::SameLine();
 				ImGui::Checkbox("Visibility check", &vis_check);
+				ImGui::SameLine();
+				ImGui::Checkbox("No recoil/sway", &aim_no_recoil);
 				if (vis_check)
 				{
 					aim = 2;
@@ -162,6 +166,7 @@ void Overlay::RenderMenu()
 			}
 
 			ImGui::Checkbox("Glow items", &item_glow);
+			ImGui::Checkbox("Glow players", &player_glow);
 
 			ImGui::Text("Max distance:");
 			ImGui::SliderFloat("##1", &max_dist, 100.0f * 40, 800.0f * 40, "%.2f");
@@ -221,20 +226,20 @@ void Overlay::ClickThrough(bool v)
 	if (v)
 	{
 		nv_edit = nv_default_in_game | WS_VISIBLE;
-		SetWindowLong(proc.overlayHWND, GWL_EXSTYLE, nv_ex_edit);
+		SetWindowLong(overlayHWND, GWL_EXSTYLE, nv_ex_edit);
 	}
 	else
 	{
 		nv_edit = nv_default | WS_VISIBLE;
-		SetWindowLong(proc.overlayHWND, GWL_EXSTYLE, nv_ex_edit_menu);
+		SetWindowLong(overlayHWND, GWL_EXSTYLE, nv_ex_edit_menu);
 	}
 }
 
 DWORD Overlay::CreateOverlay()
 {
-	EnumWindows(EnumWindowsCallback, (LPARAM)&proc);
+	EnumWindows(EnumWindowsCallback, (LPARAM)&overlayHWND);
 	Sleep(300);
-	if (proc.overlayHWND == 0)
+	if (overlayHWND == 0)
 	{
 		printf("Can't find the overlay\n");
 		Sleep(1000);
@@ -244,19 +249,19 @@ DWORD Overlay::CreateOverlay()
 	HDC hDC = ::GetWindowDC(NULL);
 	width = ::GetDeviceCaps(hDC, HORZRES);
 	height = ::GetDeviceCaps(hDC, VERTRES);
-		
+
 	running = true;
 
 	// Initialize Direct3D
-	if (!CreateDeviceD3D(proc.overlayHWND))
+	if (!CreateDeviceD3D(overlayHWND))
 	{
 		CleanupDeviceD3D();
 		return 1;
 	}
 
 	// Show the window
-	::ShowWindow(proc.overlayHWND, SW_SHOWDEFAULT);
-	::UpdateWindow(proc.overlayHWND);
+	::ShowWindow(overlayHWND, SW_SHOWDEFAULT);
+	::UpdateWindow(overlayHWND);
 
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
@@ -267,7 +272,7 @@ DWORD Overlay::CreateOverlay()
 	ImGui::StyleColorsDark();
 
 	// Setup Platform/Renderer bindings
-	ImGui_ImplWin32_Init(proc.overlayHWND);
+	ImGui_ImplWin32_Init(overlayHWND);
 	ImGui_ImplDX9_Init(g_pd3dDevice);
 
 	ImVec4 clear_color = ImVec4(0.0f, 0.0f, 0.0f, 0.00f);
@@ -281,10 +286,10 @@ DWORD Overlay::CreateOverlay()
 		HWND wnd = GetWindow(GetForegroundWindow(), GW_HWNDPREV);
 		if (use_nvidia)
 		{
-			if (GetWindowLong(proc.overlayHWND, GWL_STYLE) != nv_edit)
-				SetWindowLong(proc.overlayHWND, GWL_STYLE, nv_edit);
-			if (GetWindowLong(proc.overlayHWND, GWL_EXSTYLE) != nv_ex_edit)
-				SetWindowLong(proc.overlayHWND, GWL_EXSTYLE, nv_ex_edit);
+			if (GetWindowLong(overlayHWND, GWL_STYLE) != nv_edit)
+				SetWindowLong(overlayHWND, GWL_STYLE, nv_edit);
+			if (GetWindowLong(overlayHWND, GWL_EXSTYLE) != nv_ex_edit)
+				SetWindowLong(overlayHWND, GWL_EXSTYLE, nv_ex_edit);
 			if (show_menu)
 			{
 				ClickThrough(false);
@@ -294,10 +299,10 @@ DWORD Overlay::CreateOverlay()
 				ClickThrough(true);
 			}
 		}
-		if (wnd != proc.overlayHWND)
+		if (wnd != overlayHWND)
 		{
-			SetWindowPos(proc.overlayHWND, wnd, 0, 0, 0, 0, SWP_ASYNCWINDOWPOS | SWP_NOMOVE | SWP_NOSIZE);
-			::UpdateWindow(proc.overlayHWND);
+			SetWindowPos(overlayHWND, wnd, 0, 0, 0, 0, SWP_ASYNCWINDOWPOS | SWP_NOMOVE | SWP_NOSIZE);
+			::UpdateWindow(overlayHWND);
 		}
 
 		if (::PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
@@ -337,11 +342,11 @@ DWORD Overlay::CreateOverlay()
 			k_ins = true;
 		}
 		else if (!IsKeyDown(VK_INSERT) && k_ins)
-		{	
+		{
 			k_ins = false;
 		}
-		
-		if(show_menu)
+
+		if (show_menu)
 			RenderMenu();
 		else
 			RenderInfo();
@@ -371,7 +376,7 @@ DWORD Overlay::CreateOverlay()
 	ClickThrough(true);
 
 	CleanupDeviceD3D();
-	::DestroyWindow(proc.overlayHWND);
+	::DestroyWindow(overlayHWND);
 	return 0;
 }
 
@@ -387,8 +392,8 @@ void Overlay::Clear()
 	Sleep(50);
 	if (use_nvidia)
 	{
-		SetWindowLong(proc.overlayHWND, GWL_STYLE, nv_default);
-		SetWindowLong(proc.overlayHWND, GWL_EXSTYLE, nv_ex_default);
+		SetWindowLong(overlayHWND, GWL_STYLE, nv_default);
+		SetWindowLong(overlayHWND, GWL_EXSTYLE, nv_ex_default);
 	}
 }
 
