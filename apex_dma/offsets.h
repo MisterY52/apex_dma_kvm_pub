@@ -22,7 +22,7 @@
 #define OFFSET_OBSERVING_TARGET		0x32c0
 
 #define OFFSET_MATRIX				0x1b3bd0
-#define OFFSET_RENDER				0x40d5d98 
+#define OFFSET_RENDER				0x40d5e18 
 
 #define OFFSET_WEAPON				0x1a0c //m_latestPrimaryWeapons
 #define OFFSET_BULLET_SPEED         0x1e0c
