@@ -99,6 +99,11 @@ bool Entity::isGlowing()
 	return *(int*)(buffer + OFFSET_GLOW_ENABLE) == 7;
 }
 
+bool Entity::isZooming()
+{
+	return *(int*)(buffer + OFFSET_ZOOMING) == 1;
+}
+
 void Entity::enableGlow(WinProcess& mem)
 {
 	mem.Write<int>(ptr + OFFSET_GLOW_T1, 16256);
@@ -205,6 +210,13 @@ QAngle CalculateBestBoneAim(WinProcess& mem, Entity& from, uintptr_t t, float ma
 	curweap.update(mem, from.ptr);
 	float BulletSpeed = curweap.get_projectile_speed();
 	float BulletGrav = curweap.get_projectile_gravity();
+	float zoom_fov = curweap.get_zoom_fov();
+
+	if (zoom_fov != 0.0f && zoom_fov != 1.0f)
+	{
+		max_fov *= zoom_fov/90.0f;
+	}
+
 	/*
 	//simple aim prediction
 	if (BulletSpeed > 1.f)
@@ -306,6 +318,7 @@ void WeaponXEntity::update(WinProcess& mem, uint64_t LocalPlayer)
 
 	projectile_speed = mem.Read<float>(wep_entity + OFFSET_BULLET_SPEED);
 	projectile_scale = mem.Read<float>(wep_entity + OFFSET_BULLET_SCALE);
+	zoom_fov = mem.Read<float>(wep_entity + OFFSET_ZOOM_FOV);
 }
 
 float WeaponXEntity::get_projectile_speed()
@@ -316,4 +329,9 @@ float WeaponXEntity::get_projectile_speed()
 float WeaponXEntity::get_projectile_gravity()
 {
 	return 750.0f * projectile_scale;
+}
+
+float WeaponXEntity::get_zoom_fov()
+{
+	return zoom_fov;
 }

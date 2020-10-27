@@ -12,6 +12,7 @@ extern int spectators;
 extern int allied_spectators;
 extern float max_dist;
 extern float smooth;
+extern float max_fov;
 int width;
 int height;
 bool k_leftclick = false;
@@ -116,7 +117,7 @@ void Overlay::RenderMenu()
 		all_spec_disable = false;
 	}
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
-	ImGui::SetNextWindowSize(ImVec2(490, 250));
+	ImGui::SetNextWindowSize(ImVec2(490, 200));
 	ImGui::Begin("##title", (bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar);
 	if (ImGui::BeginTabBar("Tab"))
 	{
@@ -167,7 +168,10 @@ void Overlay::RenderMenu()
 
 			ImGui::Checkbox("Glow items", &item_glow);
 			ImGui::Checkbox("Glow players", &player_glow);
-
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("Config"))
+		{
 			ImGui::Text("Max distance:");
 			ImGui::SliderFloat("##1", &max_dist, 100.0f * 40, 800.0f * 40, "%.2f");
 			ImGui::SameLine();
@@ -176,6 +180,8 @@ void Overlay::RenderMenu()
 			ImGui::Text("Smooth aim value:");
 			ImGui::SliderFloat("##2", &smooth, 12.0f, 150.0f, "%.2f");
 
+			ImGui::Text("Max FOV:");
+			ImGui::SliderFloat("##3", &max_fov, 5.0f, 250.0f, "%.2f");
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Visuals"))

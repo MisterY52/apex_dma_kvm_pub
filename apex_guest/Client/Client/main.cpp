@@ -16,6 +16,7 @@ typedef struct player
 	int shield = 0;
 }player;
 
+int aim_key = VK_RBUTTON;
 bool use_nvidia = true;
 bool active = true;
 bool ready = false;
@@ -32,11 +33,12 @@ bool aiming = false; //read
 uint64_t g_Base = 0; //write
 float max_dist = 200.0f * 40.0f; //read
 float smooth = 12.0f;
+float max_fov = 15.0f;
 
 bool valid = false; //write
 bool next = false; //read write
 
-uint64_t add[15];
+uint64_t add[16];
 
 bool k_f5 = 0;
 bool k_f6 = 0;
@@ -128,6 +130,7 @@ int main(int argc, char** argv)
 	add[12] = (uintptr_t)&player_glow;
 	add[13] = (uintptr_t)&aim_no_recoil;
 	add[14] = (uintptr_t)&smooth;
+	add[15] = (uintptr_t)&max_fov;
 	printf("add offset: 0x%I64x\n", (uint64_t)&add[0] - (uint64_t)GetModuleHandle(NULL));
 	Overlay ov1 = Overlay();
 	ov1.Start();
@@ -235,7 +238,7 @@ int main(int argc, char** argv)
 			std::this_thread::sleep_for(std::chrono::milliseconds(130));
 		}
 
-		if (IsKeyDown(VK_RBUTTON))
+		if (IsKeyDown(aim_key))
 			aiming = true;
 		else
 			aiming = false;
