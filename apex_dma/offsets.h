@@ -8,8 +8,9 @@
 #define OFFSET_SHIELD				0x170
 #define OFFSET_ABS_VELOCITY         0x140 //m_vecAbsVelocity
 #define OFFSET_VISIBLE_TIME         0x1A6C
+#define OFFSET_ZOOMING              0x1b81 //m_bZooming
 
-#define OFFSET_LIFE_STATE			0x770  //>0 = dead
+#define OFFSET_LIFE_STATE			0x770 //>0 = dead
 #define OFFSET_BLEED_OUT_STATE		0x2610 //>0 = knocked
 
 #define OFFSET_ORIGIN				0x14c //m_vecAbsOrigin
@@ -21,12 +22,13 @@
 #define OFFSET_OBSERVER_MODE		0x32bc
 #define OFFSET_OBSERVING_TARGET		0x32c0
 
-#define OFFSET_MATRIX				0x1b3bd0
-#define OFFSET_RENDER				0x40d5e18 
+#define OFFSET_MATRIX               0x1b3bd0
+#define OFFSET_RENDER               0x40d5e18 
 
-#define OFFSET_WEAPON				0x1a0c //m_latestPrimaryWeapons
+#define OFFSET_WEAPON               0x1a0c //m_latestPrimaryWeapons
 #define OFFSET_BULLET_SPEED         0x1e0c
 #define OFFSET_BULLET_SCALE         0x1e14
+#define OFFSET_ZOOM_FOV             0x1668 + 0xb4 //m_playerData + m_curZoomFOV
 
 #define OFFSET_ITEM_GLOW            0x2A8 //m_highlightFunctionBits
 

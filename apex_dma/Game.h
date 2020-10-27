@@ -30,6 +30,7 @@ public:
 	int getHealth();
 	int getShield();
 	bool isGlowing();
+	bool isZooming();
 	Vector getAbsVelocity();
 	QAngle GetSwayAngles();
 	QAngle GetViewAngles();
@@ -64,11 +65,14 @@ public:
 	void update(WinProcess& mem, uint64_t LocalPlayer);
 	float get_projectile_speed();
 	float get_projectile_gravity();
+	float get_zoom_fov();
 
 private:
 	float projectile_scale;
 	float projectile_speed;
+	float zoom_fov;
 };
+
 Entity getEntity(WinProcess& mem, uintptr_t ptr);
 Item getItem(WinProcess& mem, uintptr_t ptr);
 bool WorldToScreen(Vector from, float* m_vMatrix, int targetWidth, int targetHeight, Vector& to);

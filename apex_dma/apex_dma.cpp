@@ -25,7 +25,7 @@ int team_player = 0;
 int tmp_spec = 0, spectators = 0;
 int tmp_all_spec = 0, allied_spectators = 0;
 int playerId = 0;
-int s_FOV = 15;
+int max_fov = 15;
 int toRead = 100;
 int aim = false;
 bool esp = false;
@@ -526,7 +526,7 @@ static void AimbotLoop(WinProcess& mem)
 				uint64_t LocalPlayer = mem.Read<uint64_t>(g_Base + OFFSET_LOCAL_ENT);
 				if (LocalPlayer == 0) continue;
 				Entity LPlayer = getEntity(mem, LocalPlayer);
-				QAngle Angles = CalculateBestBoneAim(mem, LPlayer, aimentity, s_FOV);
+				QAngle Angles = CalculateBestBoneAim(mem, LPlayer, aimentity, max_fov);
 				if (Angles.x == 0 && Angles.y == 0)
 				{
 					lock=false;
@@ -560,6 +560,7 @@ static void set_vars(WinProcess& mem, uint64_t add_addr)
 	uint64_t player_glow_addr = mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*12);
 	uint64_t aim_no_recoil_addr = mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*13);
 	uint64_t smooth_addr = mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*14);
+	uint64_t max_fov_addr = mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*15);
 
 	if(mem.Read<int>(spec_addr)!=1)
 	{
@@ -589,6 +590,7 @@ static void set_vars(WinProcess& mem, uint64_t add_addr)
 			player_glow = mem.Read<bool>(player_glow_addr);
 			aim_no_recoil = mem.Read<bool>(aim_no_recoil_addr);
 			smooth = mem.Read<float>(smooth_addr);
+			max_fov = mem.Read<float>(max_fov_addr);
 
 			if(esp && next)
 			{
