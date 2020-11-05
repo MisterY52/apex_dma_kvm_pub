@@ -1,17 +1,17 @@
-#define OFFSET_ENTITYLIST			0x18ad3a8
-#define OFFSET_LOCAL_ENT			0x1c5bcc8 //LocalPlayer
+#define OFFSET_ENTITYLIST			0x18c6928
+#define OFFSET_LOCAL_ENT			0x1c75de8 //LocalPlayer
+#define OFFSET_NAME_LIST            0x814c2b0
 
 #define OFFSET_TEAM					0x430
 #define OFFSET_HEALTH				0x420
-#define OFFSET_NAME					0x561
-#define OFFSET_SIG_NAME				0x558
 #define OFFSET_SHIELD				0x170
+#define OFFSET_NAME					0x569
 #define OFFSET_ABS_VELOCITY         0x140 //m_vecAbsVelocity
 #define OFFSET_VISIBLE_TIME         0x1A6C
-#define OFFSET_ZOOMING              0x1b81 //m_bZooming
+#define OFFSET_ZOOMING      		0x1b81 //m_bZooming
 
-#define OFFSET_LIFE_STATE			0x770 //>0 = dead
-#define OFFSET_BLEED_OUT_STATE		0x2610 //>0 = knocked
+#define OFFSET_LIFE_STATE			0x778  //>0 = dead
+#define OFFSET_BLEED_OUT_STATE		0x2620 //>0 = knocked
 
 #define OFFSET_ORIGIN				0x14c //m_vecAbsOrigin
 #define OFFSET_BONES				0xF18 //m_bConstrainBetweenEndpoints
@@ -19,16 +19,16 @@
 #define OFFSET_CAMERAPOS			0x1E6C
 #define OFFSET_VIEWANGLES			0x24A0
 #define OFFSET_BREATH_ANGLES		OFFSET_VIEWANGLES - 0x10
-#define OFFSET_OBSERVER_MODE		0x32bc
-#define OFFSET_OBSERVING_TARGET		0x32c0
+#define OFFSET_OBSERVER_MODE		0x32d4
+#define OFFSET_OBSERVING_TARGET		0x32d8
 
-#define OFFSET_MATRIX               0x1b3bd0
-#define OFFSET_RENDER               0x40d5e18 
+#define OFFSET_MATRIX				0x1b3bd0
+#define OFFSET_RENDER				0x4072958 
 
-#define OFFSET_WEAPON               0x1a0c //m_latestPrimaryWeapons
-#define OFFSET_BULLET_SPEED         0x1e0c
-#define OFFSET_BULLET_SCALE         0x1e14
-#define OFFSET_ZOOM_FOV             0x1668 + 0xb4 //m_playerData + m_curZoomFOV
+#define OFFSET_WEAPON				0x1a0c //m_latestPrimaryWeapons
+#define OFFSET_BULLET_SPEED         0x1e1c
+#define OFFSET_BULLET_SCALE         0x1e24
+#define OFFSET_ZOOM_FOV             0x1668 + 0xbc //m_playerData + m_curZoomFOV
 
 #define OFFSET_ITEM_GLOW            0x2A8 //m_highlightFunctionBits
 

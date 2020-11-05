@@ -61,7 +61,7 @@ typedef struct player
 	bool visible = false;
 	int health = 0;
 	int shield = 0;
-
+	char name[33] = { 0 };
 }player;
 
 
@@ -343,7 +343,7 @@ static void EspLoop(WinProcess& mem)
 						if (centity == 0)
 						{
 							continue;
-						}
+						}		
 						
 						if (LocalPlayer == centity)
 						{
@@ -351,6 +351,7 @@ static void EspLoop(WinProcess& mem)
 						}
 
 						Entity Target = getEntity(mem, centity);
+
 						if (!Target.isDummy())
 						{
 							continue;
@@ -394,8 +395,9 @@ static void EspLoop(WinProcess& mem)
 								0,
 								(Target.lastVisTime() > lastvis_esp[c]),
 								health,
-								shield
+								shield	
 							};
+							Target.get_name(mem,g_Base, i-1, &players[c].name[0]);
 							lastvis_esp[c] = Target.lastVisTime();
 							valid = true;
 							c++;
@@ -418,6 +420,7 @@ static void EspLoop(WinProcess& mem)
 						}
 
 						Entity Target = getEntity(mem, centity);
+						
 						if (!Target.isPlayer())
 						{
 							continue;
@@ -440,7 +443,7 @@ static void EspLoop(WinProcess& mem)
 						{	
 							continue;
 						}
-						
+
 						Vector bs = Vector();
 						WorldToScreen(EntityPosition, m.matrix, 1920, 1080, bs);
 						if (bs.x > 0 && bs.y > 0)
@@ -469,6 +472,7 @@ static void EspLoop(WinProcess& mem)
 								health,
 								shield
 							};
+							Target.get_name(mem, g_Base, i-1, &players[i].name[0]);
 							lastvis_esp[i] = Target.lastVisTime();
 							valid = true;
 						}
@@ -514,7 +518,7 @@ static void AimbotLoop(WinProcess& mem)
 				default:
 					break;
 				}
-
+				
 				if (aimentity == 0 || !aiming)
 				{
 					lock=false;
@@ -694,7 +698,7 @@ static void init()
 		bool apex_found = false;
 		bool client_found = false;
 		//Client "add" offset
-		uint64_t add_off = 0x41a60;
+		uint64_t add_off = 0x39870;
 		
 		while(active)
 		{

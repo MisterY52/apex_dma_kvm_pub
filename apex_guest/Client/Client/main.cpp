@@ -14,6 +14,7 @@ typedef struct player
 	bool visible = false;
 	int health = 0;
 	int shield = 0;
+	char name[33] = { 0 };
 }player;
 
 int aim_key = VK_RBUTTON;
@@ -31,7 +32,7 @@ bool player_glow = false;
 bool aim_no_recoil = true;
 bool aiming = false; //read
 uint64_t g_Base = 0; //write
-float max_dist = 200.0f * 40.0f; //read
+float max_dist = 200.0f*40.0f; //read
 float smooth = 12.0f;
 float max_fov = 15.0f;
 
@@ -66,7 +67,7 @@ void Overlay::RenderEsp()
 		{
 			ImGui::SetNextWindowPos(ImVec2(0, 0));
 			ImGui::SetNextWindowSize(ImVec2((float)getWidth(), (float)getHeight()));
-			ImGui::Begin("##esp", (bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoBringToFrontOnFocus);
+			ImGui::Begin(XorStr("##esp"), (bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoBringToFrontOnFocus);
 
 			for (int i = 0; i < 100; i++)
 			{
@@ -74,7 +75,6 @@ void Overlay::RenderEsp()
 				{
 					std::string distance = std::to_string(players[i].dist / 39.62);
 					distance = distance.substr(0, distance.find('.')) + "m(" + std::to_string(players[i].entity_team) + ")";
-
 					if (v.box)
 					{
 						if (players[i].visible)
@@ -90,7 +90,7 @@ void Overlay::RenderEsp()
 						}
 					}
 
-					if (v.line)
+					if(v.line)
 						DrawLine(ImVec2((float)(getWidth() / 2), (float)getHeight()), ImVec2(players[i].b_x, players[i].b_y), BLUE, 1); //LINE FROM MIDDLE SCREEN
 
 					if (v.distance)
@@ -101,10 +101,13 @@ void Overlay::RenderEsp()
 							String(ImVec2(players[i].boxMiddle, (players[i].b_y + 1)), GREEN, distance.c_str());  //DISTANCE
 					}
 
-					if (v.healthbar)
+					if(v.healthbar)
 						ProgressBar((players[i].b_x - (players[i].width / 2.0f) - 4), (players[i].b_y - players[i].height), 3, players[i].height, players[i].health, 100); //health bar
 					if (v.shieldbar)
-						ProgressBar((players[i].b_x + (players[i].width / 2.0f) + 1), (players[i].b_y - players[i].height), 3, players[i].height, players[i].shield, 125); //shield bar	
+						ProgressBar((players[i].b_x + (players[i].width / 2.0f) + 1), (players[i].b_y - players[i].height), 3, players[i].height, players[i].shield, 125); //shield bar
+
+					if(v.name)
+						String(ImVec2(players[i].boxMiddle, (players[i].b_y - players[i].height - 15)), WHITE, players[i].name);
 				}
 			}
 
@@ -131,10 +134,10 @@ int main(int argc, char** argv)
 	add[13] = (uintptr_t)&aim_no_recoil;
 	add[14] = (uintptr_t)&smooth;
 	add[15] = (uintptr_t)&max_fov;
-	printf("add offset: 0x%I64x\n", (uint64_t)&add[0] - (uint64_t)GetModuleHandle(NULL));
+	printf(XorStr("add offset: 0x%I64x\n"), (uint64_t)&add[0] - (uint64_t)GetModuleHandle(NULL));
 	Overlay ov1 = Overlay();
 	ov1.Start();
-	printf("Waiting for host process...\n");
+	printf(XorStr("Waiting for host process...\n"));
 	while (spectators == 1)
 	{
 		if (IsKeyDown(VK_F4))
@@ -147,9 +150,9 @@ int main(int argc, char** argv)
 	if (active)
 	{
 		ready = true;
-		printf("Ready\n");
+		printf(XorStr("Ready\n"));
 	}
-
+		
 	while (active)
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -245,8 +248,7 @@ int main(int argc, char** argv)
 	}
 	ready = false;
 	ov1.Clear();
-	if (!use_nvidia)
-		system("taskkill /F /T /IM overlay_ap.exe"); //custom overlay process name
+	if(!use_nvidia)
+		system(XorStr("taskkill /F /T /IM overlay_ap.exe")); //custom overlay process name
 	return 0;
 }
-

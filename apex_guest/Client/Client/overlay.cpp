@@ -43,7 +43,7 @@ BOOL CALLBACK EnumWindowsCallback(HWND hwnd, LPARAM lParam)
 	GetClassName(hwnd, className, 255);
 	if (use_nvidia)
 	{
-		if (wcscmp(L"CEF-OSC-WIDGET", className) == 0) //Nvidia overlay
+		if (wcscmp(XorStrW(L"CEF-OSC-WIDGET"), className) == 0) //Nvidia overlay
 		{
 			HWND* w = (HWND*)lParam;
 			if (GetWindowLong(hwnd, GWL_STYLE) != nv_default && GetWindowLong(hwnd, GWL_STYLE) != nv_default_in_game)
@@ -54,7 +54,7 @@ BOOL CALLBACK EnumWindowsCallback(HWND hwnd, LPARAM lParam)
 	}
 	else
 	{
-		if (wcscmp(L"overlay", className) == 0) //Custom overlay
+		if (wcscmp(XorStrW(L"overlay"), className) == 0) //Custom overlay
 		{
 			HWND* w = (HWND*)lParam;
 			*w = hwnd;
@@ -117,17 +117,17 @@ void Overlay::RenderMenu()
 		all_spec_disable = false;
 	}
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
-	ImGui::SetNextWindowSize(ImVec2(490, 200));
-	ImGui::Begin("##title", (bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar);
-	if (ImGui::BeginTabBar("Tab"))
+	ImGui::SetNextWindowSize(ImVec2(490, 190));
+	ImGui::Begin(XorStr("##title"), (bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar);
+	if (ImGui::BeginTabBar(XorStr("Tab")))
 	{
-		if (ImGui::BeginTabItem("Main"))
+		if (ImGui::BeginTabItem(XorStr("Main")))
 		{
-			ImGui::Checkbox("Disable with enemy spectators", &spec_disable);
+			ImGui::Checkbox(XorStr("Disable with enemy spectators"), &spec_disable);
 			if (spec_disable)
 			{
 				ImGui::SameLine();
-				ImGui::Checkbox("Disable with allied spectators", &all_spec_disable);
+				ImGui::Checkbox(XorStr("Disable with allied spectators"), &all_spec_disable);
 				if (all_spec_disable)
 				{
 					safe_level = 2;
@@ -142,16 +142,16 @@ void Overlay::RenderMenu()
 				safe_level = 0;
 			}
 
-			ImGui::Checkbox("ESP", &esp);
+			ImGui::Checkbox(XorStr("ESP"), &esp);
 
-			ImGui::Checkbox("AIM", &aim_enable);
+			ImGui::Checkbox(XorStr("AIM"), &aim_enable);
 
 			if (aim_enable)
 			{
 				ImGui::SameLine();
-				ImGui::Checkbox("Visibility check", &vis_check);
+				ImGui::Checkbox(XorStr("Visibility check"), &vis_check);
 				ImGui::SameLine();
-				ImGui::Checkbox("No recoil/sway", &aim_no_recoil);
+				ImGui::Checkbox(XorStr("No recoil/sway"), &aim_no_recoil);
 				if (vis_check)
 				{
 					aim = 2;
@@ -166,37 +166,39 @@ void Overlay::RenderMenu()
 				aim = 0;
 			}
 
-			ImGui::Checkbox("Glow items", &item_glow);
-			ImGui::Checkbox("Glow players", &player_glow);
+			ImGui::Checkbox(XorStr("Glow items"), &item_glow);
+			ImGui::Checkbox(XorStr("Glow players"), &player_glow);
 			ImGui::EndTabItem();
 		}
-		if (ImGui::BeginTabItem("Config"))
+		if (ImGui::BeginTabItem(XorStr("Config")))
 		{
-			ImGui::Text("Max distance:");
-			ImGui::SliderFloat("##1", &max_dist, 100.0f * 40, 800.0f * 40, "%.2f");
+			ImGui::Text(XorStr("Max distance:"));
+			ImGui::SliderFloat(XorStr("##1"), &max_dist, 100.0f * 40, 800.0f * 40, "%.2f");
 			ImGui::SameLine();
 			ImGui::Text("(%d meters)", (int)(max_dist / 40));
 
-			ImGui::Text("Smooth aim value:");
-			ImGui::SliderFloat("##2", &smooth, 12.0f, 150.0f, "%.2f");
+			ImGui::Text(XorStr("Smooth aim value:"));
+			ImGui::SliderFloat(XorStr("##2"), &smooth, 12.0f, 150.0f, "%.2f");
 
-			ImGui::Text("Max FOV:");
-			ImGui::SliderFloat("##3", &max_fov, 5.0f, 250.0f, "%.2f");
+			ImGui::Text(XorStr("Max FOV:"));
+			ImGui::SliderFloat(XorStr("##3"), &max_fov, 5.0f, 250.0f, "%.2f");
 			ImGui::EndTabItem();
 		}
-		if (ImGui::BeginTabItem("Visuals"))
+		if (ImGui::BeginTabItem(XorStr("Visuals")))
 		{
-			ImGui::Text("ESP options:");
-			ImGui::Checkbox("Box", &v.box);
-			ImGui::Checkbox("Line", &v.line);
-			ImGui::Checkbox("Distance", &v.distance);
-			ImGui::Checkbox("Health bar", &v.healthbar);
-			ImGui::Checkbox("Shield bar", &v.shieldbar);
+			ImGui::Text(XorStr("ESP options:"));
+			ImGui::Checkbox(XorStr("Box"), &v.box);
+			ImGui::SameLine(0, 70.0f);
+			ImGui::Checkbox(XorStr("Name"), &v.name);
+			ImGui::Checkbox(XorStr("Line"), &v.line);
+			ImGui::Checkbox(XorStr("Distance"), &v.distance);
+			ImGui::Checkbox(XorStr("Health bar"), &v.healthbar);
+			ImGui::Checkbox(XorStr("Shield bar"), &v.shieldbar);
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();
 	}
-	ImGui::Text("Overlay FPS: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+	ImGui::Text(XorStr("Overlay FPS: %.3f ms/frame (%.1f FPS)"), 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	ImGui::End();
 }
 
@@ -204,7 +206,7 @@ void Overlay::RenderInfo()
 {
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
 	ImGui::SetNextWindowSize(ImVec2(50, 20));
-	ImGui::Begin("##info", (bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar);
+	ImGui::Begin(XorStr("##info"), (bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar);
 	switch (safe_level)
 	{
 	case 0:
@@ -249,7 +251,7 @@ DWORD Overlay::CreateOverlay()
 	Sleep(300);
 	if (overlayHWND == 0)
 	{
-		printf("Can't find the overlay\n");
+		printf(XorStr("Can't find the overlay\n"));
 		Sleep(1000);
 		exit(0);
 	}
@@ -257,7 +259,7 @@ DWORD Overlay::CreateOverlay()
 	HDC hDC = ::GetWindowDC(NULL);
 	width = ::GetDeviceCaps(hDC, HORZRES);
 	height = ::GetDeviceCaps(hDC, VERTRES);
-
+		
 	running = true;
 
 	// Initialize Direct3D
@@ -350,11 +352,11 @@ DWORD Overlay::CreateOverlay()
 			k_ins = true;
 		}
 		else if (!IsKeyDown(VK_INSERT) && k_ins)
-		{
+		{	
 			k_ins = false;
 		}
-
-		if (show_menu)
+		
+		if(show_menu)
 			RenderMenu();
 		else
 			RenderInfo();
@@ -492,6 +494,6 @@ void Overlay::ProgressBar(float x, float y, float w, float h, int value, int v_m
 		25,
 		255
 	);
-
+	
 	RectFilled(x, y, x + w, y + ((h / float(v_max)) * (float)value), barColor, 0.0f, 0);
 }

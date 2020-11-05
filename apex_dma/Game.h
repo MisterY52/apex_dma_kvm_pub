@@ -44,6 +44,7 @@ public:
 	void SetViewAngles(WinProcess& mem, QAngle& angles);
 	Vector getBonePosition(WinProcess& mem, int id);
 	uint64_t Observing(WinProcess& mem, uint64_t entitylist);
+	void get_name(WinProcess& mem, uint64_t g_Base, uint64_t index, char* name);
 };
 
 class Item
