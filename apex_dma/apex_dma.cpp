@@ -140,7 +140,7 @@ void DoActions(WinProcess& mem)
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		while (g_Base!=0 && c_Base!=0)
 		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(300));
+			std::this_thread::sleep_for(std::chrono::milliseconds(200));
 			uint64_t LocalPlayer = mem.Read<uint64_t>(g_Base + OFFSET_LOCAL_ENT);
 			if (LocalPlayer == 0) continue;
 
