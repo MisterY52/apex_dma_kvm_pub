@@ -143,7 +143,7 @@ QAngle Entity::GetRecoil()
 void Entity::get_name(WinProcess& mem, uint64_t g_Base, uint64_t index, char* name)
 {
 	index *= 0x10;
-	mem.ReadMem(mem.Read<uint64_t>(g_Base + OFFSET_NAME_LIST + index), (uint64_t)name, 33);
+	mem.ReadMem(mem.Read<uint64_t>(g_Base + OFFSET_NAME_LIST + index), (uint64_t)name, 32);
 }
 
 bool Item::isItem()
