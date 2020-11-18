@@ -24,7 +24,6 @@ float max_dist = 200.0f*40.0f;
 int team_player = 0;
 int tmp_spec = 0, spectators = 0;
 int tmp_all_spec = 0, allied_spectators = 0;
-int playerId = 0;
 int max_fov = 15;
 int toRead = 100;
 int aim = false;
@@ -75,7 +74,6 @@ float lastvis_aim[100];
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool tmp = true;
 void ProcessPlayer(WinProcess& mem, Entity& LPlayer, Entity& target, uint64_t entitylist, int index)
 {
 	int entity_team = target.getTeamId();
