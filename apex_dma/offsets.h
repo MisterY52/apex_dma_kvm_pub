@@ -6,7 +6,7 @@
 #if VERSION == STEAM
     #define OFFSET_ENTITYLIST			0x18c7af8
     #define OFFSET_LOCAL_ENT			0x1c76fb8 //LocalPlayer
-    #define OFFSET_NAME_LIST            0x8151950
+    #define OFFSET_NAME_LIST            0x81518d0
 
     #define OFFSET_TEAM					0x430 //m_iTeamNum
     #define OFFSET_HEALTH				0x420 //m_iHealth
@@ -29,7 +29,7 @@
     #define OFFSET_OBSERVING_TARGET		0x32e0 //m_hObserverTarget
 
     #define OFFSET_MATRIX				0x1b3bd0
-    #define OFFSET_RENDER				0x4077bd8 
+    #define OFFSET_RENDER				0x4077b58 
 
     #define OFFSET_WEAPON				0x1a0c //m_latestPrimaryWeapons
     #define OFFSET_BULLET_SPEED         0x1e1c
@@ -42,10 +42,9 @@
     #define OFFSET_GLOW_T2              0x2c4 //1193322764 = enabled, 0 = disabled 
     #define OFFSET_GLOW_ENABLE          0x350 //7 = enabled, 2 = disabled
     #define OFFSET_GLOW_THROUGH_WALLS   0x360 //2 = enabled, 5 = disabled
-#elif VERSION == ORIGIN
     #define OFFSET_ENTITYLIST			0x18c7af8
     #define OFFSET_LOCAL_ENT			0x1c76fb8 //LocalPlayer
-    #define OFFSET_NAME_LIST            0x8151950
+    #define OFFSET_NAME_LIST            0x81518d0
 
     #define OFFSET_TEAM					0x430 //m_iTeamNum
     #define OFFSET_HEALTH				0x420 //m_iHealth
@@ -68,7 +67,7 @@
     #define OFFSET_OBSERVING_TARGET		0x32e0 //m_hObserverTarget
 
     #define OFFSET_MATRIX				0x1b3bd0
-    #define OFFSET_RENDER				0x4077bd8 
+    #define OFFSET_RENDER				0x4077b58 
 
     #define OFFSET_WEAPON				0x1a0c //m_latestPrimaryWeapons
     #define OFFSET_BULLET_SPEED         0x1e1c

@@ -13,6 +13,7 @@ extern int allied_spectators;
 extern float max_dist;
 extern float smooth;
 extern float max_fov;
+extern int bone;
 int width;
 int height;
 bool k_leftclick = false;
@@ -117,7 +118,7 @@ void Overlay::RenderMenu()
 		all_spec_disable = false;
 	}
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
-	ImGui::SetNextWindowSize(ImVec2(490, 190));
+	ImGui::SetNextWindowSize(ImVec2(490, 215));
 	ImGui::Begin(XorStr("##title"), (bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar);
 	if (ImGui::BeginTabBar(XorStr("Tab")))
 	{
@@ -182,6 +183,9 @@ void Overlay::RenderMenu()
 
 			ImGui::Text(XorStr("Max FOV:"));
 			ImGui::SliderFloat(XorStr("##3"), &max_fov, 5.0f, 250.0f, "%.2f");
+			
+			ImGui::Text(XorStr("Aim at (bone id):"));
+			ImGui::SliderInt(XorStr("##4"), &bone, 0, 175);
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem(XorStr("Visuals")))
@@ -341,14 +345,7 @@ DWORD Overlay::CreateOverlay()
 		if (IsKeyDown(VK_INSERT) && !k_ins && ready)
 		{
 			show_menu = !show_menu;
-			if (show_menu)
-			{
-				ClickThrough(false);
-			}
-			else
-			{
-				ClickThrough(true);
-			}
+			ClickThrough(!show_menu);
 			k_ins = true;
 		}
 		else if (!IsKeyDown(VK_INSERT) && k_ins)

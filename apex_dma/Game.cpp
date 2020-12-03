@@ -2,6 +2,7 @@
 extern bool firing_range;
 float smooth = 12.0f;
 bool aim_no_recoil = true;
+int bone = 2;
 
 uint64_t Entity::Observing(WinProcess& mem, uint64_t entitylist)
 {
@@ -196,16 +197,6 @@ QAngle CalculateBestBoneAim(WinProcess& mem, Entity& from, uintptr_t t, float ma
 		{
 			return QAngle(0, 0, 0);
 		}
-	}
-
-	Vector EntityPosition = target.getPosition();
-	Vector LocalPlayerPosition = from.getPosition();
-	float dist = LocalPlayerPosition.DistTo(EntityPosition);
-
-	int bone = 2;
-	if (dist < 500)
-	{
-		bone = 5;
 	}
 	
 	Vector LocalCamera = from.GetCamPos();
