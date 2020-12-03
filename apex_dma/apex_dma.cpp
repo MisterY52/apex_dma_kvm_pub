@@ -34,6 +34,7 @@ extern bool aim_no_recoil;
 int safe_level = 0;
 bool aiming = false;
 extern float smooth;
+extern int bone;
 
 bool actions_t = false;
 bool esp_t = false;
@@ -77,16 +78,21 @@ float lastvis_aim[100];
 void ProcessPlayer(WinProcess& mem, Entity& LPlayer, Entity& target, uint64_t entitylist, int index)
 {
 	int entity_team = target.getTeamId();
-	if (target.Observing(mem, entitylist) == LPlayer.ptr)
-	{		
-		if (entity_team == team_player)
+	uint64_t obs = target.Observing(mem, entitylist);
+	if (obs)
+	{
+		if(obs == LPlayer.ptr)
 		{
-			tmp_all_spec++;
+			if (entity_team == team_player)
+			{
+				tmp_all_spec++;
+			}
+			else
+			{
+				tmp_spec++;
+			}
 		}
-		else
-		{
-			tmp_spec++;
-		}
+		return;
 	}
 	Vector EntityPosition = target.getPosition();
 	Vector LocalPlayerPosition = LPlayer.getPosition();
@@ -138,7 +144,7 @@ void DoActions(WinProcess& mem)
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		while (g_Base!=0 && c_Base!=0)
 		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(200));
+			std::this_thread::sleep_for(std::chrono::milliseconds(30));
 			uint64_t LocalPlayer = mem.Read<uint64_t>(g_Base + OFFSET_LOCAL_ENT);
 			if (LocalPlayer == 0) continue;
 
@@ -563,6 +569,7 @@ static void set_vars(WinProcess& mem, uint64_t add_addr)
 	uint64_t aim_no_recoil_addr = mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*13);
 	uint64_t smooth_addr = mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*14);
 	uint64_t max_fov_addr = mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*15);
+	uint64_t bone_addr = mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*16);
 
 	if(mem.Read<int>(spec_addr)!=1)
 	{
@@ -593,6 +600,7 @@ static void set_vars(WinProcess& mem, uint64_t add_addr)
 			aim_no_recoil = mem.Read<bool>(aim_no_recoil_addr);
 			smooth = mem.Read<float>(smooth_addr);
 			max_fov = mem.Read<float>(max_fov_addr);
+			bone = mem.Read<int>(bone_addr);
 
 			if(esp && next)
 			{
@@ -696,7 +704,7 @@ static void init()
 		bool apex_found = false;
 		bool client_found = false;
 		//Client "add" offset
-		uint64_t add_off = 0x39870;
+		uint64_t add_off = 0x3e870;
 		
 		while(active)
 		{
