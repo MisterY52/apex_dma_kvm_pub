@@ -4,6 +4,7 @@
 #define VERSION STEAM
 
 #if VERSION == STEAM
+
     #define OFFSET_ENTITYLIST			0x18c7af8
     #define OFFSET_LOCAL_ENT			0x1c76fb8 //LocalPlayer
     #define OFFSET_NAME_LIST            0x81518d0
@@ -42,6 +43,9 @@
     #define OFFSET_GLOW_T2              0x2c4 //1193322764 = enabled, 0 = disabled 
     #define OFFSET_GLOW_ENABLE          0x350 //7 = enabled, 2 = disabled
     #define OFFSET_GLOW_THROUGH_WALLS   0x360 //2 = enabled, 5 = disabled
+
+#elif VERSION == ORIGIN
+
     #define OFFSET_ENTITYLIST			0x18c7af8
     #define OFFSET_LOCAL_ENT			0x1c76fb8 //LocalPlayer
     #define OFFSET_NAME_LIST            0x81518d0
@@ -80,4 +84,5 @@
     #define OFFSET_GLOW_T2              0x2c4 //1193322764 = enabled, 0 = disabled 
     #define OFFSET_GLOW_ENABLE          0x350 //7 = enabled, 2 = disabled
     #define OFFSET_GLOW_THROUGH_WALLS   0x360 //2 = enabled, 5 = disabled
+
 #endif
