@@ -13,6 +13,7 @@
     #define OFFSET_HEALTH				0x440 //m_iHealth
     #define OFFSET_SHIELD				0x170 //m_shieldHealth
     #define OFFSET_NAME					0x589 //m_iName
+    #define OFFSET_SIGN_NAME			0x580 //m_iSignifierName
     #define OFFSET_ABS_VELOCITY         0x140 //m_vecAbsVelocity
     #define OFFSET_VISIBLE_TIME         0x1A4C
     #define OFFSET_ZOOMING      		0x1b41 //m_bZooming
@@ -24,7 +25,7 @@
     #define OFFSET_BONES				0xF38 //m_bConstrainBetweenEndpoints
     #define OFFSET_AIMPUNCH				0x2390 //m_currentFrameLocalPlayer.m_vecPunchWeapon_Angle
     #define OFFSET_CAMERAPOS			0x1e30
-    #define OFFSET_VIEWANGLES			0x2470
+    #define OFFSET_VIEWANGLES			0x2470 //m_ammoPoolCapacity - 0x14
     #define OFFSET_BREATH_ANGLES		OFFSET_VIEWANGLES - 0x10
     #define OFFSET_OBSERVER_MODE		0x32a4 //m_iObserverMode
     #define OFFSET_OBSERVING_TARGET		0x32a8 //m_hObserverTarget
@@ -33,8 +34,8 @@
     #define OFFSET_RENDER				0x4076fc0
 
     #define OFFSET_WEAPON				0x19ec //m_latestPrimaryWeapons
-    #define OFFSET_BULLET_SPEED         0x1e58
-    #define OFFSET_BULLET_SCALE         0x1e50
+    #define OFFSET_BULLET_SPEED         0x1e50
+    #define OFFSET_BULLET_SCALE         0x1e58
     #define OFFSET_ZOOM_FOV             0x1678 + 0xb8 //m_playerData + m_curZoomFOV
 
     #define OFFSET_ITEM_GLOW            0x2c0 //m_highlightFunctionBits
@@ -54,6 +55,7 @@
     #define OFFSET_HEALTH				0x440 //m_iHealth
     #define OFFSET_SHIELD				0x170 //m_shieldHealth
     #define OFFSET_NAME					0x589 //m_iName
+    #define OFFSET_SIGN_NAME			0x580 //m_iSignifierName
     #define OFFSET_ABS_VELOCITY         0x140 //m_vecAbsVelocity
     #define OFFSET_VISIBLE_TIME         0x1A4C
     #define OFFSET_ZOOMING      		0x1b41 //m_bZooming
@@ -74,8 +76,8 @@
     #define OFFSET_RENDER				0x4076fc0
 
     #define OFFSET_WEAPON				0x19ec //m_latestPrimaryWeapons
-    #define OFFSET_BULLET_SPEED         0x1e58
-    #define OFFSET_BULLET_SCALE         0x1e50
+    #define OFFSET_BULLET_SPEED         0x1e50
+    #define OFFSET_BULLET_SCALE         0x1e58
     #define OFFSET_ZOOM_FOV             0x1678 + 0xb8 //m_playerData + m_curZoomFOV
 
     #define OFFSET_ITEM_GLOW            0x2c0 //m_highlightFunctionBits
