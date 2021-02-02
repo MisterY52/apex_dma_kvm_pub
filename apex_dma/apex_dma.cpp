@@ -341,7 +341,7 @@ static void EspLoop(WinProcess& mem)
 				if(firing_range)
 				{
 					int c=0;
-					for (int i = 0; i < 9000; i++)
+					for (int i = 0; i < 10000; i++)
 					{
 						uint64_t centity = mem.Read<uint64_t>( entitylist + ((uint64_t)i << 5));
 						if (centity == 0)

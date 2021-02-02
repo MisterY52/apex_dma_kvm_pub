@@ -149,7 +149,7 @@ void Entity::get_name(WinProcess& mem, uint64_t g_Base, uint64_t index, char* na
 
 bool Item::isItem()
 {
-	return *(int*)(buffer + OFFSET_ITEM_GLOW) >= 1358917120 && *(int*)(buffer + OFFSET_ITEM_GLOW) <= 1696628992;
+	return *(int*)(buffer + OFFSET_ITEM_GLOW) >= 1358917120;
 }
 
 bool Item::isGlowing()
