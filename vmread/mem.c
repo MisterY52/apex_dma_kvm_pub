@@ -278,7 +278,6 @@ uint64_t VTranslate(const ProcessData* data, uint64_t dirBase, uint64_t address)
 
 void SetMemCacheTime(size_t newTime)
 {
-	if (newTime >= 0)
 		vtCacheTimeMS = newTime;
 }
 
