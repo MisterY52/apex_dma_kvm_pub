@@ -209,27 +209,27 @@ void Overlay::RenderMenu()
 void Overlay::RenderInfo()
 {
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
-	ImGui::SetNextWindowSize(ImVec2(50, 20));
+	ImGui::SetNextWindowSize(ImVec2(20, 20));
 	ImGui::Begin(XorStr("##info"), (bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar);
 	switch (safe_level)
 	{
 	case 0:
-		DrawLine(ImVec2(18, 5), ImVec2(35, 5), RED, 2);
+		DrawLine(ImVec2(9, 5), ImVec2(17, 5), RED, 2);
 		break;
 	case 1:
-		DrawLine(ImVec2(18, 5), ImVec2(35, 5), ORANGE, 2);
+		DrawLine(ImVec2(9, 5), ImVec2(17, 5), ORANGE, 2);
 		break;
 	case 2:
-		DrawLine(ImVec2(18, 5), ImVec2(35, 5), GREEN, 2);
+		DrawLine(ImVec2(9, 5), ImVec2(17, 5), GREEN, 2);
 		break;
 	default:
 		break;
 	}
 	ImGui::TextColored(RED, "%d", spectators);
 	ImGui::SameLine();
-	ImGui::Text("-");
+	/*ImGui::Text("-");
 	ImGui::SameLine();
-	ImGui::TextColored(GREEN, "%d", allied_spectators);
+	ImGui::TextColored(GREEN, "%d", allied_spectators);*/
 	ImGui::End();
 }
 
