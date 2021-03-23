@@ -5,9 +5,9 @@
 
 #if VERSION == STEAM
 
-    #define OFFSET_ENTITYLIST			0x18da338
-    #define OFFSET_LOCAL_ENT			0x1c898f8 //LocalPlayer
-    #define OFFSET_NAME_LIST            0x81330f0
+    #define OFFSET_ENTITYLIST			0x18da3d8
+    #define OFFSET_LOCAL_ENT			0x1c89a38 //LocalPlayer
+    #define OFFSET_NAME_LIST            0x8133270
 
     #define OFFSET_TEAM					0x450 //m_iTeamNum
     #define OFFSET_HEALTH				0x440 //m_iHealth
@@ -25,13 +25,13 @@
     #define OFFSET_BONES				0xF38 //m_bConstrainBetweenEndpoints
     #define OFFSET_AIMPUNCH				0x2390 //m_currentFrameLocalPlayer.m_vecPunchWeapon_Angle
     #define OFFSET_CAMERAPOS			0x1e30
-    #define OFFSET_VIEWANGLES			0x2478 //m_ammoPoolCapacity - 0x14
+    #define OFFSET_VIEWANGLES			0x248c - 0x14 //m_ammoPoolCapacity - 0x14
     #define OFFSET_BREATH_ANGLES		OFFSET_VIEWANGLES - 0x10
     #define OFFSET_OBSERVER_MODE		0x32a4 //m_iObserverMode
     #define OFFSET_OBSERVING_TARGET		0x32a8 //m_hObserverTarget
 
     #define OFFSET_MATRIX				0x1b3bd0
-    #define OFFSET_RENDER				0x408b768
+    #define OFFSET_RENDER				0x408b8e8
 
     #define OFFSET_WEAPON				0x19ec //m_latestPrimaryWeapons
     #define OFFSET_BULLET_SPEED         0x1e50
@@ -47,9 +47,9 @@
 
 #elif VERSION == ORIGIN
 
-    #define OFFSET_ENTITYLIST			0x18da338
-    #define OFFSET_LOCAL_ENT			0x1c898f8 //LocalPlayer
-    #define OFFSET_NAME_LIST            0x81330f0
+    #define OFFSET_ENTITYLIST			0x18da3d8
+    #define OFFSET_LOCAL_ENT			0x1c89a38 //LocalPlayer
+    #define OFFSET_NAME_LIST            0x8133270
 
     #define OFFSET_TEAM					0x450 //m_iTeamNum
     #define OFFSET_HEALTH				0x440 //m_iHealth
@@ -67,13 +67,13 @@
     #define OFFSET_BONES				0xF38 //m_bConstrainBetweenEndpoints
     #define OFFSET_AIMPUNCH				0x2390 //m_currentFrameLocalPlayer.m_vecPunchWeapon_Angle
     #define OFFSET_CAMERAPOS			0x1e30
-    #define OFFSET_VIEWANGLES			0x2478 //m_ammoPoolCapacity - 0x14
+    #define OFFSET_VIEWANGLES			0x248c - 0x14 //m_ammoPoolCapacity - 0x14
     #define OFFSET_BREATH_ANGLES		OFFSET_VIEWANGLES - 0x10
     #define OFFSET_OBSERVER_MODE		0x32a4 //m_iObserverMode
     #define OFFSET_OBSERVING_TARGET		0x32a8 //m_hObserverTarget
 
     #define OFFSET_MATRIX				0x1b3bd0
-    #define OFFSET_RENDER				0x408b768
+    #define OFFSET_RENDER				0x408b8e8
 
     #define OFFSET_WEAPON				0x19ec //m_latestPrimaryWeapons
     #define OFFSET_BULLET_SPEED         0x1e50
