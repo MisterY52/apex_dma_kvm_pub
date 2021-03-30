@@ -5,8 +5,8 @@
 
 #if VERSION == STEAM
 
-    #define OFFSET_ENTITYLIST			0x18da3d8
-    #define OFFSET_LOCAL_ENT			0x1c89a38 //LocalPlayer
+    #define OFFSET_ENTITYLIST			0x18da3f8
+    #define OFFSET_LOCAL_ENT			0x1c89a78 //LocalPlayer
     #define OFFSET_NAME_LIST            0x8133270
 
     #define OFFSET_TEAM					0x450 //m_iTeamNum
@@ -47,8 +47,8 @@
 
 #elif VERSION == ORIGIN
 
-    #define OFFSET_ENTITYLIST			0x18da3d8
-    #define OFFSET_LOCAL_ENT			0x1c89a38 //LocalPlayer
+    #define OFFSET_ENTITYLIST			0x18da3f8
+    #define OFFSET_LOCAL_ENT			0x1c89a78 //LocalPlayer
     #define OFFSET_NAME_LIST            0x8133270
 
     #define OFFSET_TEAM					0x450 //m_iTeamNum
