@@ -5,9 +5,9 @@
 
 #if VERSION == STEAM
 
-    #define OFFSET_ENTITYLIST			0x18da3f8
-    #define OFFSET_LOCAL_ENT			0x1c89a78 //LocalPlayer
-    #define OFFSET_NAME_LIST            0x8133270
+    #define OFFSET_ENTITYLIST			0x18db438
+    #define OFFSET_LOCAL_ENT			0x1c8aa98 //LocalPlayer
+    #define OFFSET_NAME_LIST            0x81342f0
 
     #define OFFSET_TEAM					0x450 //m_iTeamNum
     #define OFFSET_HEALTH				0x440 //m_iHealth
@@ -31,7 +31,7 @@
     #define OFFSET_OBSERVING_TARGET		0x32a8 //m_hObserverTarget
 
     #define OFFSET_MATRIX				0x1b3bd0
-    #define OFFSET_RENDER				0x408b8e8
+    #define OFFSET_RENDER				0x408c968
 
     #define OFFSET_WEAPON				0x19ec //m_latestPrimaryWeapons
     #define OFFSET_BULLET_SPEED         0x1e50
