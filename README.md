@@ -5,4 +5,4 @@ UnknownCheats thread: https://www.unknowncheats.me/forum/apex-legends/406426-kvm
 
 Bone IDs reference: https://www.unknowncheats.me/wiki/Apex_Legends_Bones_and_Hitboxes
 
-Game version (Steam & Origin): v3.0.9.289
+Game version (Steam & Origin): v3.0.10.135
