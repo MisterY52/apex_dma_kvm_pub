@@ -1,6 +1,6 @@
 #include "Math.h"
 #include "offsets.h"
-#include "../vmread/hlapi/hlapi.h"
+#include "memory.h"
 
 #define NUM_ENT_ENTRIES			(1 << 12)
 #define ENT_ENTRY_MASK			(NUM_ENT_ENTRIES - 1)
@@ -38,13 +38,13 @@ public:
 	QAngle GetRecoil();
 	Vector GetViewAnglesV();
 
-	void enableGlow(WinProcess& mem);
-	void disableGlow(WinProcess& mem);
-	void SetViewAngles(WinProcess& mem, SVector angles);
-	void SetViewAngles(WinProcess& mem, QAngle& angles);
-	Vector getBonePosition(WinProcess& mem, int id);
-	bool Observing(WinProcess& mem, uint64_t entitylist);
-	void get_name(WinProcess& mem, uint64_t g_Base, uint64_t index, char* name);
+	void enableGlow();
+	void disableGlow();
+	void SetViewAngles(SVector angles);
+	void SetViewAngles(QAngle& angles);
+	Vector getBonePosition(int id);
+	bool Observing(uint64_t entitylist);
+	void get_name(uint64_t g_Base, uint64_t index, char* name);
 };
 
 class Item
@@ -56,14 +56,14 @@ public:
 	bool isItem();
 	bool isGlowing();
 	
-	void enableGlow(WinProcess& mem);
-	void disableGlow(WinProcess& mem);
+	void enableGlow();
+	void disableGlow();
 };
 
 class WeaponXEntity
 {
 public:
-	void update(WinProcess& mem, uint64_t LocalPlayer);
+	void update(uint64_t LocalPlayer);
 	float get_projectile_speed();
 	float get_projectile_gravity();
 	float get_zoom_fov();
@@ -74,8 +74,8 @@ private:
 	float zoom_fov;
 };
 
-Entity getEntity(WinProcess& mem, uintptr_t ptr);
-Item getItem(WinProcess& mem, uintptr_t ptr);
+Entity getEntity(uintptr_t ptr);
+Item getItem(uintptr_t ptr);
 bool WorldToScreen(Vector from, float* m_vMatrix, int targetWidth, int targetHeight, Vector& to);
 float CalculateFov(Entity& from, Entity& target);
-QAngle CalculateBestBoneAim(WinProcess& mem, Entity& from, uintptr_t target, float max_fov);
+QAngle CalculateBestBoneAim(Entity& from, uintptr_t target, float max_fov);

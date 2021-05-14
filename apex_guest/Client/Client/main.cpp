@@ -64,6 +64,7 @@ void Overlay::RenderEsp()
 		{
 			std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		}
+
 		if (next && valid)
 		{
 			ImGui::SetNextWindowPos(ImVec2(0, 0));
