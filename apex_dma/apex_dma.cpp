@@ -709,7 +709,7 @@ static void item_glow_t()
 
 int main()
 {
-	const char* cl_proc = "cl_ap.exe";
+	const char* cl_proc = "client_ap.exe";
 	const char* ap_proc = "R5Apex.exe";
 	//const char* ap_proc = "EasyAntiCheat_launcher.exe";
 
