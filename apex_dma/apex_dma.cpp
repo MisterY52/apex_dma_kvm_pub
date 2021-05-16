@@ -33,6 +33,7 @@ int safe_level = 0;
 bool aiming = false;
 extern float smooth;
 extern int bone;
+bool thirdperson = false;
 
 bool actions_t = false;
 bool esp_t = false;
@@ -140,9 +141,21 @@ void DoActions()
 	while (actions_t)
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		bool tmp_thirdperson = false;
 		while (g_Base!=0 && c_Base!=0)
 		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(30));
+			std::this_thread::sleep_for(std::chrono::milliseconds(30));	
+			if(thirdperson && !tmp_thirdperson)
+			{
+				apex_mem.Write<int>(g_Base + OFFSET_THIRDPERSON, 1);
+				tmp_thirdperson = true;
+			}
+			else if(!thirdperson && tmp_thirdperson)
+			{
+				apex_mem.Write<int>(g_Base + OFFSET_THIRDPERSON, -1);
+				tmp_thirdperson = false;
+			}
+
 			uint64_t LocalPlayer = 0;
 			apex_mem.Read<uint64_t>(g_Base + OFFSET_LOCAL_ENT, LocalPlayer);
 			if (LocalPlayer == 0) continue;
@@ -596,6 +609,8 @@ static void set_vars(uint64_t add_addr)
 	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*15, max_fov_addr);
 	uint64_t bone_addr = 0;
 	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*16, bone_addr);
+	uint64_t thirdperson_addr = 0;
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*17, thirdperson_addr);
 
 	int tmp = 0;
 	client_mem.Read<int>(spec_addr, tmp);
@@ -618,7 +633,6 @@ static void set_vars(uint64_t add_addr)
 			std::this_thread::sleep_for(std::chrono::milliseconds(1));
 			client_mem.Write<int>(all_spec_addr, allied_spectators);
 			client_mem.Write<int>(spec_addr, spectators);
-			client_mem.Write<int>(all_spec_addr, allied_spectators);
 			client_mem.Write<uint64_t>(g_Base_addr, g_Base);
 
 			client_mem.Read<int>(aim_addr, aim);
@@ -632,6 +646,7 @@ static void set_vars(uint64_t add_addr)
 			client_mem.Read<float>(smooth_addr, smooth);
 			client_mem.Read<float>(max_fov_addr, max_fov);
 			client_mem.Read<int>(bone_addr, bone);
+			client_mem.Read<bool>(thirdperson_addr, thirdperson);
 
 			if(esp && next)
 			{
