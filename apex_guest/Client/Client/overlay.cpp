@@ -14,6 +14,7 @@ extern float max_dist;
 extern float smooth;
 extern float max_fov;
 extern int bone;
+extern bool thirdperson;
 int width;
 int height;
 bool k_leftclick = false;
@@ -169,6 +170,7 @@ void Overlay::RenderMenu()
 
 			ImGui::Checkbox(XorStr("Glow items"), &item_glow);
 			ImGui::Checkbox(XorStr("Glow players"), &player_glow);
+			ImGui::Checkbox(XorStr("Thirdperson"), &thirdperson);
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem(XorStr("Config")))
