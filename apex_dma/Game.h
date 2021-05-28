@@ -74,8 +74,19 @@ private:
 	float zoom_fov;
 };
 
+struct ClientClass {
+	uint64_t pCreateFn;
+	uint64_t pCreateEventFn;
+	uint64_t pNetworkName;
+	uint64_t pRecvTable;
+	uint64_t pNext;
+	uint32_t ClassID;
+	uint32_t ClassSize;
+};
+
 Entity getEntity(uintptr_t ptr);
 Item getItem(uintptr_t ptr);
 bool WorldToScreen(Vector from, float* m_vMatrix, int targetWidth, int targetHeight, Vector& to);
 float CalculateFov(Entity& from, Entity& target);
 QAngle CalculateBestBoneAim(Entity& from, uintptr_t target, float max_fov);
+void get_class_name(uint64_t entity_ptr, char* out_str);
