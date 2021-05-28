@@ -20,6 +20,25 @@ bool Entity::Observing(uint64_t entitylist)
 	return *(bool*)(buffer + OFFSET_OBSERVER_MODE);
 }
 
+//https://github.com/CasualX/apexbot/blob/master/src/state.cpp#L104
+void get_class_name(uint64_t entity_ptr, char* out_str)
+{
+	uint64_t client_networkable_vtable;
+	apex_mem.Read<uint64_t>(entity_ptr + 8 * 3, client_networkable_vtable);
+
+	uint64_t get_client_class;
+	apex_mem.Read<uint64_t>(client_networkable_vtable + 8 * 3, get_client_class);
+
+	uint32_t disp;
+	apex_mem.Read<uint32_t>(get_client_class + 3, disp);
+	const uint64_t client_class_ptr = get_client_class + disp + 7;
+
+	ClientClass client_class;
+	apex_mem.Read<ClientClass>(client_class_ptr, client_class);
+
+	apex_mem.ReadArray<char>(client_class.pNetworkName, out_str, 32);
+}
+
 int Entity::getTeamId()
 {
 	return *(int*)(buffer + OFFSET_TEAM);
@@ -52,7 +71,10 @@ bool Entity::isPlayer()
 
 bool Entity::isDummy()
 {
-	return *(int*)(buffer + OFFSET_TEAM) == 97;
+	char class_name[33] = {};
+	get_class_name(ptr, class_name);
+
+	return strncmp(class_name, "CAI_BaseNPC", 11) == 0;
 }
 
 bool Entity::isKnocked()
@@ -155,7 +177,10 @@ void Entity::get_name(uint64_t g_Base, uint64_t index, char* name)
 
 bool Item::isItem()
 {
-	return *(int*)(buffer + OFFSET_ITEM_GLOW) >= 1358917120;
+	char class_name[33] = {};
+	get_class_name(ptr, class_name);
+
+	return strncmp(class_name, "CPropSurvival", 13) == 0;
 }
 
 bool Item::isGlowing()
