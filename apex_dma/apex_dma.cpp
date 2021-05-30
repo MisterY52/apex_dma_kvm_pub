@@ -722,8 +722,14 @@ static void item_glow_t()
 	item_t = false;
 }
 
-int main()
+int main(int argc, char *argv[])
 {
+	if(geteuid() != 0)
+	{
+		printf("Error: %s is not running as root\n", argv[0]);
+		return 0;
+	}
+
 	const char* cl_proc = "client_ap.exe";
 	const char* ap_proc = "R5Apex.exe";
 	//const char* ap_proc = "EasyAntiCheat_launcher.exe";
