@@ -5,10 +5,10 @@
 
 #if VERSION == STEAM
 
-    #define OFFSET_ENTITYLIST			0x18eda78
-    #define OFFSET_LOCAL_ENT			0x1c9d198 //LocalPlayer
-    #define OFFSET_NAME_LIST            0x81af640
-    #define OFFSET_THIRDPERSON          0x018d42d0 + 0x6c //thirdperson_override + 0x6c
+    #define OFFSET_ENTITYLIST			0x1911448
+    #define OFFSET_LOCAL_ENT			0x1cc0ce8 //LocalPlayer
+    #define OFFSET_NAME_LIST            0x8382450
+    #define OFFSET_THIRDPERSON          0x018f7970 + 0x6c //thirdperson_override + 0x6c
 
     #define OFFSET_TEAM					0x448 //m_iTeamNum
     #define OFFSET_HEALTH				0x438 //m_iHealth
@@ -20,7 +20,7 @@
     #define OFFSET_ZOOMING      		0x1be1 //m_bZooming
 
     #define OFFSET_LIFE_STATE			0x798  //m_lifeState, >0 = dead
-    #define OFFSET_BLEED_OUT_STATE		0x2688 //m_bleedoutState, >0 = knocked
+    #define OFFSET_BLEED_OUT_STATE		0x26c8 //m_bleedoutState, >0 = knocked
 
     #define OFFSET_ORIGIN				0x14c //m_vecAbsOrigin
     #define OFFSET_BONES				0xF38 //m_bConstrainBetweenEndpoints
@@ -32,7 +32,7 @@
     #define OFFSET_OBSERVING_TARGET		0x3350 //m_hObserverTarget
 
     #define OFFSET_MATRIX				0x1b3bd0
-    #define OFFSET_RENDER				0x40bf468
+    #define OFFSET_RENDER				0x41e3588
 
     #define OFFSET_WEAPON				0x1a6c //m_latestPrimaryWeapons
     #define OFFSET_BULLET_SPEED         0x1ED0
@@ -48,10 +48,10 @@
 
 #elif VERSION == ORIGIN
 
-    #define OFFSET_ENTITYLIST			0x18eda78
-    #define OFFSET_LOCAL_ENT			0x1c9d198 //LocalPlayer
-    #define OFFSET_NAME_LIST            0x81af640
-    #define OFFSET_THIRDPERSON          0x018d42d0 + 0x6c //thirdperson_override + 0x6c
+    #define OFFSET_ENTITYLIST			0x1911448
+    #define OFFSET_LOCAL_ENT			0x1cc0ce8 //LocalPlayer
+    #define OFFSET_NAME_LIST            0x8382450
+    #define OFFSET_THIRDPERSON          0x018f7970 + 0x6c //thirdperson_override + 0x6c
 
     #define OFFSET_TEAM					0x448 //m_iTeamNum
     #define OFFSET_HEALTH				0x438 //m_iHealth
@@ -63,7 +63,7 @@
     #define OFFSET_ZOOMING      		0x1be1 //m_bZooming
 
     #define OFFSET_LIFE_STATE			0x798  //m_lifeState, >0 = dead
-    #define OFFSET_BLEED_OUT_STATE		0x2688 //m_bleedoutState, >0 = knocked
+    #define OFFSET_BLEED_OUT_STATE		0x26c8 //m_bleedoutState, >0 = knocked
 
     #define OFFSET_ORIGIN				0x14c //m_vecAbsOrigin
     #define OFFSET_BONES				0xF38 //m_bConstrainBetweenEndpoints
@@ -75,7 +75,7 @@
     #define OFFSET_OBSERVING_TARGET		0x3350 //m_hObserverTarget
 
     #define OFFSET_MATRIX				0x1b3bd0
-    #define OFFSET_RENDER				0x40bf468
+    #define OFFSET_RENDER				0x41e3588
 
     #define OFFSET_WEAPON				0x1a6c //m_latestPrimaryWeapons
     #define OFFSET_BULLET_SPEED         0x1ED0
