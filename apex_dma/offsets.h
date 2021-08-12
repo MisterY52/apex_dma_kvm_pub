@@ -5,10 +5,10 @@
 
 #if VERSION == STEAM
 
-    #define OFFSET_ENTITYLIST			0x19224d8
-    #define OFFSET_LOCAL_ENT			0x1cd1d58 //LocalPlayer
-    #define OFFSET_NAME_LIST            0x84056a0
-    #define OFFSET_THIRDPERSON          0x01908960 + 0x6c //thirdperson_override + 0x6c
+    #define OFFSET_ENTITYLIST			0x1923578
+    #define OFFSET_LOCAL_ENT			0x1cd2df8 //LocalPlayer
+    #define OFFSET_NAME_LIST            0x84067a0
+    #define OFFSET_THIRDPERSON          0x01909a00 + 0x6c //thirdperson_override + 0x6c
 
     #define OFFSET_TEAM					0x448 //m_iTeamNum
     #define OFFSET_HEALTH				0x438 //m_iHealth
@@ -32,7 +32,7 @@
     #define OFFSET_OBSERVING_TARGET		0x33a8 //m_hObserverTarget
 
     #define OFFSET_MATRIX				0x1b3bd0
-    #define OFFSET_RENDER				0x41f4d98
+    #define OFFSET_RENDER				0x41f5e98
 
     #define OFFSET_WEAPON				0x1a6c //m_latestPrimaryWeapons
     #define OFFSET_BULLET_SPEED         0x1ED0
@@ -48,10 +48,10 @@
 
 #elif VERSION == ORIGIN
 
-    #define OFFSET_ENTITYLIST			0x19224d8
-    #define OFFSET_LOCAL_ENT			0x1cd1d58 //LocalPlayer
-    #define OFFSET_NAME_LIST            0x84056a0
-    #define OFFSET_THIRDPERSON          0x01908960 + 0x6c //thirdperson_override + 0x6c
+    #define OFFSET_ENTITYLIST			0x1923578
+    #define OFFSET_LOCAL_ENT			0x1cd2df8 //LocalPlayer
+    #define OFFSET_NAME_LIST            0x84067a0
+    #define OFFSET_THIRDPERSON          0x01909a00 + 0x6c //thirdperson_override + 0x6c
 
     #define OFFSET_TEAM					0x448 //m_iTeamNum
     #define OFFSET_HEALTH				0x438 //m_iHealth
@@ -75,7 +75,7 @@
     #define OFFSET_OBSERVING_TARGET		0x33a8 //m_hObserverTarget
 
     #define OFFSET_MATRIX				0x1b3bd0
-    #define OFFSET_RENDER				0x41f4d98
+    #define OFFSET_RENDER				0x41f5e98
 
     #define OFFSET_WEAPON				0x1a6c //m_latestPrimaryWeapons
     #define OFFSET_BULLET_SPEED         0x1ED0
