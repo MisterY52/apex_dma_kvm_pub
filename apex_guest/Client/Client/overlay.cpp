@@ -7,9 +7,6 @@ extern bool player_glow;
 extern bool aim_no_recoil;
 extern bool ready;
 extern bool use_nvidia;
-extern int safe_level;
-extern int spectators;
-extern int allied_spectators;
 extern float max_dist;
 extern float smooth;
 extern float max_fov;
@@ -67,14 +64,16 @@ BOOL CALLBACK EnumWindowsCallback(HWND hwnd, LPARAM lParam)
 }
 
 // Data
-static LPDIRECT3D9              g_pD3D = NULL;
-static LPDIRECT3DDEVICE9        g_pd3dDevice = NULL;
-static D3DPRESENT_PARAMETERS    g_d3dpp = {};
+static ID3D11Device* g_pd3dDevice = NULL;
+static ID3D11DeviceContext* g_pd3dDeviceContext = NULL;
+static IDXGISwapChain* g_pSwapChain = NULL;
+static ID3D11RenderTargetView* g_mainRenderTargetView = NULL;
 
 // Forward declarations of helper functions
 bool CreateDeviceD3D(HWND hWnd);
 void CleanupDeviceD3D();
-void ResetDevice();
+void CreateRenderTarget();
+void CleanupRenderTarget();
 
 void Overlay::RenderMenu()
 {
@@ -101,23 +100,6 @@ void Overlay::RenderMenu()
 		vis_check = false;
 	}
 
-	if (safe_level > 0)
-	{
-		spec_disable = true;
-		if (safe_level > 1)
-		{
-			all_spec_disable = true;
-		}
-		else
-		{
-			all_spec_disable = false;
-		}
-	}
-	else
-	{
-		spec_disable = false;
-		all_spec_disable = false;
-	}
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
 	ImGui::SetNextWindowSize(ImVec2(490, 215));
 	ImGui::Begin(XorStr("##title"), (bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar);
@@ -125,25 +107,6 @@ void Overlay::RenderMenu()
 	{
 		if (ImGui::BeginTabItem(XorStr("Main")))
 		{
-			ImGui::Checkbox(XorStr("Disable with enemy spectators"), &spec_disable);
-			if (spec_disable)
-			{
-				ImGui::SameLine();
-				ImGui::Checkbox(XorStr("Disable with allied spectators"), &all_spec_disable);
-				if (all_spec_disable)
-				{
-					safe_level = 2;
-				}
-				else
-				{
-					safe_level = 1;
-				}
-			}
-			else
-			{
-				safe_level = 0;
-			}
-
 			ImGui::Checkbox(XorStr("ESP"), &esp);
 
 			ImGui::Checkbox(XorStr("AIM"), &aim_enable);
@@ -211,27 +174,9 @@ void Overlay::RenderMenu()
 void Overlay::RenderInfo()
 {
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
-	ImGui::SetNextWindowSize(ImVec2(20, 20));
+	ImGui::SetNextWindowSize(ImVec2(22, 12));
 	ImGui::Begin(XorStr("##info"), (bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar);
-	switch (safe_level)
-	{
-	case 0:
-		DrawLine(ImVec2(9, 5), ImVec2(17, 5), RED, 2);
-		break;
-	case 1:
-		DrawLine(ImVec2(9, 5), ImVec2(17, 5), ORANGE, 2);
-		break;
-	case 2:
-		DrawLine(ImVec2(9, 5), ImVec2(17, 5), GREEN, 2);
-		break;
-	default:
-		break;
-	}
-	ImGui::TextColored(RED, "%d", spectators);
-	ImGui::SameLine();
-	/*ImGui::Text("-");
-	ImGui::SameLine();
-	ImGui::TextColored(GREEN, "%d", allied_spectators);*/
+	DrawLine(ImVec2(7, 5), ImVec2(17, 5), RED, 4);
 	ImGui::End();
 }
 
@@ -265,7 +210,7 @@ DWORD Overlay::CreateOverlay()
 	HDC hDC = ::GetWindowDC(NULL);
 	width = ::GetDeviceCaps(hDC, HORZRES);
 	height = ::GetDeviceCaps(hDC, VERTRES);
-		
+
 	running = true;
 
 	// Initialize Direct3D
@@ -286,10 +231,11 @@ DWORD Overlay::CreateOverlay()
 
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
+	ImGui::GetStyle().WindowMinSize = ImVec2(1, 1);
 
 	// Setup Platform/Renderer bindings
 	ImGui_ImplWin32_Init(overlayHWND);
-	ImGui_ImplDX9_Init(g_pd3dDevice);
+	ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
 
 	ImVec4 clear_color = ImVec4(0.0f, 0.0f, 0.0f, 0.00f);
 
@@ -329,7 +275,7 @@ DWORD Overlay::CreateOverlay()
 		}
 
 		// Start the Dear ImGui frame
-		ImGui_ImplDX9_NewFrame();
+		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
 
@@ -351,34 +297,26 @@ DWORD Overlay::CreateOverlay()
 			k_ins = true;
 		}
 		else if (!IsKeyDown(VK_INSERT) && k_ins)
-		{	
+		{
 			k_ins = false;
 		}
-		
-		if(show_menu)
+
+		if (show_menu)
 			RenderMenu();
 		else
 			RenderInfo();
 
 		RenderEsp();
+
 		// Rendering
 		ImGui::EndFrame();
-		g_pd3dDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
-		g_pd3dDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
-		g_pd3dDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
-		D3DCOLOR clear_col_dx = D3DCOLOR_RGBA((int)(clear_color.x * 255.0f), (int)(clear_color.y * 255.0f), (int)(clear_color.z * 255.0f), (int)(clear_color.w * 255.0f));
-		g_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, clear_col_dx, 1.0f, 0);
-		if (g_pd3dDevice->BeginScene() >= 0)
-		{
-			ImGui::Render();
-			ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
-			g_pd3dDevice->EndScene();
-		}
-		HRESULT result = g_pd3dDevice->Present(NULL, NULL, NULL, NULL);
+		ImGui::Render();
+		const float clear_color_with_alpha[4] = { clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w };
+		g_pd3dDeviceContext->OMSetRenderTargets(1, &g_mainRenderTargetView, NULL);
+		g_pd3dDeviceContext->ClearRenderTargetView(g_mainRenderTargetView, clear_color_with_alpha);
+		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
-		// Handle loss of D3D9 device
-		if (result == D3DERR_DEVICELOST && g_pd3dDevice->TestCooperativeLevel() == D3DERR_DEVICENOTRESET)
-			ResetDevice();
+		g_pSwapChain->Present(1, 0); // Present with vsync
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
@@ -418,43 +356,58 @@ int Overlay::getHeight()
 
 // Helper functions
 
+void CreateRenderTarget()
+{
+	ID3D11Texture2D* pBackBuffer;
+	g_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer));
+	if (pBackBuffer)
+	{
+		g_pd3dDevice->CreateRenderTargetView(pBackBuffer, NULL, &g_mainRenderTargetView);
+		pBackBuffer->Release();
+	}
+}
+
 bool CreateDeviceD3D(HWND hWnd)
 {
-	if ((g_pD3D = Direct3DCreate9(D3D_SDK_VERSION)) == NULL)
+	// Setup swap chain
+	DXGI_SWAP_CHAIN_DESC sd;
+	ZeroMemory(&sd, sizeof(sd));
+	sd.BufferCount = 2;
+	sd.BufferDesc.Width = 0;
+	sd.BufferDesc.Height = 0;
+	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	sd.BufferDesc.RefreshRate.Numerator = 60;
+	sd.BufferDesc.RefreshRate.Denominator = 1;
+	sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	sd.OutputWindow = hWnd;
+	sd.SampleDesc.Count = 1;
+	sd.SampleDesc.Quality = 0;
+	sd.Windowed = TRUE;
+	sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+
+	UINT createDeviceFlags = 0;
+	//createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+	D3D_FEATURE_LEVEL featureLevel;
+	const D3D_FEATURE_LEVEL featureLevelArray[2] = { D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_0, };
+	if (D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, createDeviceFlags, featureLevelArray, 2, D3D11_SDK_VERSION, &sd, &g_pSwapChain, &g_pd3dDevice, &featureLevel, &g_pd3dDeviceContext) != S_OK)
 		return false;
 
-	// Create the D3DDevice
-	ZeroMemory(&g_d3dpp, sizeof(g_d3dpp));
-	g_d3dpp.Windowed = TRUE;
-	g_d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	g_d3dpp.EnableAutoDepthStencil = TRUE;
-	g_d3dpp.AutoDepthStencilFormat = D3DFMT_D16;
-	g_d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
-	g_d3dpp.hDeviceWindow = hWnd;
-	g_d3dpp.MultiSampleQuality = D3DMULTISAMPLE_NONE;
-	g_d3dpp.BackBufferCount = 1;
-	g_d3dpp.BackBufferFormat = D3DFMT_A8R8G8B8;
-	g_d3dpp.BackBufferWidth = 0;
-	g_d3dpp.BackBufferHeight = 0;
-	if (g_pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, D3DCREATE_HARDWARE_VERTEXPROCESSING, &g_d3dpp, &g_pd3dDevice) < 0)
-		return false;
-
+	CreateRenderTarget();
 	return true;
+}
+
+void CleanupRenderTarget()
+{
+	if (g_mainRenderTargetView) { g_mainRenderTargetView->Release(); g_mainRenderTargetView = NULL; }
 }
 
 void CleanupDeviceD3D()
 {
+	CleanupRenderTarget();
+	if (g_pSwapChain) { g_pSwapChain->Release(); g_pSwapChain = NULL; }
+	if (g_pd3dDeviceContext) { g_pd3dDeviceContext->Release(); g_pd3dDeviceContext = NULL; }
 	if (g_pd3dDevice) { g_pd3dDevice->Release(); g_pd3dDevice = NULL; }
-	if (g_pD3D) { g_pD3D->Release(); g_pD3D = NULL; }
-}
-
-void ResetDevice()
-{
-	ImGui_ImplDX9_InvalidateDeviceObjects();
-	HRESULT hr = g_pd3dDevice->Reset(&g_d3dpp);
-	if (hr == D3DERR_INVALIDCALL)
-		IM_ASSERT(0);
-	ImGui_ImplDX9_CreateDeviceObjects();
 }
 
 void Overlay::DrawLine(ImVec2 a, ImVec2 b, ImColor color, float width)

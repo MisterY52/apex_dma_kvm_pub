@@ -20,8 +20,6 @@ uintptr_t lastaimentity = 0;
 float max = 999.0f;
 float max_dist = 200.0f*40.0f;
 int team_player = 0;
-int tmp_spec = 0, spectators = 0;
-int tmp_all_spec = 0, allied_spectators = 0;
 float max_fov = 15;
 const int toRead = 100;
 int aim = false;
@@ -29,7 +27,6 @@ bool esp = false;
 bool item_glow = false;
 bool player_glow = false;
 extern bool aim_no_recoil;
-int safe_level = 0;
 bool aiming = false;
 extern float smooth;
 extern int bone;
@@ -76,23 +73,7 @@ float lastvis_aim[toRead];
 void ProcessPlayer(Entity& LPlayer, Entity& target, uint64_t entitylist, int index)
 {
 	int entity_team = target.getTeamId();
-	bool obs = target.Observing(entitylist);
-	if (obs)
-	{
-		/*if(obs == LPlayer.ptr)
-		{
-			if (entity_team == team_player)
-			{
-				tmp_all_spec++;
-			}
-			else
-			{
-				tmp_spec++;
-			}
-		}*/
-		tmp_spec++;
-		return;
-	}
+
 	Vector EntityPosition = target.getPosition();
 	Vector LocalPlayerPosition = LPlayer.getPosition();
 	float dist = LocalPlayerPosition.DistTo(EntityPosition);
@@ -177,8 +158,6 @@ void DoActions()
 			}
 
 			max = 999.0f;
-			tmp_spec = 0;
-			tmp_all_spec = 0;
 			tmp_aimentity = 0;
 			if(firing_range)
 			{
@@ -232,32 +211,6 @@ void DoActions()
 						continue;
 					}
 
-					switch (safe_level)
-					{
-					case 1:
-						if (spectators > 0)
-						{
-							if(Target.isGlowing())
-							{
-								Target.disableGlow();
-							}
-							continue;
-						}
-						break;
-					case 2:
-						if (spectators+allied_spectators > 0)
-						{
-							if(Target.isGlowing())
-							{
-								Target.disableGlow();
-							}
-							continue;
-						}
-						break;
-					default:
-						break;
-					}
-
 					if(player_glow && !Target.isGlowing())
 					{
 						Target.enableGlow();
@@ -268,8 +221,7 @@ void DoActions()
 					}
 				}
 			}
-			spectators = tmp_spec;
-			allied_spectators = tmp_all_spec;
+
 			if(!lock)
 				aimentity = tmp_aimentity;
 			else
@@ -295,33 +247,6 @@ static void EspLoop()
 			if (esp)
 			{
 				valid = false;
-				switch (safe_level)
-				{
-				case 1:
-					if (spectators > 0)
-					{
-						next = true;
-						while(next && g_Base!=0 && c_Base!=0 && esp)
-						{
-							std::this_thread::sleep_for(std::chrono::milliseconds(1));
-						}
-						continue;
-					}
-					break;
-				case 2:
-					if (spectators+allied_spectators > 0)
-					{
-						next = true;
-						while(next && g_Base!=0 && c_Base!=0 && esp)
-						{
-							std::this_thread::sleep_for(std::chrono::milliseconds(1));
-						}
-						continue;
-					}
-					break;
-				default:
-					break;
-				}
 
 				uint64_t LocalPlayer = 0;
 				apex_mem.Read<uint64_t>(g_Base + OFFSET_LOCAL_ENT, LocalPlayer);
@@ -526,24 +451,6 @@ static void AimbotLoop()
 			std::this_thread::sleep_for(std::chrono::milliseconds(1));
 			if (aim>0)
 			{
-				switch (safe_level)
-				{
-				case 1:
-					if (spectators > 0)
-					{
-						continue;
-					}
-					break;
-				case 2:
-					if (spectators+allied_spectators > 0)
-					{
-						continue;
-					}
-					break;
-				default:
-					break;
-				}
-				
 				if (aimentity == 0 || !aiming)
 				{
 					lock=false;
@@ -575,47 +482,43 @@ static void set_vars(uint64_t add_addr)
 	printf("Reading client vars...\n");
 	std::this_thread::sleep_for(std::chrono::milliseconds(50));
 	//Get addresses of client vars
-	uint64_t spec_addr = 0;
-	client_mem.Read<uint64_t>(add_addr, spec_addr);
-	uint64_t all_spec_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t), all_spec_addr);
+	uint64_t check_addr = 0;
+	client_mem.Read<uint64_t>(add_addr, check_addr);
 	uint64_t aim_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*2, aim_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t), aim_addr);
 	uint64_t esp_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*3, esp_addr);
-	uint64_t safe_lev_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*4, safe_lev_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*2, esp_addr);
 	uint64_t aiming_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*5, aiming_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*3, aiming_addr);
 	uint64_t g_Base_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*6, g_Base_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*4, g_Base_addr);
 	uint64_t next_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*7, next_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*5, next_addr);
 	uint64_t player_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*8, player_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*6, player_addr);
 	uint64_t valid_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*9, valid_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*7, valid_addr);
 	uint64_t max_dist_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*10, max_dist_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*8, max_dist_addr);
 	uint64_t item_glow_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*11, item_glow_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*9, item_glow_addr);
 	uint64_t player_glow_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*12, player_glow_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*10, player_glow_addr);
 	uint64_t aim_no_recoil_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*13, aim_no_recoil_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*11, aim_no_recoil_addr);
 	uint64_t smooth_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*14, smooth_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*12, smooth_addr);
 	uint64_t max_fov_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*15, max_fov_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*13, max_fov_addr);
 	uint64_t bone_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*16, bone_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*14, bone_addr);
 	uint64_t thirdperson_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*17, thirdperson_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*15, thirdperson_addr);
 
-	int tmp = 0;
-	client_mem.Read<int>(spec_addr, tmp);
+	uint32_t check = 0;
+	client_mem.Read<uint32_t>(check_addr, check);
 	
-	if(tmp != 1)
+	if(check != 0xABCD)
 	{
 		printf("Incorrect values read. Check if the add_off is correct. Quitting.\n");
 		active = false;
@@ -626,18 +529,18 @@ static void set_vars(uint64_t add_addr)
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		if(c_Base!=0 && g_Base!=0)
+		{
+			client_mem.Write<uint32_t>(check_addr, 0);
 			printf("\nReady\n");
+		}
 
 		while(c_Base!=0 && g_Base!=0)
 		{
 			std::this_thread::sleep_for(std::chrono::milliseconds(1));
-			client_mem.Write<int>(all_spec_addr, allied_spectators);
-			client_mem.Write<int>(spec_addr, spectators);
 			client_mem.Write<uint64_t>(g_Base_addr, g_Base);
 
 			client_mem.Read<int>(aim_addr, aim);
 			client_mem.Read<bool>(esp_addr, esp);
-			client_mem.Read<int>(safe_lev_addr, safe_level);
 			client_mem.Read<bool>(aiming_addr, aiming);
 			client_mem.Read<float>(max_dist_addr, max_dist);
 			client_mem.Read<bool>(item_glow_addr, item_glow);
@@ -735,7 +638,7 @@ int main(int argc, char *argv[])
 	//const char* ap_proc = "EasyAntiCheat_launcher.exe";
 
 	//Client "add" offset
-	uint64_t add_off = 0x3e890;
+	uint64_t add_off = 0x3f870;
 
 	std::thread aimbot_thr;
 	std::thread esp_thr;

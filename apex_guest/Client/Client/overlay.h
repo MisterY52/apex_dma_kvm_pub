@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <Windows.h>
 #include <WinUser.h>
 #include <Dwmapi.h> 
@@ -13,12 +12,11 @@
 #include <string>
 #include "XorString.h"
 #include "imgui/imgui.h"
-#include "imgui/imgui_impl_dx9.h"
+#include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
-#include <d3d9.h>
-#pragma comment(lib, "d3d9.lib")
-#include <d3dx9.h>
-#pragma comment(lib, "d3dx9.lib")
+#include <d3d11.h>
+#pragma comment(lib, "d3d11.lib")
+
 #define GREEN ImColor(0, 255, 0)
 #define RED ImColor(255, 0, 0)
 #define BLUE ImColor(0, 0, 255)

@@ -17,22 +17,21 @@ typedef struct player
 	char name[33] = { 0 };
 }player;
 
+uint32_t check = 0xABCD;
+
 int aim_key = VK_RBUTTON;
 bool use_nvidia = true;
 bool active = true;
 bool ready = false;
 extern visuals v;
-int spectators = 1; //write
-int allied_spectators = 1; //write
 int aim = 0; //read
 bool esp = false; //read
-int safe_level = 0; //read
 bool item_glow = false;
 bool player_glow = false;
 bool aim_no_recoil = true;
 bool aiming = false; //read
 uint64_t g_Base = 0; //write
-float max_dist = 200.0f*40.0f; //read
+float max_dist = 200.0f * 40.0f; //read
 float smooth = 12.0f;
 float max_fov = 15.0f;
 int bone = 2;
@@ -41,11 +40,10 @@ bool thirdperson = false;
 bool valid = false; //write
 bool next = false; //read write
 
-uint64_t add[18];
+uint64_t add[16];
 
 bool k_f5 = 0;
 bool k_f6 = 0;
-bool k_f7 = 0;
 bool k_f8 = 0;
 
 bool IsKeyDown(int vk)
@@ -121,29 +119,28 @@ void Overlay::RenderEsp()
 
 int main(int argc, char** argv)
 {
-	add[0] = (uintptr_t)&spectators;
-	add[1] = (uintptr_t)&allied_spectators;
-	add[2] = (uintptr_t)&aim;
-	add[3] = (uintptr_t)&esp;
-	add[4] = (uintptr_t)&safe_level;
-	add[5] = (uintptr_t)&aiming;
-	add[6] = (uintptr_t)&g_Base;
-	add[7] = (uintptr_t)&next;
-	add[8] = (uintptr_t)&players[0];
-	add[9] = (uintptr_t)&valid;
-	add[10] = (uintptr_t)&max_dist;
-	add[11] = (uintptr_t)&item_glow;
-	add[12] = (uintptr_t)&player_glow;
-	add[13] = (uintptr_t)&aim_no_recoil;
-	add[14] = (uintptr_t)&smooth;
-	add[15] = (uintptr_t)&max_fov;
-	add[16] = (uintptr_t)&bone;
-	add[17] = (uintptr_t)&thirdperson;
+	add[0] = (uintptr_t)&check;
+	add[1] = (uintptr_t)&aim;
+	add[2] = (uintptr_t)&esp;
+	add[3] = (uintptr_t)&aiming;
+	add[4] = (uintptr_t)&g_Base;
+	add[5] = (uintptr_t)&next;
+	add[6] = (uintptr_t)&players[0];
+	add[7] = (uintptr_t)&valid;
+	add[8] = (uintptr_t)&max_dist;
+	add[9] = (uintptr_t)&item_glow;
+	add[10] = (uintptr_t)&player_glow;
+	add[11] = (uintptr_t)&aim_no_recoil;
+	add[12] = (uintptr_t)&smooth;
+	add[13] = (uintptr_t)&max_fov;
+	add[14] = (uintptr_t)&bone;
+	add[15] = (uintptr_t)&thirdperson;
 	printf(XorStr("add offset: 0x%I64x\n"), (uint64_t)&add[0] - (uint64_t)GetModuleHandle(NULL));
+
 	Overlay ov1 = Overlay();
 	ov1.Start();
 	printf(XorStr("Waiting for host process...\n"));
-	while (spectators == 1)
+	while (check == 0xABCD)
 	{
 		if (IsKeyDown(VK_F4))
 		{
@@ -197,29 +194,6 @@ int main(int argc, char** argv)
 		else if (!IsKeyDown(VK_F6) && k_f6 == 1)
 		{
 			k_f6 = 0;
-		}
-
-		if (IsKeyDown(VK_F7) && k_f7 == 0)
-		{
-			k_f7 = 1;
-			switch (safe_level)
-			{
-			case 0:
-				safe_level = 1;
-				break;
-			case 1:
-				safe_level = 2;
-				break;
-			case 2:
-				safe_level = 0;
-				break;
-			default:
-				break;
-			}
-		}
-		else if (!IsKeyDown(VK_F7) && k_f7 == 1)
-		{
-			k_f7 = 0;
 		}
 
 		if (IsKeyDown(VK_F8) && k_f8 == 0)

@@ -34,7 +34,10 @@
     <ClCompile Include="imgui\imgui_draw.cpp">
       <Filter>Source\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\imgui_impl_dx9.cpp">
+    <ClCompile Include="imgui\imgui_tables.cpp">
+      <Filter>Source\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_impl_dx11.cpp">
       <Filter>Source\imgui</Filter>
     </ClCompile>
   </ItemGroup>
@@ -64,14 +67,14 @@
     <ClInclude Include="imgui\imstb_truetype.h">
       <Filter>Headers\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="imgui\imgui_impl_dx9.h">
-      <Filter>Headers\imgui</Filter>
-    </ClInclude>
     <ClInclude Include="imgui\imgui_impl_win32.h">
       <Filter>Headers\imgui</Filter>
     </ClInclude>
     <ClInclude Include="XorString.h">
       <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_impl_dx11.h">
+      <Filter>Headers\imgui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
