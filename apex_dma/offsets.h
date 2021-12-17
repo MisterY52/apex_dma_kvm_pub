@@ -5,10 +5,10 @@
 
 #if VERSION == STEAM
 
-    #define OFFSET_ENTITYLIST			0x1971e08
-    #define OFFSET_LOCAL_ENT			0x1d21668 //LocalPlayer
-    #define OFFSET_NAME_LIST            0xba17f40
-    #define OFFSET_THIRDPERSON          0x01957b30 + 0x6c //thirdperson_override + 0x6c
+    #define OFFSET_ENTITYLIST			0x1972ea8
+    #define OFFSET_LOCAL_ENT			0x1d22708 //LocalPlayer
+    #define OFFSET_NAME_LIST            0xba19040
+    #define OFFSET_THIRDPERSON          0x01958bd0 + 0x6c //thirdperson_override + 0x6c
 
     #define OFFSET_TEAM					0x448 //m_iTeamNum
     #define OFFSET_HEALTH				0x438 //m_iHealth
@@ -32,12 +32,12 @@
     #define OFFSET_OBSERVING_TARGET		0x33e8 //m_hObserverTarget
 
     #define OFFSET_MATRIX				0x1b3bd0
-    #define OFFSET_RENDER				0x7511b88
+    #define OFFSET_RENDER				0x7512c88
 
     #define OFFSET_WEAPON				0x1a8c //m_latestPrimaryWeapons
     #define OFFSET_BULLET_SPEED         0x1f18 //CWeaponX!m_flProjectileSpeed
     #define OFFSET_BULLET_SCALE         0x1f20 //CWeaponX!m_flProjectileScale
-    #define OFFSET_ZOOM_FOV             0x1700 + 0xb8 //m_playerData + m_curZoomFOV
+    #define OFFSET_ZOOM_FOV             0x1708 + 0xb8 //m_playerData + m_curZoomFOV
 
     #define OFFSET_ITEM_GLOW            0x2c0 //m_highlightFunctionBits
 
@@ -48,10 +48,10 @@
 
 #elif VERSION == ORIGIN
 
-    #define OFFSET_ENTITYLIST			0x1971e08
-    #define OFFSET_LOCAL_ENT			0x1d21668 //LocalPlayer
-    #define OFFSET_NAME_LIST            0xba17f40
-    #define OFFSET_THIRDPERSON          0x01957b30 + 0x6c //thirdperson_override + 0x6c
+    #define OFFSET_ENTITYLIST			0x1972ea8
+    #define OFFSET_LOCAL_ENT			0x1d22708 //LocalPlayer
+    #define OFFSET_NAME_LIST            0xba19040
+    #define OFFSET_THIRDPERSON          0x01958bd0 + 0x6c //thirdperson_override + 0x6c
 
     #define OFFSET_TEAM					0x448 //m_iTeamNum
     #define OFFSET_HEALTH				0x438 //m_iHealth
@@ -75,12 +75,12 @@
     #define OFFSET_OBSERVING_TARGET		0x33e8 //m_hObserverTarget
 
     #define OFFSET_MATRIX				0x1b3bd0
-    #define OFFSET_RENDER				0x7511b88
+    #define OFFSET_RENDER				0x7512c88
 
     #define OFFSET_WEAPON				0x1a8c //m_latestPrimaryWeapons
     #define OFFSET_BULLET_SPEED         0x1f18 //CWeaponX!m_flProjectileSpeed
     #define OFFSET_BULLET_SCALE         0x1f20 //CWeaponX!m_flProjectileScale
-    #define OFFSET_ZOOM_FOV             0x1700 + 0xb8 //m_playerData + m_curZoomFOV
+    #define OFFSET_ZOOM_FOV             0x1708 + 0xb8 //m_playerData + m_curZoomFOV
 
     #define OFFSET_ITEM_GLOW            0x2c0 //m_highlightFunctionBits
 
@@ -88,5 +88,5 @@
     #define OFFSET_GLOW_T2              0x2dc //1193322764 = enabled, 0 = disabled 
     #define OFFSET_GLOW_ENABLE          0x3c8 //7 = enabled, 2 = disabled
     #define OFFSET_GLOW_THROUGH_WALLS   0x3d0 //2 = enabled, 5 = disabled
-
+    
 #endif
