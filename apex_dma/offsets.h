@@ -5,10 +5,10 @@
 
 #if VERSION == STEAM
 
-    #define OFFSET_ENTITYLIST			0x1972ea8
-    #define OFFSET_LOCAL_ENT			0x1d22708 //LocalPlayer
-    #define OFFSET_NAME_LIST            0xba19040
-    #define OFFSET_THIRDPERSON          0x01958bd0 + 0x6c //thirdperson_override + 0x6c
+    #define OFFSET_ENTITYLIST			0x1973ad8
+    #define OFFSET_LOCAL_ENT			0x1d233d8 //LocalPlayer
+    #define OFFSET_NAME_LIST            0xb9305d0
+    #define OFFSET_THIRDPERSON          0x019596b0 + 0x6c //thirdperson_override + 0x6c
 
     #define OFFSET_TEAM					0x448 //m_iTeamNum
     #define OFFSET_HEALTH				0x438 //m_iHealth
@@ -20,19 +20,19 @@
     #define OFFSET_ZOOMING      		0x1c31 //m_bZooming
 
     #define OFFSET_LIFE_STATE			0x798  //m_lifeState, >0 = dead
-    #define OFFSET_BLEED_OUT_STATE		0x2718 //m_bleedoutState, >0 = knocked
+    #define OFFSET_BLEED_OUT_STATE		0x2708 //m_bleedoutState, >0 = knocked
 
-    #define OFFSET_ORIGIN				0x14c //m_vecAbsOrigin
+    #define OFFSET_ORIGIN				0x014c //m_vecAbsOrigin
     #define OFFSET_BONES				0xF38 //m_bConstrainBetweenEndpoints
     #define OFFSET_AIMPUNCH				0x2480 //m_currentFrameLocalPlayer.m_vecPunchWeapon_Angle
     #define OFFSET_CAMERAPOS			0x1f20 //CPlayer!camera_origin
     #define OFFSET_VIEWANGLES			0x257c - 0x14 //m_ammoPoolCapacity - 0x14
     #define OFFSET_BREATH_ANGLES		OFFSET_VIEWANGLES - 0x10
-    #define OFFSET_OBSERVER_MODE		0x33dc //m_iObserverMode
-    #define OFFSET_OBSERVING_TARGET		0x33e8 //m_hObserverTarget
+    #define OFFSET_OBSERVER_MODE		0x3494 //m_iObserverMode
+    #define OFFSET_OBSERVING_TARGET		0x34a0 //m_hObserverTarget
 
-    #define OFFSET_MATRIX				0x1b3bd0
-    #define OFFSET_RENDER				0x7512c88
+    #define OFFSET_MATRIX				0x10e8d0
+    #define OFFSET_RENDER				0x7430238
 
     #define OFFSET_WEAPON				0x1a8c //m_latestPrimaryWeapons
     #define OFFSET_BULLET_SPEED         0x1f18 //CWeaponX!m_flProjectileSpeed
@@ -48,10 +48,10 @@
 
 #elif VERSION == ORIGIN
 
-    #define OFFSET_ENTITYLIST			0x1972ea8
-    #define OFFSET_LOCAL_ENT			0x1d22708 //LocalPlayer
-    #define OFFSET_NAME_LIST            0xba19040
-    #define OFFSET_THIRDPERSON          0x01958bd0 + 0x6c //thirdperson_override + 0x6c
+    #define OFFSET_ENTITYLIST			0x1973ad8
+    #define OFFSET_LOCAL_ENT			0x1d233d8 //LocalPlayer
+    #define OFFSET_NAME_LIST            0xb9305d0
+    #define OFFSET_THIRDPERSON          0x019596b0 + 0x6c //thirdperson_override + 0x6c
 
     #define OFFSET_TEAM					0x448 //m_iTeamNum
     #define OFFSET_HEALTH				0x438 //m_iHealth
@@ -63,19 +63,19 @@
     #define OFFSET_ZOOMING      		0x1c31 //m_bZooming
 
     #define OFFSET_LIFE_STATE			0x798  //m_lifeState, >0 = dead
-    #define OFFSET_BLEED_OUT_STATE		0x2718 //m_bleedoutState, >0 = knocked
+    #define OFFSET_BLEED_OUT_STATE		0x2708 //m_bleedoutState, >0 = knocked
 
-    #define OFFSET_ORIGIN				0x14c //m_vecAbsOrigin
+    #define OFFSET_ORIGIN				0x014c //m_vecAbsOrigin
     #define OFFSET_BONES				0xF38 //m_bConstrainBetweenEndpoints
     #define OFFSET_AIMPUNCH				0x2480 //m_currentFrameLocalPlayer.m_vecPunchWeapon_Angle
     #define OFFSET_CAMERAPOS			0x1f20 //CPlayer!camera_origin
     #define OFFSET_VIEWANGLES			0x257c - 0x14 //m_ammoPoolCapacity - 0x14
     #define OFFSET_BREATH_ANGLES		OFFSET_VIEWANGLES - 0x10
-    #define OFFSET_OBSERVER_MODE		0x33dc //m_iObserverMode
-    #define OFFSET_OBSERVING_TARGET		0x33e8 //m_hObserverTarget
+    #define OFFSET_OBSERVER_MODE		0x3494 //m_iObserverMode
+    #define OFFSET_OBSERVING_TARGET		0x34a0 //m_hObserverTarget
 
-    #define OFFSET_MATRIX				0x1b3bd0
-    #define OFFSET_RENDER				0x7512c88
+    #define OFFSET_MATRIX				0x10e8d0
+    #define OFFSET_RENDER				0x7430238
 
     #define OFFSET_WEAPON				0x1a8c //m_latestPrimaryWeapons
     #define OFFSET_BULLET_SPEED         0x1f18 //CWeaponX!m_flProjectileSpeed
@@ -88,5 +88,5 @@
     #define OFFSET_GLOW_T2              0x2dc //1193322764 = enabled, 0 = disabled 
     #define OFFSET_GLOW_ENABLE          0x3c8 //7 = enabled, 2 = disabled
     #define OFFSET_GLOW_THROUGH_WALLS   0x3d0 //2 = enabled, 5 = disabled
-    
+
 #endif
