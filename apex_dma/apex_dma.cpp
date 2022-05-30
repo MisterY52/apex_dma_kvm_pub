@@ -126,16 +126,6 @@ void DoActions()
 		while (g_Base!=0 && c_Base!=0)
 		{
 			std::this_thread::sleep_for(std::chrono::milliseconds(30));	
-			if(thirdperson && !tmp_thirdperson)
-			{
-				apex_mem.Write<int>(g_Base + OFFSET_THIRDPERSON, 1);
-				tmp_thirdperson = true;
-			}
-			else if(!thirdperson && tmp_thirdperson)
-			{
-				apex_mem.Write<int>(g_Base + OFFSET_THIRDPERSON, -1);
-				tmp_thirdperson = false;
-			}
 
 			uint64_t LocalPlayer = 0;
 			apex_mem.Read<uint64_t>(g_Base + OFFSET_LOCAL_ENT, LocalPlayer);
@@ -148,6 +138,26 @@ void DoActions()
 			{
 				continue;
 			}
+
+			if(thirdperson && !tmp_thirdperson)
+			{
+				if(!aiming)
+				{
+					apex_mem.Write<int>(g_Base + OFFSET_THIRDPERSON, 1);
+					apex_mem.Write<int>(LPlayer.ptr + OFFSET_THIRDPERSON_SV, 1);
+					tmp_thirdperson = true;
+				}			
+			}
+			else if((!thirdperson && tmp_thirdperson) || aiming)
+			{
+				if(tmp_thirdperson)
+				{
+					apex_mem.Write<int>(g_Base + OFFSET_THIRDPERSON, -1);
+					apex_mem.Write<int>(LPlayer.ptr + OFFSET_THIRDPERSON_SV, 0);
+					tmp_thirdperson = false;
+				}	
+			}
+
 			uint64_t entitylist = g_Base + OFFSET_ENTITYLIST;
 
 			uint64_t baseent = 0;
