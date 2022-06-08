@@ -5,11 +5,11 @@
 
 #if VERSION == STEAM
 
-    #define OFFSET_ENTITYLIST			0x19fbcd8
-    #define OFFSET_LOCAL_ENT			0x1daca88 //LocalPlayer
-    #define OFFSET_NAME_LIST            0xb9f7f40
-    #define OFFSET_THIRDPERSON          0x019e0800 + 0x6c //thirdperson_override + 0x6c
-    #define OFFSET_TIMESCALE            0x013d8680 //host_timescale
+    #define OFFSET_ENTITYLIST			0x19fbf98
+    #define OFFSET_LOCAL_ENT			0x1dacd48 //LocalPlayer
+    #define OFFSET_NAME_LIST            0xb9f8340
+    #define OFFSET_THIRDPERSON          0x019e0ac0 + 0x6c //thirdperson_override + 0x6c
+    #define OFFSET_TIMESCALE            0x013d8800 //host_timescale
 
     #define OFFSET_TEAM					0x448 //m_iTeamNum
     #define OFFSET_HEALTH				0x438 //m_iHealth
@@ -34,13 +34,13 @@
     #define OFFSET_OBSERVING_TARGET		0x34d8 //m_hObserverTarget
 
     #define OFFSET_MATRIX				0x11a210
-    #define OFFSET_RENDER				0x7519820
+    #define OFFSET_RENDER				0x7519c20
 
     #define OFFSET_WEAPON				0x1aac //m_latestPrimaryWeapons
     #define OFFSET_BULLET_SPEED         0x1f40 //CWeaponX!m_flProjectileSpeed
     #define OFFSET_BULLET_SCALE         0x1f48 //CWeaponX!m_flProjectileScale
     #define OFFSET_ZOOM_FOV             0x1730 + 0xb8 //m_playerData + m_curZoomFOV
-    #define OFFSET_AMMO                 0x16e4 //m_ammoInClip
+    #define OFFSET_AMMO                 0x16b4 //m_ammoInClip
 
     #define OFFSET_ITEM_GLOW            0x2c0 //m_highlightFunctionBits
 
@@ -51,11 +51,11 @@
 
 #elif VERSION == ORIGIN
 
-    #define OFFSET_ENTITYLIST			0x19fbcd8
-    #define OFFSET_LOCAL_ENT			0x1daca88 //LocalPlayer
-    #define OFFSET_NAME_LIST            0xb9f7f40
-    #define OFFSET_THIRDPERSON          0x019e0800 + 0x6c //thirdperson_override + 0x6c
-    #define OFFSET_TIMESCALE            0x013d8680 //host_timescale
+    #define OFFSET_ENTITYLIST			0x19fbf98
+    #define OFFSET_LOCAL_ENT			0x1dacd48 //LocalPlayer
+    #define OFFSET_NAME_LIST            0xb9f8340
+    #define OFFSET_THIRDPERSON          0x019e0ac0 + 0x6c //thirdperson_override + 0x6c
+    #define OFFSET_TIMESCALE            0x013d8800 //host_timescale
 
     #define OFFSET_TEAM					0x448 //m_iTeamNum
     #define OFFSET_HEALTH				0x438 //m_iHealth
@@ -80,13 +80,13 @@
     #define OFFSET_OBSERVING_TARGET		0x34d8 //m_hObserverTarget
 
     #define OFFSET_MATRIX				0x11a210
-    #define OFFSET_RENDER				0x7519820
+    #define OFFSET_RENDER				0x7519c20
 
     #define OFFSET_WEAPON				0x1aac //m_latestPrimaryWeapons
     #define OFFSET_BULLET_SPEED         0x1f40 //CWeaponX!m_flProjectileSpeed
     #define OFFSET_BULLET_SCALE         0x1f48 //CWeaponX!m_flProjectileScale
     #define OFFSET_ZOOM_FOV             0x1730 + 0xb8 //m_playerData + m_curZoomFOV
-    #define OFFSET_AMMO                 0x16e4 //m_ammoInClip
+    #define OFFSET_AMMO                 0x16b4 //m_ammoInClip
 
     #define OFFSET_ITEM_GLOW            0x2c0 //m_highlightFunctionBits
 
