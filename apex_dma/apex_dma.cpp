@@ -139,7 +139,7 @@ void DoActions()
 				continue;
 			}
 
-			if(thirdperson && !tmp_thirdperson)
+			/*if(thirdperson && !tmp_thirdperson)
 			{
 				if(!aiming)
 				{
@@ -156,7 +156,7 @@ void DoActions()
 					apex_mem.Write<int>(LPlayer.ptr + OFFSET_THIRDPERSON_SV, 0);
 					tmp_thirdperson = false;
 				}	
-			}
+			}*/
 
 			uint64_t entitylist = g_Base + OFFSET_ENTITYLIST;
 
