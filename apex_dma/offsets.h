@@ -8,8 +8,8 @@
     #define OFFSET_ENTITYLIST			0x1a1e3b8
     #define OFFSET_LOCAL_ENT			0x1dcf5e8 //LocalPlayer
     #define OFFSET_NAME_LIST            0xba2e9b0
-    #define OFFSET_THIRDPERSON          0x019e0ac0 + 0x6c //thirdperson_override + 0x6c
-    #define OFFSET_TIMESCALE            0x013d8800 //host_timescale
+    #define OFFSET_THIRDPERSON          0x01a02db0 + 0x6c //thirdperson_override + 0x6c
+    #define OFFSET_TIMESCALE            0x013fa370 //host_timescale
 
     #define OFFSET_TEAM					0x448 //m_iTeamNum
     #define OFFSET_HEALTH				0x438 //m_iHealth
@@ -55,8 +55,8 @@
     #define OFFSET_ENTITYLIST			0x1a1e3b8
     #define OFFSET_LOCAL_ENT			0x1dcf5e8 //LocalPlayer
     #define OFFSET_NAME_LIST            0xba2e9b0
-    #define OFFSET_THIRDPERSON          0x019e0ac0 + 0x6c //thirdperson_override + 0x6c
-    #define OFFSET_TIMESCALE            0x013d8800 //host_timescale
+    #define OFFSET_THIRDPERSON          0x01a02db0 + 0x6c //thirdperson_override + 0x6c
+    #define OFFSET_TIMESCALE            0x013fa370 //host_timescale
 
     #define OFFSET_TEAM					0x448 //m_iTeamNum
     #define OFFSET_HEALTH				0x438 //m_iHealth
