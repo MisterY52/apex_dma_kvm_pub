@@ -121,6 +121,20 @@ Vector Entity::GetViewAnglesV()
 	return *(Vector*)(buffer + OFFSET_VIEWANGLES);
 }
 
+float Entity::GetYaw()
+{
+	float yaw = 0;
+	apex_mem.Read<float>(ptr + OFFSET_YAW, yaw);
+
+	if (yaw < 0)
+    	yaw += 360;
+	yaw += 90;
+	if (yaw > 360)
+    	yaw -= 360;
+		
+	return yaw;
+}
+
 bool Entity::isGlowing()
 {
 	return *(int*)(buffer + OFFSET_GLOW_ENABLE) == 7;

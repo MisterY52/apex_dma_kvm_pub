@@ -36,11 +36,13 @@ float smooth = 12.0f;
 float max_fov = 15.0f;
 int bone = 2;
 bool thirdperson = false;
+int spectators = 0; //write
+int allied_spectators = 0; //write
 
 bool valid = false; //write
 bool next = false; //read write
 
-uint64_t add[16];
+uint64_t add[18];
 
 bool k_f5 = 0;
 bool k_f6 = 0;
@@ -135,6 +137,9 @@ int main(int argc, char** argv)
 	add[13] = (uintptr_t)&max_fov;
 	add[14] = (uintptr_t)&bone;
 	add[15] = (uintptr_t)&thirdperson;
+	add[16] = (uintptr_t)&spectators;
+	add[17] = (uintptr_t)&allied_spectators;
+
 	printf(XorStr("add offset: 0x%I64x\n"), (uint64_t)&add[0] - (uint64_t)GetModuleHandle(NULL));
 
 	Overlay ov1 = Overlay();

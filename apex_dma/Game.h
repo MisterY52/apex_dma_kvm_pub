@@ -37,6 +37,7 @@ public:
 	Vector GetCamPos();
 	QAngle GetRecoil();
 	Vector GetViewAnglesV();
+	float GetYaw();
 
 	void enableGlow();
 	void disableGlow();

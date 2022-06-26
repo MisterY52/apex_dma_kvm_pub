@@ -12,6 +12,9 @@ extern float smooth;
 extern float max_fov;
 extern int bone;
 extern bool thirdperson;
+extern int spectators;
+extern int allied_spectators;
+
 int width;
 int height;
 bool k_leftclick = false;
@@ -174,9 +177,14 @@ void Overlay::RenderMenu()
 void Overlay::RenderInfo()
 {
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
-	ImGui::SetNextWindowSize(ImVec2(22, 12));
+	ImGui::SetNextWindowSize(ImVec2(50, 25));
 	ImGui::Begin(XorStr("##info"), (bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar);
-	DrawLine(ImVec2(7, 5), ImVec2(17, 5), RED, 4);
+	DrawLine(ImVec2(9, 5), ImVec2(45, 5), RED, 2);
+	ImGui::TextColored(RED, "%d", spectators);
+	ImGui::SameLine();
+	ImGui::Text("-");
+	ImGui::SameLine();
+	ImGui::TextColored(GREEN, "%d", allied_spectators);
 	ImGui::End();
 }
 
