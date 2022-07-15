@@ -14,6 +14,7 @@ extern int bone;
 extern bool thirdperson;
 extern int spectators;
 extern int allied_spectators;
+extern bool chargerifle;
 
 int width;
 int height;
@@ -137,6 +138,7 @@ void Overlay::RenderMenu()
 			ImGui::Checkbox(XorStr("Glow items"), &item_glow);
 			ImGui::Checkbox(XorStr("Glow players"), &player_glow);
 			ImGui::Checkbox(XorStr("Thirdperson"), &thirdperson);
+			ImGui::Checkbox(XorStr("Charge rifle hack"), &chargerifle);
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem(XorStr("Config")))

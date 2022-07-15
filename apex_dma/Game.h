@@ -68,11 +68,13 @@ public:
 	float get_projectile_speed();
 	float get_projectile_gravity();
 	float get_zoom_fov();
+	int get_ammo();
 
 private:
 	float projectile_scale;
 	float projectile_speed;
 	float zoom_fov;
+	int ammo;
 };
 
 struct ClientClass {
@@ -91,3 +93,4 @@ bool WorldToScreen(Vector from, float* m_vMatrix, int targetWidth, int targetHei
 float CalculateFov(Entity& from, Entity& target);
 QAngle CalculateBestBoneAim(Entity& from, uintptr_t target, float max_fov);
 void get_class_name(uint64_t entity_ptr, char* out_str);
+void charge_rifle_hack(uint64_t entity_ptr);

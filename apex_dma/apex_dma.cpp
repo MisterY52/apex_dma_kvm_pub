@@ -31,6 +31,8 @@ bool aiming = false;
 extern float smooth;
 extern int bone;
 bool thirdperson = false;
+bool chargerifle = false;
+bool shooting = false;
 
 bool actions_t = false;
 bool esp_t = false;
@@ -138,6 +140,7 @@ void DoActions()
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		bool tmp_thirdperson = false;
+		bool tmp_chargerifle = false;
 		uint32_t counter = 0;
 
 		while (g_Base!=0 && c_Base!=0)
@@ -272,6 +275,20 @@ void DoActions()
 				aimentity = tmp_aimentity;
 			else
 				aimentity = lastaimentity;
+
+			if(chargerifle)
+			{
+				charge_rifle_hack(LocalPlayer);
+				tmp_chargerifle = true;
+			}
+			else
+			{
+				if(tmp_chargerifle)
+				{
+					apex_mem.Write<float>(g_Base + OFFSET_TIMESCALE + 0x68, 1.f);
+					tmp_chargerifle = false;
+				}
+			}
 		}
 	}
 	actions_t = false;
@@ -564,6 +581,11 @@ static void set_vars(uint64_t add_addr)
 	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*16, spectators_addr);
 	uint64_t allied_spectators_addr = 0;
 	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*17, allied_spectators_addr);
+	uint64_t chargerifle_addr = 0;
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*18, chargerifle_addr);
+	uint64_t shooting_addr = 0;
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*19, shooting_addr);
+	
 
 	uint32_t check = 0;
 	client_mem.Read<uint32_t>(check_addr, check);
@@ -602,6 +624,8 @@ static void set_vars(uint64_t add_addr)
 			client_mem.Read<float>(max_fov_addr, max_fov);
 			client_mem.Read<int>(bone_addr, bone);
 			client_mem.Read<bool>(thirdperson_addr, thirdperson);
+			client_mem.Read<bool>(shooting_addr, shooting);
+			client_mem.Read<bool>(chargerifle_addr, chargerifle);
 
 			if(esp && next)
 			{

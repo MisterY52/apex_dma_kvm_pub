@@ -20,6 +20,7 @@ typedef struct player
 uint32_t check = 0xABCD;
 
 int aim_key = VK_RBUTTON;
+int shoot_key = VK_LBUTTON;
 bool use_nvidia = true;
 bool active = true;
 bool ready = false;
@@ -38,11 +39,13 @@ int bone = 2;
 bool thirdperson = false;
 int spectators = 0; //write
 int allied_spectators = 0; //write
+bool chargerifle = false;
+bool shooting = false; //read
 
 bool valid = false; //write
 bool next = false; //read write
 
-uint64_t add[18];
+uint64_t add[20];
 
 bool k_f5 = 0;
 bool k_f6 = 0;
@@ -139,6 +142,9 @@ int main(int argc, char** argv)
 	add[15] = (uintptr_t)&thirdperson;
 	add[16] = (uintptr_t)&spectators;
 	add[17] = (uintptr_t)&allied_spectators;
+	add[18] = (uintptr_t)&chargerifle;
+	add[19] = (uintptr_t)&shooting;
+
 
 	printf(XorStr("add offset: 0x%I64x\n"), (uint64_t)&add[0] - (uint64_t)GetModuleHandle(NULL));
 
@@ -229,6 +235,11 @@ int main(int argc, char** argv)
 			aiming = true;
 		else
 			aiming = false;
+
+		if (IsKeyDown(shoot_key))
+			shooting = true;
+		else
+			shooting = false;
 	}
 	ready = false;
 	ov1.Clear();
