@@ -387,7 +387,7 @@ static void EspLoop()
 						if (bs.x > 0 && bs.y > 0)
 						{
 							Vector hs = Vector();
-							Vector HeadPosition = Target.getBonePosition(8);
+							Vector HeadPosition = Target.getBonePositionByHitbox(0);
 							WorldToScreen(HeadPosition, m.matrix, 1920, 1080, hs);
 							float height = abs(abs(hs.y) - abs(bs.y));
 							float width = height / 2.0f;
@@ -462,7 +462,7 @@ static void EspLoop()
 						if (bs.x > 0 && bs.y > 0)
 						{
 							Vector hs = Vector();
-							Vector HeadPosition = Target.getBonePosition(8);
+							Vector HeadPosition = Target.getBonePositionByHitbox(0);
 							WorldToScreen(HeadPosition, m.matrix, 1920, 1080, hs);
 							float height = abs(abs(hs.y) - abs(bs.y));
 							float width = height / 2.0f;

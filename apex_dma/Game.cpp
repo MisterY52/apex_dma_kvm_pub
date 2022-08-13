@@ -125,6 +125,42 @@ Vector Entity::getBonePosition(int id)
 	return bone;
 }
 
+//https://www.unknowncheats.me/forum/apex-legends/496984-getting-hitbox-positions-cstudiohdr-externally.html
+//https://www.unknowncheats.me/forum/3499185-post1334.html
+Vector Entity::getBonePositionByHitbox(int id)
+{
+	Vector origin = getPosition();
+ 
+    //BoneByHitBox
+	uint64_t Model = *(uint64_t*)(buffer + OFFSET_STUDIOHDR);
+    
+	//get studio hdr
+	uint64_t StudioHdr;
+	apex_mem.Read<uint64_t>(Model + 0x8, StudioHdr);
+ 
+    //get hitbox array
+	int HitBoxsArray_set;
+	apex_mem.Read<int>(StudioHdr + 0xB4,HitBoxsArray_set);
+	uint64_t HitBoxsArray = StudioHdr + HitBoxsArray_set;
+ 
+	int HitboxIndex;
+	apex_mem.Read<int>(HitBoxsArray + 0x8, HitboxIndex);
+ 
+	int Bone;
+	apex_mem.Read<int>(HitBoxsArray + HitboxIndex + (id * 0x2C), Bone);
+
+	if(Bone < 0 || Bone > 255)
+		return Vector();
+ 
+    //hitpos
+	uint64_t BoneArray = *(uint64_t*)(buffer + OFFSET_BONES);
+ 
+	matrix3x4_t Matrix = {};
+	apex_mem.Read<matrix3x4_t>(BoneArray + Bone * sizeof(matrix3x4_t), Matrix);
+ 
+	return Vector(Matrix.m_flMatVal[0][3] + origin.x, Matrix.m_flMatVal[1][3] + origin.y, Matrix.m_flMatVal[2][3] + origin.z);
+}
+
 QAngle Entity::GetSwayAngles()
 {
 	return *(QAngle*)(buffer + OFFSET_BREATH_ANGLES);
@@ -264,7 +300,7 @@ QAngle CalculateBestBoneAim(Entity& from, uintptr_t t, float max_fov)
 	}
 	
 	Vector LocalCamera = from.GetCamPos();
-	Vector TargetBonePosition = target.getBonePosition(bone);
+	Vector TargetBonePosition = target.getBonePositionByHitbox(bone);
 	QAngle CalculatedAngles = QAngle(0, 0, 0);
 	
 	WeaponXEntity curweap = WeaponXEntity();

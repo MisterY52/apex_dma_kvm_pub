@@ -27,6 +27,7 @@
 
     #define OFFSET_ORIGIN				0x014c //m_vecAbsOrigin
     #define OFFSET_BONES				0x0e88 + 0x48 //m_nForceBone + 0x48
+    #define OFFSET_STUDIOHDR            0x10d8
     #define OFFSET_AIMPUNCH				0x23f8 //m_currentFrameLocalPlayer.m_vecPunchWeapon_Angle
     #define OFFSET_CAMERAPOS			0x1ea0 //CPlayer!camera_origin
     #define OFFSET_VIEWANGLES			0x24f4 - 0x14 //m_ammoPoolCapacity - 0x14
@@ -74,6 +75,7 @@
 
     #define OFFSET_ORIGIN				0x014c //m_vecAbsOrigin
     #define OFFSET_BONES				0x0e88 + 0x48 //m_nForceBone + 0x48
+    #define OFFSET_STUDIOHDR            0x10d8
     #define OFFSET_AIMPUNCH				0x23f8 //m_currentFrameLocalPlayer.m_vecPunchWeapon_Angle
     #define OFFSET_CAMERAPOS			0x1ea0 //CPlayer!camera_origin
     #define OFFSET_VIEWANGLES			0x24f4 - 0x14 //m_ammoPoolCapacity - 0x14
