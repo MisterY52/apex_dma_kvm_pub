@@ -8,7 +8,7 @@
 #include <cfloat>
 #include "Game.h"
 #include <thread>
-
+//this is a test, with seconds
 Memory apex_mem;
 Memory client_mem;
 
@@ -20,19 +20,29 @@ uintptr_t lastaimentity = 0;
 float max = 999.0f;
 float max_dist = 200.0f*40.0f;
 int team_player = 0;
-float max_fov = 15;
+float max_fov = 25;
 const int toRead = 100;
-int aim = false;
-bool esp = false;
-bool item_glow = false;
-bool player_glow = false;
+int aim = true;
+bool esp = true;
+bool item_glow = true;
+bool player_glow = true;
 extern bool aim_no_recoil;
 bool aiming = false;
 extern float smooth;
 extern int bone;
 bool thirdperson = false;
+
+//chargerifle hack
 bool chargerifle = false;
 bool shooting = false;
+
+//Player Glow Color and Brightness
+float glowr = 0.0f;
+float glowg = 120.0f;
+float glowb = 120.0f;
+int glowtype = 1;
+int glowtype2 = 2;
+
 
 bool actions_t = false;
 bool esp_t = false;
@@ -41,7 +51,7 @@ bool vars_t = false;
 bool item_t = false;
 uint64_t g_Base;
 uint64_t c_Base;
-bool next = false;
+bool next2 = false;
 bool valid = false;
 bool lock = false;
 
@@ -59,8 +69,15 @@ typedef struct player
 	bool visible = false;
 	int health = 0;
 	int shield = 0;
+	int maxshield = 0;
+	int armortype = 0;
+	Vector EntityPosition;
+	Vector LocalPlayerPosition;
+	QAngle localviewangle;
 	char name[33] = { 0 };
 }player;
+
+
 
 struct Matrix
 {
@@ -275,7 +292,7 @@ void DoActions()
 				aimentity = tmp_aimentity;
 			else
 				aimentity = lastaimentity;
-
+			
 			if(chargerifle)
 			{
 				charge_rifle_hack(LocalPlayer);
@@ -298,6 +315,7 @@ void DoActions()
 
 player players[toRead];
 
+
 static void EspLoop()
 {
 	esp_t = true;
@@ -315,8 +333,8 @@ static void EspLoop()
 				apex_mem.Read<uint64_t>(g_Base + OFFSET_LOCAL_ENT, LocalPlayer);
 				if (LocalPlayer == 0)
 				{
-					next = true;
-					while(next && g_Base!=0 && c_Base!=0 && esp)
+					next2 = true;
+					while(next2 && g_Base!=0 && c_Base!=0 && esp)
 					{
 						std::this_thread::sleep_for(std::chrono::milliseconds(1));
 					}
@@ -326,8 +344,8 @@ static void EspLoop()
 				int team_player = LPlayer.getTeamId();
 				if (team_player < 0 || team_player>50)
 				{
-					next = true;
-					while(next && g_Base!=0 && c_Base!=0 && esp)
+					next2 = true;
+					while(next2 && g_Base!=0 && c_Base!=0 && esp)
 					{
 						std::this_thread::sleep_for(std::chrono::milliseconds(1));
 					}
@@ -345,6 +363,7 @@ static void EspLoop()
 				uint64_t entitylist = g_Base + OFFSET_ENTITYLIST;
 				
 				memset(players,0,sizeof(players));
+
 				if(firing_range)
 				{
 					int c=0;
@@ -377,6 +396,7 @@ static void EspLoop()
 
 						Vector EntityPosition = Target.getPosition();
 						float dist = LocalPlayerPosition.DistTo(EntityPosition);
+
 						if (dist > max_dist || dist < 50.0f)
 						{	
 							continue;
@@ -384,7 +404,7 @@ static void EspLoop()
 						
 						Vector bs = Vector();
 						WorldToScreen(EntityPosition, m.matrix, 1920, 1080, bs);
-						if (bs.x > 0 && bs.y > 0)
+						if (esp)
 						{
 							Vector hs = Vector();
 							Vector HeadPosition = Target.getBonePositionByHitbox(0);
@@ -394,6 +414,8 @@ static void EspLoop()
 							float boxMiddle = bs.x - (width / 2.0f);
 							int health = Target.getHealth();
 							int shield = Target.getShield();
+							int maxshield = Target.getMaxshield();
+							int armortype = Target.getArmortype();
 							players[c] = 
 							{
 								dist,
@@ -407,7 +429,10 @@ static void EspLoop()
 								0,
 								(Target.lastVisTime() > lastvis_esp[c]),
 								health,
-								shield	
+								shield,
+								maxshield,
+								armortype
+								
 							};
 							Target.get_name(g_Base, i-1, &players[c].name[0]);
 							lastvis_esp[c] = Target.lastVisTime();
@@ -459,7 +484,7 @@ static void EspLoop()
 
 						Vector bs = Vector();
 						WorldToScreen(EntityPosition, m.matrix, 1920, 1080, bs);
-						if (bs.x > 0 && bs.y > 0)
+						if (esp)
 						{
 							Vector hs = Vector();
 							Vector HeadPosition = Target.getBonePositionByHitbox(0);
@@ -469,7 +494,11 @@ static void EspLoop()
 							float boxMiddle = bs.x - (width / 2.0f);
 							int health = Target.getHealth();
 							int shield = Target.getShield();
-							
+							int maxshield = Target.getMaxshield();
+							int armortype = Target.getArmortype();
+							Vector EntityPosition = Target.getPosition();
+							Vector LocalPlayerPosition = LPlayer.getPosition();
+							QAngle localviewangle = LPlayer.GetViewAngles();
 							players[i] = 
 							{
 								dist,
@@ -483,7 +512,12 @@ static void EspLoop()
 								Target.isKnocked(),
 								(Target.lastVisTime() > lastvis_esp[i]),
 								health,
-								shield
+								shield,
+								maxshield,
+								armortype,
+								EntityPosition,
+								LocalPlayerPosition,
+								localviewangle
 							};
 							Target.get_name(g_Base, i-1, &players[i].name[0]);
 							lastvis_esp[i] = Target.lastVisTime();
@@ -492,8 +526,8 @@ static void EspLoop()
 					}
 				}
 
-				next = true;
-				while(next && g_Base!=0 && c_Base!=0 && esp)
+				next2 = true;
+				while(next2 && g_Base!=0 && c_Base!=0 && esp)
 				{
 					std::this_thread::sleep_for(std::chrono::milliseconds(1));
 				}
@@ -555,8 +589,8 @@ static void set_vars(uint64_t add_addr)
 	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*3, aiming_addr);
 	uint64_t g_Base_addr = 0;
 	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*4, g_Base_addr);
-	uint64_t next_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*5, next_addr);
+	uint64_t next2_addr = 0;
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*5, next2_addr);
 	uint64_t player_addr = 0;
 	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*6, player_addr);
 	uint64_t valid_addr = 0;
@@ -585,7 +619,18 @@ static void set_vars(uint64_t add_addr)
 	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*18, chargerifle_addr);
 	uint64_t shooting_addr = 0;
 	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*19, shooting_addr);
-	
+	uint64_t glowr_addr = 0;
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*20, glowr_addr);
+	uint64_t glowg_addr = 0;
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*21, glowg_addr);
+	uint64_t glowb_addr = 0;
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*22, glowb_addr);
+	uint64_t firing_range_addr = 0;
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*23, firing_range_addr);
+	uint64_t glowtype_addr = 0;
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*24, glowtype_addr);
+	uint64_t glowtype2_addr = 0;
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*25, glowtype2_addr);
 
 	uint32_t check = 0;
 	client_mem.Read<uint32_t>(check_addr, check);
@@ -612,7 +657,6 @@ static void set_vars(uint64_t add_addr)
 			client_mem.Write<uint64_t>(g_Base_addr, g_Base);
 			client_mem.Write<int>(spectators_addr, spectators);
 			client_mem.Write<int>(allied_spectators_addr, allied_spectators);
-
 			client_mem.Read<int>(aim_addr, aim);
 			client_mem.Read<bool>(esp_addr, esp);
 			client_mem.Read<bool>(aiming_addr, aiming);
@@ -626,28 +670,39 @@ static void set_vars(uint64_t add_addr)
 			client_mem.Read<bool>(thirdperson_addr, thirdperson);
 			client_mem.Read<bool>(shooting_addr, shooting);
 			client_mem.Read<bool>(chargerifle_addr, chargerifle);
+			client_mem.Read<float>(glowr_addr, glowr);
+			client_mem.Read<float>(glowg_addr, glowg);
+			client_mem.Read<float>(glowb_addr, glowb);
+			client_mem.Read<bool>(firing_range_addr, firing_range);
+			client_mem.Read<int>(glowtype_addr, glowtype);
+			client_mem.Read<int>(glowtype2_addr, glowtype2);
 
-			if(esp && next)
+			if(esp && next2)
 			{
 				if(valid)
-					client_mem.WriteArray<player>(player_addr, players, toRead);
+				client_mem.WriteArray<player>(player_addr, players, toRead);
 				client_mem.Write<bool>(valid_addr, valid);
-				client_mem.Write<bool>(next_addr, true); //next
+				client_mem.Write<bool>(next2_addr, true); //next2
 
-				bool next_val = false;
+				bool next2_val = false;
 				do
 				{
-					client_mem.Read<bool>(next_addr, next_val);
+					client_mem.Read<bool>(next2_addr, next2_val);
 					std::this_thread::sleep_for(std::chrono::milliseconds(1));
-				} while (next_val && g_Base!=0 && c_Base!=0);
+				} while (next2_val && g_Base!=0 && c_Base!=0);
 				
-				next = false;
+				next2 = false;
 			}
 		}
 	}
 	vars_t = false;
 }
 
+// Item Glow Stuff
+struct GlowMode {
+	int8_t GeneralGlowMode, BorderGlowMode, BorderSize, TransparentLevel;
+};
+ 
 static void item_glow_t()
 {
 	item_t = true;
@@ -661,33 +716,44 @@ static void item_glow_t()
 			uint64_t entitylist = g_Base + OFFSET_ENTITYLIST;
 			if (item_glow)
 			{
-				for (int i = 0; i < 10000; i++)
+				for (int i = 0; i < 20000; i++)
 				{
 					uint64_t centity = 0;
 					apex_mem.Read<uint64_t>(entitylist + ((uint64_t)i << 5), centity);
 					if (centity == 0) continue;
 					Item item = getItem(centity);
-
+ 
+ 
+					if (item.isBox())
+					{
+						apex_mem.Write<int>(centity + 0x262, 16256);
+						apex_mem.Write<int>(centity + 0x2dc, 1193322764);
+						apex_mem.Write<int>(centity + 0x3c8, 7);
+						apex_mem.Write<int>(centity + 0x3d0, 2);
+						
+					}
+					
 					if(item.isItem() && !item.isGlowing())
 					{
 						item.enableGlow();
 					}
+					
 				}
 				k=1;
-				std::this_thread::sleep_for(std::chrono::milliseconds(600));
+				std::this_thread::sleep_for(std::chrono::milliseconds(1));
 			}
 			else
 			{		
 				if(k==1)
 				{
-					for (int i = 0; i < 10000; i++)
+					for (int i = 0; i < 20000; i++)
 					{
 						uint64_t centity = 0;
 						apex_mem.Read<uint64_t>(entitylist + ((uint64_t)i << 5), centity);
 						if (centity == 0) continue;
-
+ 
 						Item item = getItem(centity);
-
+ 
 						if(item.isItem() && item.isGlowing())
 						{
 							item.disableGlow();
@@ -701,6 +767,7 @@ static void item_glow_t()
 	item_t = false;
 }
 
+
 int main(int argc, char *argv[])
 {
 	if(geteuid() != 0)
@@ -709,12 +776,12 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
-	const char* cl_proc = "client_ap.exe";
+	const char* cl_proc = "MonkeyCure.exe";
 	const char* ap_proc = "R5Apex.exe";
 	//const char* ap_proc = "EasyAntiCheat_launcher.exe";
 
 	//Client "add" offset
-	uint64_t add_off = 0x3f880;
+	uint64_t add_off = 0x12c980;
 
 	std::thread aimbot_thr;
 	std::thread esp_thr;

@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29519.87
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32819.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client", "Client\Client\Client.vcxproj", "{9BF6CD05-63DA-49CF-905E-B82F5F24AC6E}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Overlay", "Overlay\Overlay\Overlay.vcxproj", "{68C049A1-7EA4-45D2-942C-7710AF16B1FA}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client", "Client.vcxproj", "{9BF6CD05-63DA-49CF-905E-B82F5F24AC6E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,15 +15,11 @@ Global
 		{9BF6CD05-63DA-49CF-905E-B82F5F24AC6E}.Debug|x64.Build.0 = Debug|x64
 		{9BF6CD05-63DA-49CF-905E-B82F5F24AC6E}.Release|x64.ActiveCfg = Release|x64
 		{9BF6CD05-63DA-49CF-905E-B82F5F24AC6E}.Release|x64.Build.0 = Release|x64
-		{68C049A1-7EA4-45D2-942C-7710AF16B1FA}.Debug|x64.ActiveCfg = Debug|x64
-		{68C049A1-7EA4-45D2-942C-7710AF16B1FA}.Debug|x64.Build.0 = Debug|x64
-		{68C049A1-7EA4-45D2-942C-7710AF16B1FA}.Release|x64.ActiveCfg = Release|x64
-		{68C049A1-7EA4-45D2-942C-7710AF16B1FA}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {CA1CD6B1-E5B8-4031-A3BE-BCFCBAE43EEA}
+		SolutionGuid = {2ECB7851-7A97-4557-87A8-48F3FD238BD4}
 	EndGlobalSection
 EndGlobal

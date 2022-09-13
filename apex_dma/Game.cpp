@@ -3,7 +3,14 @@
 extern Memory apex_mem;
 
 extern bool firing_range;
-float smooth = 12.0f;
+//glow color and brigtness
+extern float glowr;
+extern float glowg;
+extern float glowb;
+extern int glowtype;
+extern int glowtype2;
+
+float smooth = 100.0f;
 bool aim_no_recoil = true;
 int bone = 2;
 
@@ -68,9 +75,22 @@ int Entity::getHealth()
 	return *(int*)(buffer + OFFSET_HEALTH);
 }
 
+#define OFFSET_ARMOR_TYPE             0x4604
+int Entity::getArmortype()
+{
+	int armortype;
+	apex_mem.Read<int>(ptr + OFFSET_ARMOR_TYPE, armortype);
+	return armortype;
+}
+
 int Entity::getShield()
 {
 	return *(int*)(buffer + OFFSET_SHIELD);
+}
+
+int Entity::getMaxshield()
+{
+	return *(int*)(buffer + OFFSET_MAXSHIELD);
 }
 
 Vector Entity::getAbsVelocity()
@@ -111,53 +131,40 @@ float Entity::lastVisTime()
   return *(float*)(buffer + OFFSET_VISIBLE_TIME);
 }
 
-Vector Entity::getBonePosition(int id)
-{
-	Vector position = getPosition();
-	uintptr_t boneArray = *(uintptr_t*)(buffer + OFFSET_BONES);
-	Vector bone = Vector();
-	uint32_t boneloc = (id * 0x30);
-	Bone bo = {};
-	apex_mem.Read<Bone>(boneArray + boneloc, bo);
-	bone.x = bo.x + position.x;
-	bone.y = bo.y + position.y;
-	bone.z = bo.z + position.z;
-	return bone;
-}
-
 //https://www.unknowncheats.me/forum/apex-legends/496984-getting-hitbox-positions-cstudiohdr-externally.html
 //https://www.unknowncheats.me/forum/3499185-post1334.html
+
 Vector Entity::getBonePositionByHitbox(int id)
 {
 	Vector origin = getPosition();
- 
+
     //BoneByHitBox
 	uint64_t Model = *(uint64_t*)(buffer + OFFSET_STUDIOHDR);
-    
+
 	//get studio hdr
 	uint64_t StudioHdr;
 	apex_mem.Read<uint64_t>(Model + 0x8, StudioHdr);
- 
+
     //get hitbox array
 	int HitBoxsArray_set;
 	apex_mem.Read<int>(StudioHdr + 0xB4,HitBoxsArray_set);
 	uint64_t HitBoxsArray = StudioHdr + HitBoxsArray_set;
- 
+
 	int HitboxIndex;
 	apex_mem.Read<int>(HitBoxsArray + 0x8, HitboxIndex);
- 
+
 	int Bone;
 	apex_mem.Read<int>(HitBoxsArray + HitboxIndex + (id * 0x2C), Bone);
 
 	if(Bone < 0 || Bone > 255)
 		return Vector();
- 
+
     //hitpos
 	uint64_t BoneArray = *(uint64_t*)(buffer + OFFSET_BONES);
- 
+
 	matrix3x4_t Matrix = {};
 	apex_mem.Read<matrix3x4_t>(BoneArray + Bone * sizeof(matrix3x4_t), Matrix);
- 
+
 	return Vector(Matrix.m_flMatVal[0][3] + origin.x, Matrix.m_flMatVal[1][3] + origin.y, Matrix.m_flMatVal[2][3] + origin.z);
 }
 
@@ -202,16 +209,19 @@ bool Entity::isZooming()
 
 void Entity::enableGlow()
 {
-	apex_mem.Write<int>(ptr + OFFSET_GLOW_T1, 16256);
-	apex_mem.Write<int>(ptr + OFFSET_GLOW_T2, 1193322764);
-	apex_mem.Write<int>(ptr + OFFSET_GLOW_ENABLE, 7);
-	apex_mem.Write<int>(ptr + OFFSET_GLOW_THROUGH_WALLS, 2);
+	apex_mem.Write<int>(ptr + OFFSET_GLOW_ENABLE, glowtype);
+	apex_mem.Write<int>(ptr + OFFSET_GLOW_THROUGH_WALLS, glowtype2);
+	// Color
+	apex_mem.Write<float>(ptr + GLOW_COLOR_R, glowr);
+	apex_mem.Write<float>(ptr + GLOW_COLOR_G, glowg);
+	apex_mem.Write<float>(ptr + GLOW_COLOR_B, glowb);
 }
 
 void Entity::disableGlow()
 {
-	apex_mem.Write<int>(ptr + OFFSET_GLOW_T1, 0);
-	apex_mem.Write<int>(ptr + OFFSET_GLOW_T2, 0);
+	apex_mem.Write<float>(ptr + GLOW_COLOR_R, 0.0f);
+	apex_mem.Write<float>(ptr + GLOW_COLOR_G, 0.0f);
+	apex_mem.Write<float>(ptr + GLOW_COLOR_B, 0.0f);
 	apex_mem.Write<int>(ptr + OFFSET_GLOW_ENABLE, 2);
 	apex_mem.Write<int>(ptr + OFFSET_GLOW_THROUGH_WALLS, 5);
 }
@@ -250,6 +260,14 @@ bool Item::isItem()
 	get_class_name(ptr, class_name);
 
 	return strncmp(class_name, "CPropSurvival", 13) == 0;
+}
+
+bool Item::isBox()
+{
+	char class_name[33] = {};
+	get_class_name(ptr, class_name);
+
+	return strncmp(class_name, "CDeathBoxProp", 13) == 0;
 }
 
 bool Item::isGlowing()
@@ -378,6 +396,7 @@ Item getItem(uintptr_t ptr)
 	return entity;
 }
 
+
 bool WorldToScreen(Vector from, float* m_vMatrix, int targetWidth, int targetHeight, Vector& to)
 {
 	float w = m_vMatrix[12] * from.x + m_vMatrix[13] * from.y + m_vMatrix[14] * from.z + m_vMatrix[15];
@@ -421,7 +440,7 @@ void WeaponXEntity::update(uint64_t LocalPlayer)
     apex_mem.Read<float>(wep_entity + OFFSET_BULLET_SCALE, projectile_scale);
 	zoom_fov = 0;
     apex_mem.Read<float>(wep_entity + OFFSET_ZOOM_FOV, zoom_fov);
-	ammo = 0;
+		ammo = 0;
     apex_mem.Read<int>(wep_entity + OFFSET_AMMO, ammo);
 }
 

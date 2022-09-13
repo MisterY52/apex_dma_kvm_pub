@@ -76,6 +76,12 @@
     <ClInclude Include="imgui\imgui_impl_dx11.h">
       <Filter>Headers\imgui</Filter>
     </ClInclude>
+    <ClInclude Include="offsets.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Desktop\TESTKVM\ApexWinKVM-master\DirectXMath.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc" />

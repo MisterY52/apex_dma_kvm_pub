@@ -29,6 +29,8 @@ public:
 	int getTeamId();
 	int getHealth();
 	int getShield();
+	int getArmortype();
+	int getMaxshield();
 	bool isGlowing();
 	bool isZooming();
 	Vector getAbsVelocity();
@@ -56,11 +58,13 @@ public:
 	uint8_t buffer[0x3FF0];
 	Vector getPosition();
 	bool isItem();
+	bool isBox();
 	bool isGlowing();
-	
 	void enableGlow();
 	void disableGlow();
 };
+
+
 
 class WeaponXEntity
 {
@@ -90,6 +94,7 @@ struct ClientClass {
 
 Entity getEntity(uintptr_t ptr);
 Item getItem(uintptr_t ptr);
+
 bool WorldToScreen(Vector from, float* m_vMatrix, int targetWidth, int targetHeight, Vector& to);
 float CalculateFov(Entity& from, Entity& target);
 QAngle CalculateBestBoneAim(Entity& from, uintptr_t target, float max_fov);
