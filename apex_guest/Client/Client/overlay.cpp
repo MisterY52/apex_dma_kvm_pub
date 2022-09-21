@@ -19,32 +19,23 @@ extern int bone;
 extern bool thirdperson;
 extern int spectators;
 extern int allied_spectators;
-extern bool chargerifle;
 //glow color and type
-extern float glowr;
-extern float glowg;
-extern float glowb;
-extern int glowtype;
-extern int glowtype2;
+extern float glowr; //Red Value
+extern float glowg; //Green Value
+extern float glowb; //Blue Value
 extern float glowcolor[3];
 //radar color
 extern bool minimapradar;
-unsigned int radarcolorr = 0;
-unsigned int radarcolorg = 0;
-unsigned int radarcolorb = 0;
+unsigned int radarcolorr = 255; //Red Value
+unsigned int radarcolorg = 0; //Green Value
+unsigned int radarcolorb = 0; //Blue Value
 extern float radarcolor[3];
 //Main Map Radar
 extern bool mainradarmap;
-
-//fov stuff
-extern bool fovcircle;
-extern float fovsize;
-extern float fovsize2;
-extern float fovcolorset[4];
-extern float fovcolor1;
-extern float fovcolor2;
-extern float fovcolor3;
-extern float fovthick;
+// Main Map Radar Stuff
+extern bool stormpoint; //Set for map, ONLY ONE THO
+extern bool worldsedge; //Set for map, ONLY ONE THO
+extern bool kingscanyon; //Set for map, ONLY ONE THO
 
 int width;
 int height;
@@ -165,16 +156,36 @@ void Overlay::RenderMenu()
 			ImGui::SameLine();
 			ImGui::Sliderbox(XorStr("Glow Players"), &player_glow);
 			ImGui::Sliderbox(XorStr("Thirdperson"), &thirdperson);
-			ImGui::Sliderbox(XorStr("Charge Rifle Hack"), &chargerifle);
 			ImGui::Sliderbox(XorStr("Firing Range Toggle"), &firing_range);
-			ImGui::Sliderbox(XorStr("Radar"), &minimapradar);
-			/*
-			//Full man Radar, Broken atm
-			ImGui::Sliderbox("Main Map Toggle Test", &mainradarmap);
-			*/
-			ImGui::Sliderbox("Circle Fov", &fovcircle);
+			ImGui::Sliderbox(XorStr("Mini-Map Radar"), &minimapradar);
+			ImGui::Text(XorStr("Main Map Selection Config:"));
+			//setting the state counter
+			static int e = 0;
+			//Is it me being lazy? or that i dont know how? prob both. Setting the Map for the Main Map Radar
+			ImGui::RadioButton("King's Canyon", &e, 0); ImGui::SameLine();
+			ImGui::RadioButton("World's Edge", &e, 1); ImGui::SameLine();
+			ImGui::RadioButton("Storm Point", &e, 2);
+			//Setting one and unsetting the other
+			if (e == 0)
+			{
+				kingscanyon = true;
+				worldsedge = false;
+				stormpoint = false;
+			}
+			else if (e == 1)
+			{
+				kingscanyon = false;
+				worldsedge = true;
+				stormpoint = false;
+			}
+			else if (e == 2)
+			{
+				kingscanyon = false;
+				worldsedge = false;
+				stormpoint = true;
+			}
 			ImGui::Text(XorStr("Max distance:"));
-			ImGui::SliderFloat(XorStr("##1"), &max_dist, 100.0f * 40, 800.0f * 40, "%.2f");
+			ImGui::SliderFloat(XorStr("##1"), &max_dist, 100.0f * 40, 3800.0f * 40, "%.2f");
 			ImGui::SameLine();
 			ImGui::Text("(%d meters)", (int)(max_dist / 40));
 			ImGui::Text(XorStr("Smooth Aim Value:"));
@@ -208,28 +219,13 @@ void Overlay::RenderMenu()
 				radarcolorg = radarcolor[1] * 250;
 				radarcolorb = radarcolor[2] * 250;
 			}
-			//Fov Circle Color
-			ImGui::Text(XorStr("Fov Circle Color Picker:"));
-			ImGui::ColorEdit4("##Fov Circle Color Picker", fovcolorset);
-			{
-
-				fovcolor1 = fovcolorset[0] * 250;
-				fovcolor2 = fovcolorset[1] * 250;
-				fovcolor3 = fovcolorset[2] * 250;
-				fovthick = fovcolorset[3] * 250;
-			}
-
-			ImGui::Text(XorStr("Saving and Loading:"));
-			
+			ImGui::Text(XorStr("Saving and Loading. Need to Save Once to make the file."));
 			//Saving
 			if (ImGui::Button("Save Config"))
 			{
-				ofstream config("Config.txt");
-
+				ofstream config("Settings.txt");
 				if (config.is_open())
 				{
-
-
 					config << std::boolalpha << firing_range << "\n";
 					config << aim << "\n";
 					config << std::boolalpha << esp << "\n";
@@ -243,8 +239,6 @@ void Overlay::RenderMenu()
 					config << glowr << "\n";
 					config << glowg << "\n";
 					config << glowb << "\n";
-					config << glowtype << "\n";
-					config << glowtype2 << "\n";
 					config << glowcolor[0] << "\n";
 					config << glowcolor[1] << "\n";
 					config << glowcolor[2] << "\n";
@@ -258,18 +252,7 @@ void Overlay::RenderMenu()
 					config << v.shieldbar << "\n";
 					config << v.distance << "\n";
 					config << thirdperson<< "\n";
-					config << std::boolalpha << minimapradar << "\n";
-					config << fovcircle << "\n";
-					config << fovsize << "\n";
-					config << fovsize2 << "\n";
-					config << fovcolor1 << "\n";
-					config << fovcolor2 << "\n";
-					config << fovcolor3 << "\n";
-					config << fovcolorset[0] << "\n";
-					config << fovcolorset[1] << "\n";
-					config << fovcolorset[2] << "\n";
-					config << fovcolorset[3] << "\n";
-					config << fovthick;
+					config << std::boolalpha << minimapradar;
 					config.close();
 				}
 			}
@@ -277,13 +260,9 @@ void Overlay::RenderMenu()
 			//Loading
 			if (ImGui::Button("Load Config"))
 			{
-
-				ifstream config("Config.txt");
-
+				ifstream config("Settings.txt");
 				if (config.is_open())
 				{
-
-
 					config >> std::boolalpha >> firing_range;
 					config >> aim;
 					config >> std::boolalpha >> esp;
@@ -297,8 +276,6 @@ void Overlay::RenderMenu()
 					config >> glowr;
 					config >> glowg;
 					config >> glowb;
-					config >> glowtype;
-					config >> glowtype2;
 					config >> glowcolor[0];
 					config >> glowcolor[1];
 					config >> glowcolor[2];
@@ -313,37 +290,20 @@ void Overlay::RenderMenu()
 					config >> v.distance;
 					config >> thirdperson;
 					config >> minimapradar;
-					config >> fovcircle;
-					config >> fovsize;
-					config >> fovsize2;
-					config >> fovcolor1;
-					config >> fovcolor2;
-					config >> fovcolor3;
-					config >> fovcolorset[0];
-					config >> fovcolorset[1];
-					config >> fovcolorset[2];
-					config >> fovcolorset[3];
-					config >> fovthick;
 					config.close();
 				}
-			}
-		
-		
-		
-	
+			}	
 	ImGui::Text(XorStr("Overlay FPS: %.3f ms/frame (%.1f FPS)"), 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	ImGui::End();
 }
 
 
 void Overlay::RenderInfo()
-{
-
-	
+{	
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
-	ImGui::SetNextWindowSize(ImVec2(150, 25));
+	ImGui::SetNextWindowSize(ImVec2(160, 25));
 	ImGui::Begin(XorStr("##info"), (bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar);
-	DrawLine(ImVec2(1, 5), ImVec2(140, 5), RED, 2);
+	DrawLine(ImVec2(1, 5), ImVec2(160, 5), RED, 2);
 	ImGui::TextColored(RED, "%d", spectators);
 	ImGui::SameLine();
 	ImGui::Text("--");
@@ -386,7 +346,7 @@ DWORD Overlay::CreateOverlay()
 	Sleep(300);
 	if (overlayHWND == 0)
 	{
-		printf(XorStr("Can't find the overlay\n"));
+		printf(XorStr("Can't find the overlay, HIT ALT-Z\n"));
 		Sleep(1000);
 		exit(0);
 	}
