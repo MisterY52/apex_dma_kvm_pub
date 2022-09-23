@@ -114,6 +114,7 @@ void ProcessPlayer(Entity& LPlayer, Entity& target, uint64_t entitylist, int ind
 	Vector EntityPosition = target.getPosition();
 	Vector LocalPlayerPosition = LPlayer.getPosition();
 	float dist = LocalPlayerPosition.DistTo(EntityPosition);
+	//std::printf("  X: %.6f   ||    Y:%.6f",LocalPlayerPosition.x, LocalPlayerPosition.y); //Prints x and y cords of localplayer to get mainmap radar stuff.
 	if (dist > max_dist) return;
 
 	if(!firing_range)
@@ -668,14 +669,11 @@ static void set_vars(uint64_t add_addr)
 			client_mem.Read<float>(max_fov_addr, max_fov);
 			client_mem.Read<int>(bone_addr, bone);
 			client_mem.Read<bool>(thirdperson_addr, thirdperson);
-			client_mem.Read<bool>(shooting_addr, shooting);
-			client_mem.Read<bool>(chargerifle_addr, chargerifle);
 			client_mem.Read<float>(glowr_addr, glowr);
 			client_mem.Read<float>(glowg_addr, glowg);
 			client_mem.Read<float>(glowb_addr, glowb);
 			client_mem.Read<bool>(firing_range_addr, firing_range);
-			client_mem.Read<int>(glowtype_addr, glowtype);
-			client_mem.Read<int>(glowtype2_addr, glowtype2);
+	
 
 			if(esp && next2)
 			{
@@ -716,7 +714,7 @@ static void item_glow_t()
 			uint64_t entitylist = g_Base + OFFSET_ENTITYLIST;
 			if (item_glow)
 			{
-				for (int i = 0; i < 20000; i++)
+				for (int i = 0; i < 15000; i++)
 				{
 					uint64_t centity = 0;
 					apex_mem.Read<uint64_t>(entitylist + ((uint64_t)i << 5), centity);
@@ -725,6 +723,15 @@ static void item_glow_t()
  
  
 					if (item.isBox())
+					{
+						apex_mem.Write<int>(centity + 0x262, 16256);
+						apex_mem.Write<int>(centity + 0x2dc, 1193322764);
+						apex_mem.Write<int>(centity + 0x3c8, 7);
+						apex_mem.Write<int>(centity + 0x3d0, 2);
+						
+					}
+					
+					if (item.isTrap())
 					{
 						apex_mem.Write<int>(centity + 0x262, 16256);
 						apex_mem.Write<int>(centity + 0x2dc, 1193322764);
@@ -746,7 +753,7 @@ static void item_glow_t()
 			{		
 				if(k==1)
 				{
-					for (int i = 0; i < 20000; i++)
+					for (int i = 0; i < 15000; i++)
 					{
 						uint64_t centity = 0;
 						apex_mem.Read<uint64_t>(entitylist + ((uint64_t)i << 5), centity);
@@ -781,7 +788,7 @@ int main(int argc, char *argv[])
 	//const char* ap_proc = "EasyAntiCheat_launcher.exe";
 
 	//Client "add" offset
-	uint64_t add_off = 0x12c980;
+	uint64_t add_off = 0x12c940;
 
 	std::thread aimbot_thr;
 	std::thread esp_thr;

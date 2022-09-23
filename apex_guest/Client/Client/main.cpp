@@ -72,7 +72,7 @@ int allied_spectators = 0; //write
 bool valid = true; //write
 bool next2 = true; //read write
 
-uint64_t add[27];
+uint64_t add[24];
 
 bool k_f5 = 0;
 bool k_f6 = 0;
@@ -285,7 +285,6 @@ ImVec2 worldToScreenMap(D3DXVECTOR3 origin) {
 			w1 = WorldsEdge.w1;
 			s1 = WorldsEdge.s1;
 		}
-		
 		
 		else {
 			return ImVec2(0, 0);
@@ -506,13 +505,16 @@ int main(int argc, char** argv)
 			mainradartoggle = 0;
 		}
 		
-		if (IsKeyDown(aim_key | aim_key2))
+		if (IsKeyDown(aim_key))
 		{
-			aiming = true;
+				aiming = true;
 		}
+
+		else if (IsKeyDown(aim_key2))
+				aiming = true;
 		else
 		{
-			aiming = false;
+				aiming = false;
 		}
 	}
 	ready = false;

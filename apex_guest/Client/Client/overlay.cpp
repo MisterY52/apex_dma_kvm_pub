@@ -26,7 +26,7 @@ extern float glowb; //Blue Value
 extern float glowcolor[3];
 //radar color
 extern bool minimapradar;
-unsigned int radarcolorr = 255; //Red Value
+unsigned int radarcolorr = 0; //Red Value
 unsigned int radarcolorg = 0; //Green Value
 unsigned int radarcolorb = 0; //Blue Value
 extern float radarcolor[3];
@@ -162,23 +162,23 @@ void Overlay::RenderMenu()
 			//setting the state counter
 			static int e = 0;
 			//Is it me being lazy? or that i dont know how? prob both. Setting the Map for the Main Map Radar
-			ImGui::RadioButton("King's Canyon", &e, 0); ImGui::SameLine();
-			ImGui::RadioButton("World's Edge", &e, 1); ImGui::SameLine();
-			ImGui::RadioButton("Storm Point", &e, 2);
+			ImGui::RadioButton("King's Canyon", &e, 1); ImGui::SameLine();
+			ImGui::RadioButton("World's Edge", &e, 2); ImGui::SameLine();
+			ImGui::RadioButton("Storm Point", &e, 3);
 			//Setting one and unsetting the other
-			if (e == 0)
+			if (e == 1)
 			{
 				kingscanyon = true;
 				worldsedge = false;
 				stormpoint = false;
 			}
-			else if (e == 1)
+			else if (e == 2)
 			{
 				kingscanyon = false;
 				worldsedge = true;
 				stormpoint = false;
 			}
-			else if (e == 2)
+			else if (e == 3)
 			{
 				kingscanyon = false;
 				worldsedge = false;

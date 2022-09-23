@@ -59,6 +59,7 @@ public:
 	Vector getPosition();
 	bool isItem();
 	bool isBox();
+	bool isTrap();
 	bool isGlowing();
 	void enableGlow();
 	void disableGlow();

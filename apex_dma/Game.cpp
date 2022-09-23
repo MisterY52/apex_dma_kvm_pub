@@ -270,6 +270,14 @@ bool Item::isBox()
 	return strncmp(class_name, "CDeathBoxProp", 13) == 0;
 }
 
+bool Item::isTrap()
+{
+	char class_name[33] = {};
+	get_class_name(ptr, class_name);
+
+	return strncmp(class_name, "caustic_trap", 13) == 0;
+}
+
 bool Item::isGlowing()
 {
 	return *(int*)(buffer + OFFSET_ITEM_GLOW) == 1363184265;
