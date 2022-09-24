@@ -53,7 +53,9 @@ float glowr = 120.0f; //Red Value
 float glowg = 0.0f; //Green Value
 float glowb = 0.0f; //Blue Value
 float glowcolor[3] = { 000.0f, 000.0f, 000.0f };
-//Radar Color
+//MiniMap Radar
+extern int minimapradardotsize1;
+extern int minimapradardotsize2;
 bool minimapradar = false;
 extern unsigned int radarcolorr; //Red Value
 extern unsigned int radarcolorg; //Green Value
@@ -62,9 +64,11 @@ float radarcolor[3];
 //Full Map Radar
 bool mainradartoggle = 0; //Toggle for Main Map radar
 bool mainradarmap = false; //if the Main Map Radar is enabled
-bool stormpoint = false; //Set for map, ONLY ONE THO
-bool worldsedge = false; //Set for map, ONLY ONE THO
-bool kingscanyon = false; //Set for map, ONLY ONE THO
+bool kingscanyon = true; //Set for map, ONLY ONE THO
+extern int mainmapradardotsize1;
+extern int mainmapradardotsize2;
+
+
 
 bool thirdperson = false;
 int spectators = 0; //write
@@ -85,6 +89,8 @@ bool k_f10 = 0;
 bool k_f20 = 0;
 
 bool k_f100 = 0;
+
+player players[100];
 
 //Radar Code
 #define M_PI		3.14159265358979323846	// matches value in gcc v2 math.h
@@ -145,6 +151,89 @@ static void FilledRectangle(int x, int y, int w, int h, RGBA color)
 {
 	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x, y), ImVec2(x + w, y + h), ImGui::ColorConvertFloat4ToU32(ImVec4(color.R / 255.0, color.G / 255.0, color.B / 255.0, color.A / 255.0)), 0, 0);
 }
+
+//Color Team Radar Test. oh god why... This is stupid.. dont do this.. it works tho
+static void Team1(int x, int y, int w, int h, RGBA color)
+{
+	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x, y), ImVec2(x + w, y + h), ImGui::ColorConvertFloat4ToU32(ImVec4(color.R / 255.0, color.G / 255.0, color.B / 255.0, color.A / 255.0)), 0, 0);
+}
+static void Team2(int x, int y, int w, int h, RGBA color)
+{
+	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x, y), ImVec2(x + w, y + h), ImGui::ColorConvertFloat4ToU32(ImVec4(color.R / 255.0, color.G / 255.0, color.B / 255.0, color.A / 255.0)), 0, 0);
+}
+static void Team3(int x, int y, int w, int h, RGBA color)
+{
+	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x, y), ImVec2(x + w, y + h), ImGui::ColorConvertFloat4ToU32(ImVec4(color.R / 255.0, color.G / 255.0, color.B / 255.0, color.A / 255.0)), 0, 0);
+}
+static void Team4(int x, int y, int w, int h, RGBA color)
+{
+	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x, y), ImVec2(x + w, y + h), ImGui::ColorConvertFloat4ToU32(ImVec4(color.R / 255.0, color.G / 255.0, color.B / 255.0, color.A / 255.0)), 0, 0);
+}
+static void Team5(int x, int y, int w, int h, RGBA color)
+{
+	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x, y), ImVec2(x + w, y + h), ImGui::ColorConvertFloat4ToU32(ImVec4(color.R / 255.0, color.G / 255.0, color.B / 255.0, color.A / 255.0)), 0, 0);
+}
+static void Team6(int x, int y, int w, int h, RGBA color)
+{
+	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x, y), ImVec2(x + w, y + h), ImGui::ColorConvertFloat4ToU32(ImVec4(color.R / 255.0, color.G / 255.0, color.B / 255.0, color.A / 255.0)), 0, 0);
+}
+static void Team7(int x, int y, int w, int h, RGBA color)
+{
+	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x, y), ImVec2(x + w, y + h), ImGui::ColorConvertFloat4ToU32(ImVec4(color.R / 255.0, color.G / 255.0, color.B / 255.0, color.A / 255.0)), 0, 0);
+}
+static void Team8(int x, int y, int w, int h, RGBA color)
+{
+	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x, y), ImVec2(x + w, y + h), ImGui::ColorConvertFloat4ToU32(ImVec4(color.R / 255.0, color.G / 255.0, color.B / 255.0, color.A / 255.0)), 0, 0);
+}
+static void Team9(int x, int y, int w, int h, RGBA color)
+{
+	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x, y), ImVec2(x + w, y + h), ImGui::ColorConvertFloat4ToU32(ImVec4(color.R / 255.0, color.G / 255.0, color.B / 255.0, color.A / 255.0)), 0, 0);
+}
+static void Team10(int x, int y, int w, int h, RGBA color)
+{
+	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x, y), ImVec2(x + w, y + h), ImGui::ColorConvertFloat4ToU32(ImVec4(color.R / 255.0, color.G / 255.0, color.B / 255.0, color.A / 255.0)), 0, 0);
+}
+static void Team11(int x, int y, int w, int h, RGBA color)
+{
+	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x, y), ImVec2(x + w, y + h), ImGui::ColorConvertFloat4ToU32(ImVec4(color.R / 255.0, color.G / 255.0, color.B / 255.0, color.A / 255.0)), 0, 0);
+}
+static void Team12(int x, int y, int w, int h, RGBA color)
+{
+	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x, y), ImVec2(x + w, y + h), ImGui::ColorConvertFloat4ToU32(ImVec4(color.R / 255.0, color.G / 255.0, color.B / 255.0, color.A / 255.0)), 0, 0);
+}
+static void Team13(int x, int y, int w, int h, RGBA color)
+{
+	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x, y), ImVec2(x + w, y + h), ImGui::ColorConvertFloat4ToU32(ImVec4(color.R / 255.0, color.G / 255.0, color.B / 255.0, color.A / 255.0)), 0, 0);
+}
+static void Team14(int x, int y, int w, int h, RGBA color)
+{
+	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x, y), ImVec2(x + w, y + h), ImGui::ColorConvertFloat4ToU32(ImVec4(color.R / 255.0, color.G / 255.0, color.B / 255.0, color.A / 255.0)), 0, 0);
+}
+static void Team15(int x, int y, int w, int h, RGBA color)
+{
+	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x, y), ImVec2(x + w, y + h), ImGui::ColorConvertFloat4ToU32(ImVec4(color.R / 255.0, color.G / 255.0, color.B / 255.0, color.A / 255.0)), 0, 0);
+}
+static void Team16(int x, int y, int w, int h, RGBA color)
+{
+	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x, y), ImVec2(x + w, y + h), ImGui::ColorConvertFloat4ToU32(ImVec4(color.R / 255.0, color.G / 255.0, color.B / 255.0, color.A / 255.0)), 0, 0);
+}
+static void Team17(int x, int y, int w, int h, RGBA color)
+{
+	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x, y), ImVec2(x + w, y + h), ImGui::ColorConvertFloat4ToU32(ImVec4(color.R / 255.0, color.G / 255.0, color.B / 255.0, color.A / 255.0)), 0, 0);
+}
+static void Team18(int x, int y, int w, int h, RGBA color)
+{
+	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x, y), ImVec2(x + w, y + h), ImGui::ColorConvertFloat4ToU32(ImVec4(color.R / 255.0, color.G / 255.0, color.B / 255.0, color.A / 255.0)), 0, 0);
+}
+static void Team19(int x, int y, int w, int h, RGBA color)
+{
+	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x, y), ImVec2(x + w, y + h), ImGui::ColorConvertFloat4ToU32(ImVec4(color.R / 255.0, color.G / 255.0, color.B / 255.0, color.A / 255.0)), 0, 0);
+}
+static void Team20(int x, int y, int w, int h, RGBA color)
+{
+	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x, y), ImVec2(x + w, y + h), ImGui::ColorConvertFloat4ToU32(ImVec4(color.R / 255.0, color.G / 255.0, color.B / 255.0, color.A / 255.0)), 0, 0);
+}
+
 bool menu = true;
 bool firstS = true;
 //Radar Settings.. ToDO: Put in ImGui menu to change in game
@@ -162,7 +251,7 @@ namespace RadarSettings
 	int distance_Radar2 = 1000;
 };
 
-void DrawRadarPoint(D3DXVECTOR3 EneamyPos, D3DXVECTOR3 LocalPos, float LocalPlayerY, float eneamyDist, int xAxis, int yAxis, int width, int height, D3DXCOLOR color)
+void DrawRadarPoint(D3DXVECTOR3 EneamyPos, D3DXVECTOR3 LocalPos, float LocalPlayerY, float eneamyDist, int TeamID, int xAxis, int yAxis, int width, int height, D3DXCOLOR color)
 {
 	bool out = false;
 	D3DXVECTOR3 siz;
@@ -176,11 +265,90 @@ void DrawRadarPoint(D3DXVECTOR3 EneamyPos, D3DXVECTOR3 LocalPos, float LocalPlay
 	D3DXVECTOR3 single = RotatePoint(EneamyPos, LocalPos, pos.x, pos.y, siz.x, siz.y, LocalPlayerY, 0.3f, &ck);
 	if (eneamyDist >= 0.f && eneamyDist < RadarSettings::distance_Radar)
 	{
-		FilledRectangle(single.x, single.y, 5, 5, { radarcolorr, radarcolorg, radarcolorb, 255 });
+			if (TeamID == 1)
+			{
+				Team1(single.x, single.y, minimapradardotsize1, minimapradardotsize2, { 255, 255, 255, 255 });
+			}
+			if (TeamID == 2)
+			{
+				Team2(single.x, single.y, minimapradardotsize1, minimapradardotsize2, { 242, 86, 38, 255 });
+			}
+			if (TeamID == 3)
+			{
+				Team3(single.x, single.y, minimapradardotsize1, minimapradardotsize2, { 242, 86, 38, 255 });
+			}
+			if (TeamID == 4)
+			{
+				Team4(single.x, single.y, minimapradardotsize1, minimapradardotsize2, { 174, 247, 89, 255 });
+			}
+			if (TeamID == 5)
+			{
+				Team5(single.x, single.y, minimapradardotsize1, minimapradardotsize2, { 102, 214, 173, 255 });
+			}
+			if (TeamID == 6)
+			{
+				Team6(single.x, single.y, minimapradardotsize1, minimapradardotsize2, { 98, 244, 234, 255 });
+			}
+			if (TeamID == 7)
+			{
+				Team7(single.x, single.y, minimapradardotsize1, minimapradardotsize2, { 92, 208, 250, 255 });
+			}
+			if (TeamID == 8)
+			{
+				Team8(single.x, single.y, minimapradardotsize1, minimapradardotsize2, { 93, 137, 238, 255 });
+			}
+			if (TeamID == 9)
+			{
+				Team9(single.x, single.y, minimapradardotsize1, minimapradardotsize2, { 164, 105, 252, 255 });
+			}
+			if (TeamID == 10)
+			{
+				Team10(single.x, single.y, minimapradardotsize1, minimapradardotsize2, { 243, 98, 161, 255 });
+			}
+			if (TeamID == 11)
+			{
+				Team11(single.x, single.y, minimapradardotsize1, minimapradardotsize2, { 214, 67, 67, 255 });
+			}
+			if (TeamID == 12)
+			{
+				Team12(single.x, single.y, minimapradardotsize1, minimapradardotsize2, { 230, 116, 51, 255 });
+			}
+			if (TeamID == 13)
+			{
+				Team13(single.x, single.y, minimapradardotsize1, minimapradardotsize2, { 185, 179, 167, 255 });
+			}
+			if (TeamID == 14)
+			{
+				Team14(single.x, single.y, minimapradardotsize1, minimapradardotsize2, { 148, 200, 65, 255 });
+			}
+			if (TeamID == 15)
+			{
+				Team15(single.x, single.y, minimapradardotsize1, minimapradardotsize2, { 86, 174, 91, 255 });
+			}
+			if (TeamID == 16)
+			{
+				Team16(single.x, single.y, minimapradardotsize1, minimapradardotsize2, { 55, 188, 200, 255 });
+			}
+			if (TeamID == 17)
+			{
+				Team17(single.x, single.y, minimapradardotsize1, minimapradardotsize2, { 84, 169, 212, 255 });
+			}
+			if (TeamID == 18)
+			{
+				Team18(single.x, single.y, minimapradardotsize1, minimapradardotsize2, { 98, 121, 203, 255 });
+			}
+			if (TeamID == 19)
+			{
+				Team19(single.x, single.y, minimapradardotsize1, minimapradardotsize2, { 102, 61, 174, 255 });
+			}
+			if (TeamID == 20)
+			{
+				Team20(single.x, single.y, minimapradardotsize1, minimapradardotsize2, { 218, 73, 145, 255 });
+			}
 	}
 }
 //MiniMap Radar Stuff
-void MiniMapRadar(D3DXVECTOR3 EneamyPos, D3DXVECTOR3 LocalPos, float LocalPlayerY, float eneamyDist)
+void MiniMapRadar(D3DXVECTOR3 EneamyPos, D3DXVECTOR3 LocalPos, float LocalPlayerY, float eneamyDist, int TeamId)
 {
 	ImGuiStyle* style = &ImGui::GetStyle();
 	style->WindowRounding = 0.2f;
@@ -211,7 +379,7 @@ void MiniMapRadar(D3DXVECTOR3 EneamyPos, D3DXVECTOR3 LocalPos, float LocalPlayer
 			//ImGui::GetWindowDrawList()->AddLine(ImVec2(midRadar.x - DrawSize.x / 2.f, midRadar.y), ImVec2(midRadar.x + DrawSize.x / 2.f, midRadar.y), IM_COL32(255, 255, 255, 255));
 			//ImGui::GetWindowDrawList()->AddLine(ImVec2(midRadar.x, midRadar.y - DrawSize.y / 2.f), ImVec2(midRadar.x, midRadar.y + DrawSize.y / 2.f), IM_COL32(255, 255, 255, 255));
 
-			DrawRadarPoint(EneamyPos, LocalPos, LocalPlayerY, eneamyDist, DrawPos.x, DrawPos.y, DrawSize.x, DrawSize.y, { 255, 255, 255, 255 });
+			DrawRadarPoint(EneamyPos, LocalPos, LocalPlayerY, eneamyDist, TeamId, DrawPos.x, DrawPos.y, DrawSize.x, DrawSize.y, { 255, 255, 255, 255 });
 		}
 		ImGui::End();
 	}
@@ -222,7 +390,7 @@ bool IsKeyDown(int vk)
 	return (GetAsyncKeyState(vk) & 0x8000) != 0;
 }
 
-player players[100];
+
 
 
 //Full map radar test, Needs Manual setting of cords
@@ -261,7 +429,7 @@ world Habitat4(ImVec2(4482.470215, -604.362854), ImVec2(1205, 544), ImVec2(-4464
 world Encore(ImVec2(4144.926270, 468.957611), ImVec2(1184, 472), ImVec2(-3791.070313, 3.092307), ImVec2(692, 501));
 world PartyCrasher(ImVec2(-3275.972900, 3646.970703), ImVec2(589, 197), ImVec2(1085.708740, -3869.658936), ImVec2(1022, 943));
 //TODO get map auto 
-ImVec2 worldToScreenMap(D3DXVECTOR3 origin) {
+ImVec2 worldToScreenMap(D3DXVECTOR3 origin, int TeamID) {
 		float ratioX;
 		float ratioY;
 		ImVec2 w1;
@@ -273,18 +441,7 @@ ImVec2 worldToScreenMap(D3DXVECTOR3 origin) {
 			w1 = KingsCanyon.w1;
 			s1 = KingsCanyon.s1;
 		}
-		if (stormpoint == true) { //Storm Point
-			ratioX = StormPoint.ratioX;
-			ratioY = StormPoint.ratioY;
-			w1 = StormPoint.w1;
-			s1 = StormPoint.s1;
-		}
-		if (worldsedge == true) { //WorldsEdge
-			ratioX = WorldsEdge.ratioX;
-			ratioY = WorldsEdge.ratioY;
-			w1 = WorldsEdge.w1;
-			s1 = WorldsEdge.s1;
-		}
+
 		
 		else {
 			return ImVec2(0, 0);
@@ -303,7 +460,86 @@ ImVec2 worldToScreenMap(D3DXVECTOR3 origin) {
 		float pos_x = s1.x + scr_diff_x;
 		float pos_y = s1.y - scr_diff_y;
 
-		FilledRectangle(pos_x, pos_y, 5, 5, { radarcolorr, radarcolorg, radarcolorb, 255 });
+		if (TeamID == 1)
+		{
+			Team1(pos_x, pos_y, mainmapradardotsize1, mainmapradardotsize2, { 255, 255, 255, 255 });
+		}
+		if (TeamID == 2)
+		{
+			Team2(pos_x, pos_y, mainmapradardotsize1, mainmapradardotsize2, { 242, 86, 38, 255 });
+		}
+		if (TeamID == 3)
+		{
+			Team3(pos_x, pos_y, mainmapradardotsize1, mainmapradardotsize2, { 242, 86, 38, 255 });
+		}
+		if (TeamID == 4)
+		{
+			Team4(pos_x, pos_y, mainmapradardotsize1, mainmapradardotsize2, { 174, 247, 89, 255 });
+		}
+		if (TeamID == 5)
+		{
+			Team5(pos_x, pos_y, mainmapradardotsize1, mainmapradardotsize2, { 102, 214, 173, 255 });
+		}
+		if (TeamID == 6)
+		{
+			Team6(pos_x, pos_y, mainmapradardotsize1, mainmapradardotsize2, { 98, 244, 234, 255 });
+		}
+		if (TeamID == 7)
+		{
+			Team7(pos_x, pos_y, mainmapradardotsize1, mainmapradardotsize2, { 92, 208, 250, 255 });
+		}
+		if (TeamID == 8)
+		{
+			Team8(pos_x, pos_y, mainmapradardotsize1, mainmapradardotsize2, { 93, 137, 238, 255 });
+		}
+		if (TeamID == 9)
+		{
+			Team9(pos_x, pos_y, mainmapradardotsize1, mainmapradardotsize2, { 164, 105, 252, 255 });
+		}
+		if (TeamID == 10)
+		{
+			Team10(pos_x, pos_y, mainmapradardotsize1, mainmapradardotsize2, { 243, 98, 161, 255 });
+		}
+		if (TeamID == 11)
+		{
+			Team11(pos_x, pos_y, mainmapradardotsize1, mainmapradardotsize2, { 214, 67, 67, 255 });
+		}
+		if (TeamID == 12)
+		{
+			Team12(pos_x, pos_y, mainmapradardotsize1, mainmapradardotsize2, { 230, 116, 51, 255 });
+		}
+		if (TeamID == 13)
+		{
+			Team13(pos_x, pos_y, mainmapradardotsize1, mainmapradardotsize2, { 185, 179, 167, 255 });
+		}
+		if (TeamID == 14)
+		{
+			Team14(pos_x, pos_y, mainmapradardotsize1, mainmapradardotsize2, { 148, 200, 65, 255 });
+		}
+		if (TeamID == 15)
+		{
+			Team15(pos_x, pos_y, mainmapradardotsize1, mainmapradardotsize2, { 86, 174, 91, 255 });
+		}
+		if (TeamID == 16)
+		{
+			Team16(pos_x, pos_y, mainmapradardotsize1, mainmapradardotsize2, { 55, 188, 200, 255 });
+		}
+		if (TeamID == 17)
+		{
+			Team17(pos_x, pos_y, mainmapradardotsize1, mainmapradardotsize2, { 84, 169, 212, 255 });
+		}
+		if (TeamID == 18)
+		{
+			Team18(pos_x, pos_y, mainmapradardotsize1, mainmapradardotsize2, { 98, 121, 203, 255 });
+		}
+		if (TeamID == 19)
+		{
+			Team19(pos_x, pos_y, mainmapradardotsize1, mainmapradardotsize2, { 102, 61, 174, 255 });
+		}
+		if (TeamID == 20)
+		{
+			Team20(pos_x, pos_y, mainmapradardotsize1, mainmapradardotsize2, { 218, 73, 145, 255 });
+		}
 		
 	
 }
@@ -339,7 +575,7 @@ void Overlay::RenderEsp()
 					//Radar Stuff
 					if (minimapradar == true)
 					{
-							MiniMapRadar(players[i].EntityPosition, players[i].LocalPlayerPosition, players[i].localviewangle.y, radardistance);
+							MiniMapRadar(players[i].EntityPosition, players[i].LocalPlayerPosition, players[i].localviewangle.y, radardistance, players[i].entity_team);
 					}
 					if (v.line)
 						DrawLine(ImVec2((float)(getWidth() / 2), (float)getHeight()), ImVec2(players[i].b_x, players[i].b_y), BLUE, 1); //LINE FROM MIDDLE SCREEN
@@ -359,7 +595,7 @@ void Overlay::RenderEsp()
 					//Full Radar map, Need Manual setting of cords
 					if (mainradarmap == true)
 
-						worldToScreenMap(players[i].EntityPosition);
+						worldToScreenMap(players[i].EntityPosition, players[i].entity_team);
 
 						//String(ImVec2(players[i].boxMiddle, (players[i].b_y - players[i].height - 15)), WHITE, players[i].name);
 				}

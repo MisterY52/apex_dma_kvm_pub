@@ -24,7 +24,9 @@ extern float glowr; //Red Value
 extern float glowg; //Green Value
 extern float glowb; //Blue Value
 extern float glowcolor[3];
-//radar color
+//MiniMap Radar
+int minimapradardotsize1 = 5;
+int minimapradardotsize2 = 5;
 extern bool minimapradar;
 unsigned int radarcolorr = 0; //Red Value
 unsigned int radarcolorg = 0; //Green Value
@@ -32,10 +34,10 @@ unsigned int radarcolorb = 0; //Blue Value
 extern float radarcolor[3];
 //Main Map Radar
 extern bool mainradarmap;
-// Main Map Radar Stuff
-extern bool stormpoint; //Set for map, ONLY ONE THO
-extern bool worldsedge; //Set for map, ONLY ONE THO
-extern bool kingscanyon; //Set for map, ONLY ONE THO
+int mainmapradardotsize1 = 5;
+int mainmapradardotsize2 = 5;
+
+
 
 int width;
 int height;
@@ -128,9 +130,13 @@ void Overlay::RenderMenu()
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
 	ImGui::SetNextWindowSize(ImVec2(450, 860), ImGuiCond_Once);
 	ImGui::Begin(XorStr("##title"), (bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
-	ImGui::Sliderbox(XorStr("ESP Toggle"), &esp);
+	if (ImGui::BeginTabBar(XorStr("Tab")))
+	{
+		if (ImGui::BeginTabItem(XorStr("Main")))
+		{
+			ImGui::Sliderbox(XorStr("ESP Toggle"), &esp);
 
-	ImGui::Sliderbox(XorStr("AIM Toggle"), &aim_enable);
+			ImGui::Sliderbox(XorStr("AIM Toggle"), &aim_enable);
 
 			if (aim_enable)
 			{
@@ -158,32 +164,6 @@ void Overlay::RenderMenu()
 			ImGui::Sliderbox(XorStr("Thirdperson"), &thirdperson);
 			ImGui::Sliderbox(XorStr("Firing Range Toggle"), &firing_range);
 			ImGui::Sliderbox(XorStr("Mini-Map Radar"), &minimapradar);
-			ImGui::Text(XorStr("Main Map Selection Config:"));
-			//setting the state counter
-			static int e = 0;
-			//Is it me being lazy? or that i dont know how? prob both. Setting the Map for the Main Map Radar
-			ImGui::RadioButton("King's Canyon", &e, 1); ImGui::SameLine();
-			ImGui::RadioButton("World's Edge", &e, 2); ImGui::SameLine();
-			ImGui::RadioButton("Storm Point", &e, 3);
-			//Setting one and unsetting the other
-			if (e == 1)
-			{
-				kingscanyon = true;
-				worldsedge = false;
-				stormpoint = false;
-			}
-			else if (e == 2)
-			{
-				kingscanyon = false;
-				worldsedge = true;
-				stormpoint = false;
-			}
-			else if (e == 3)
-			{
-				kingscanyon = false;
-				worldsedge = false;
-				stormpoint = true;
-			}
 			ImGui::Text(XorStr("Max distance:"));
 			ImGui::SliderFloat(XorStr("##1"), &max_dist, 100.0f * 40, 3800.0f * 40, "%.2f");
 			ImGui::SameLine();
@@ -251,7 +231,7 @@ void Overlay::RenderMenu()
 					config << v.healthbar << "\n";
 					config << v.shieldbar << "\n";
 					config << v.distance << "\n";
-					config << thirdperson<< "\n";
+					config << thirdperson << "\n";
 					config << std::boolalpha << minimapradar;
 					config.close();
 				}
@@ -291,8 +271,24 @@ void Overlay::RenderMenu()
 					config >> thirdperson;
 					config >> minimapradar;
 					config.close();
+					
 				}
-			}	
+			}
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem(XorStr("Radar")))
+		{
+			//Dot Size for both mini and main map
+			ImGui::Text(XorStr("MiniMap Radar Dot Size"));
+			ImGui::SliderInt(XorStr("MiniMap Dot Width"), &minimapradardotsize1, 1, 10);
+			ImGui::SliderInt(XorStr("MiniMap Dot length"), &minimapradardotsize2, 1, 10);
+			ImGui::Text(XorStr("Main Map Radar Dot Size"));
+			ImGui::SliderInt(XorStr("Main Map Dot Width"), &mainmapradardotsize1, 1, 10);
+			ImGui::SliderInt(XorStr("Main Map Dot length"), &mainmapradardotsize2, 1, 10);
+			ImGui::EndTabItem();
+		}
+		ImGui::EndTabBar();
+	}
 	ImGui::Text(XorStr("Overlay FPS: %.3f ms/frame (%.1f FPS)"), 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	ImGui::End();
 }
