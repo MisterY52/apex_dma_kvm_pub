@@ -67,7 +67,76 @@ bool mainradarmap = false; //if the Main Map Radar is enabled
 bool kingscanyon = true; //Set for map, ONLY ONE THO
 extern int mainmapradardotsize1;
 extern int mainmapradardotsize2;
-
+//Ha think i was done ?
+//Item Filter Brute Force!
+bool lightbackpack = false;
+bool medbackpack = false;
+bool heavybackpack = false;
+bool shieldupgrade = false;
+bool shieldupgradehead = false;
+bool accelerant = false;
+bool phoenix = false;
+bool healthlarge = false;
+bool healthsmall = false;
+bool shieldbattsmall = false;
+bool shieldbattlarge = false;
+bool ammosniper = false;
+bool ammohc = false;
+bool optic = false;
+bool ammosc = false;
+bool ammonrg = false;
+bool ammoshotgun = false;
+bool lasersight = false;
+bool magsniper = false;
+bool magenergy = false;
+bool stocksniper = false;
+bool stockregular = false;
+bool shielddown = false;
+bool lightammomag = false;
+bool heavyammomag = false;
+bool optic2x = false;
+bool opticholo1x = false;
+bool opticsniper6x = false;
+bool opticsniper4x8x = false;
+bool opticsniperthreat = false;
+bool optic2x4x = false;
+bool opticthreat = false;
+bool optic3x = false;
+bool opticholo1x2x = false;
+bool suppressor = false;
+bool weaponmod = false;
+bool grenade_frag = false;
+bool grenade_arc_star = false;
+bool grenade_thermite = false;
+bool shotgunbolt = false;
+bool weapon_kraber = false;
+bool weapon_mastiff = false;
+bool weapon_lstar = false;
+bool weapon_havoc = false;
+bool weapon_devotion = false;
+bool weapon_triple_take = false;
+bool weapon_flatline = false;
+bool weapon_hemlock = false;
+bool weapon_g7_scout = false;
+bool weapon_alternator = false;
+bool weapon_r99 = false;
+bool weapon_prowler = false;
+bool weapon_volt = false;
+bool weapon_longbow = false;
+bool weapon_charge_rifle = false;
+bool weapon_spitfire = false;
+bool weapon_r301 = false;
+bool weapon_eva8 = false;
+bool weapon_peacekeeper = false;
+bool weapon_mozambique = false;
+bool weapon_wingman = false;
+bool weapon_p2020 = false;
+bool weapon_re45 = false;
+bool weapon_sentinel = false;
+bool weapon_bow = false;
+bool weapon_3030_repeater = false;
+bool weapon_rampage = false;
+bool weapon_car_smg = false;
 
 
 bool thirdperson = false;
@@ -76,7 +145,7 @@ int allied_spectators = 0; //write
 bool valid = true; //write
 bool next2 = true; //read write
 
-uint64_t add[24];
+uint64_t add[93];
 
 bool k_f5 = 0;
 bool k_f6 = 0;
@@ -629,6 +698,77 @@ int main(int argc, char** argv)
 	add[21] = (uintptr_t)&glowg;
 	add[22] = (uintptr_t)&glowb;
 	add[23] = (uintptr_t)&firing_range;
+	add[24] = (uintptr_t)&lightbackpack;
+	add[25] = (uintptr_t)&medbackpack;
+	add[26] = (uintptr_t)&heavybackpack;
+	add[27] = (uintptr_t)&shieldupgrade;
+	add[28] = (uintptr_t)&shieldupgradehead;
+	add[29] = (uintptr_t)&accelerant;
+	add[30] = (uintptr_t)&phoenix;
+	add[31] = (uintptr_t)&healthlarge;
+	add[32] = (uintptr_t)&healthsmall;
+	add[33] = (uintptr_t)&shieldbattsmall;
+	add[34] = (uintptr_t)&shieldbattlarge;
+	add[35] = (uintptr_t)&ammosniper;
+	add[36] = (uintptr_t)&ammohc;
+	add[37] = (uintptr_t)&optic;
+	add[38] = (uintptr_t)&ammosc;
+	add[39] = (uintptr_t)&ammonrg;
+	add[40] = (uintptr_t)&ammoshotgun;
+	add[41] = (uintptr_t)&lasersight;
+	add[42] = (uintptr_t)&magsniper;
+	add[43] = (uintptr_t)&magenergy;
+	add[44] = (uintptr_t)&stocksniper;
+	add[45] = (uintptr_t)&stockregular;
+	add[46] = (uintptr_t)&shielddown;
+	add[47] = (uintptr_t)&lightammomag;
+	add[48] = (uintptr_t)&heavyammomag;
+	add[49] = (uintptr_t)&optic2x;
+	add[50] = (uintptr_t)&opticholo1x;
+	add[51] = (uintptr_t)&opticholo1x2x;
+	add[52] = (uintptr_t)&opticthreat;
+	add[53] = (uintptr_t)&optic3x;
+	add[54] = (uintptr_t)&optic2x4x;
+	add[55] = (uintptr_t)&opticsniper6x;
+	add[56] = (uintptr_t)&opticsniper4x8x;
+	add[57] = (uintptr_t)&opticsniperthreat;
+	add[58] = (uintptr_t)&suppressor;
+	add[59] = (uintptr_t)&weaponmod;
+	add[60] = (uintptr_t)&grenade_frag;
+	add[61] = (uintptr_t)&grenade_arc_star;
+	add[62] = (uintptr_t)&grenade_thermite;
+	add[63] = (uintptr_t)&shotgunbolt;
+	add[64] = (uintptr_t)&weapon_kraber;
+	add[65] = (uintptr_t)&weapon_mastiff;
+	add[66] = (uintptr_t)&weapon_lstar;
+	add[67] = (uintptr_t)&weapon_havoc;
+	add[68] = (uintptr_t)&weapon_devotion;
+	add[69] = (uintptr_t)&weapon_triple_take;
+	add[70] = (uintptr_t)&weapon_flatline;
+	add[71] = (uintptr_t)&weapon_hemlock;
+	add[72] = (uintptr_t)&weapon_g7_scout;
+	add[73] = (uintptr_t)&weapon_alternator;
+	add[74] = (uintptr_t)&weapon_r99;
+	add[75] = (uintptr_t)&weapon_prowler;
+	add[76] = (uintptr_t)&weapon_volt;
+	add[77] = (uintptr_t)&weapon_longbow;
+	add[78] = (uintptr_t)&weapon_charge_rifle;
+	add[79] = (uintptr_t)&weapon_spitfire;
+	add[80] = (uintptr_t)&weapon_r301;
+	add[81] = (uintptr_t)&weapon_eva8;
+	add[82] = (uintptr_t)&weapon_peacekeeper;
+	add[83] = (uintptr_t)&weapon_mozambique;
+	add[84] = (uintptr_t)&weapon_wingman;
+	add[85] = (uintptr_t)&weapon_p2020;
+	add[86] = (uintptr_t)&weapon_re45;
+	add[87] = (uintptr_t)&weapon_sentinel;
+	add[88] = (uintptr_t)&weapon_bow;
+	add[89] = (uintptr_t)&weapon_3030_repeater;
+	add[90] = (uintptr_t)&weapon_rampage;
+	add[91] = (uintptr_t)&weapon_car_smg;
+
+
+
 	
 	printf(XorStr("Game Version v3.0.12.19 |-| Main Map Radar Test |-| Add me offset: 0x%I64x\n"), (uint64_t)&add[0] - (uint64_t)GetModuleHandle(NULL));
 

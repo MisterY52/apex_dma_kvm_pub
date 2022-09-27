@@ -51,6 +51,10 @@
 #define OFFSET_AMMO 0x1624 //m_ammoInClip first offset 
 
 #define OFFSET_ITEM_GLOW 0x02c0 //m_highlightFunctionBits
+#define OFFSET_ITEM_ID 0x0589 // item id?
+#define OFFSET_MODELNAME 0x0030 // m_ModelName
+#define OFFSET_M_CUSTOMSCRIPTINT 0x1628 //m_customScriptInt
+#define OFFSET_MINIMAP_SCALE 0x4560 //m_minimapTargetZoomScale, float
 
 #define OFFSET_GLOW_T1 0x262 //16256 = enabled, 0 = disabled
 #define OFFSET_GLOW_T2 0x2dc //1193322764 = enabled, 0 = disabled
