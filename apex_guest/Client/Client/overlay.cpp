@@ -19,11 +19,22 @@ extern int bone;
 extern bool thirdperson;
 extern int spectators;
 extern int allied_spectators;
+//Left and Right Aim key toggle
+extern bool toggleaim;
+extern bool toggleaim2;
+int e = 0;
+//World to Screen Res
+extern int lengthws;
+extern int widthws;
+int wss = 0;
 //glow color and type
 extern float glowr; //Red Value
 extern float glowg; //Green Value
 extern float glowb; //Blue Value
 extern float glowcolor[3];
+//Radar multi res
+extern int wstimesx;
+extern int wstimesy;
 //MiniMap Radar
 int minimapradardotsize1 = 5;
 int minimapradardotsize2 = 5;
@@ -207,6 +218,26 @@ void Overlay::RenderMenu()
 			ImGui::Sliderbox(XorStr("ESP Toggle"), &esp);
 
 			ImGui::Sliderbox(XorStr("AIM Toggle"), &aim_enable);
+			ImGui::RadioButton("Left Mouse Aim", &e, 1); ImGui::SameLine();
+			ImGui::RadioButton("Right Mouse Aim", &e, 2); ImGui::SameLine();
+			ImGui::RadioButton("Left and Right Mouse Aim", &e, 3);
+			//Setting one and unsetting the other
+			if (e == 1)
+			{
+				toggleaim = true;
+				toggleaim2 = false;			
+			}
+			else if (e == 2)
+			{
+				toggleaim = false;
+				toggleaim2 = true;
+			}
+			else if (e == 3)
+			{
+				toggleaim = true;
+				toggleaim2 = true;
+			}
+			
 
 			if (aim_enable)
 			{
@@ -372,8 +403,17 @@ void Overlay::RenderMenu()
 					config << std::boolalpha << weapon_bow << "\n";
 					config << std::boolalpha << weapon_3030_repeater << "\n";
 					config << std::boolalpha << weapon_rampage << "\n";
-					config << std::boolalpha << weapon_car_smg;
-
+					config << std::boolalpha << weapon_car_smg << "\n";
+					config << toggleaim << "\n";
+					config << toggleaim2 << "\n";
+					config << e << "\n";
+					config << lengthws << "\n";
+					config << widthws << "\n";
+					config << wss << "\n";
+					config << wstimesx << "\n";
+					config << wstimesy << "\n";
+					config << minimapradardotsize1 << "\n";
+					config << minimapradardotsize2;
 					config.close();
 				}
 			}
@@ -480,6 +520,16 @@ void Overlay::RenderMenu()
 					config >> weapon_3030_repeater;
 					config >> weapon_rampage;
 					config >> weapon_car_smg;
+					config >> toggleaim;
+					config >> toggleaim2;
+					config >> e;
+					config >> lengthws;
+					config >> widthws;
+					config >> wss;
+					config >> wstimesx;
+					config >> wstimesy;
+					config >> minimapradardotsize1;
+					config >> minimapradardotsize2;
 					config.close();
 					
 				}
@@ -495,6 +545,41 @@ void Overlay::RenderMenu()
 			ImGui::Text(XorStr("Main Map Radar Dot Size"));
 			ImGui::SliderInt(XorStr("Main Map Dot Width"), &mainmapradardotsize1, 1, 10);
 			ImGui::SliderInt(XorStr("Main Map Dot length"), &mainmapradardotsize2, 1, 10);
+			ImGui::Text(XorStr("Radar Screen Res"));
+			ImGui::RadioButton("1080p", &wss, 1); ImGui::SameLine();
+			ImGui::RadioButton("1440p", &wss, 2); ImGui::SameLine();
+			ImGui::RadioButton("4k", &wss, 3);
+			//Setting one and unsetting the other
+			if (wss == 1)
+			{
+				lengthws = 1080;
+				widthws = 1920;
+			}
+			else if (wss == 2)
+			{
+				lengthws = 1440;
+				widthws = 2560;
+			}
+			else if (wss == 3)
+			{
+				lengthws = 3840;
+				widthws = 2160;
+			}
+			if (wss == 1)
+			{
+				wstimesx = 0;
+				wstimesy = 0;
+			}
+			if (wss == 2)
+			{
+				wstimesx = 1.3333333;
+				wstimesy = 1.3333333;
+			}
+			if (wss == 3)
+			{
+				wstimesx = 2;
+				wstimesy = 2;
+			}
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem(XorStr("Item Filter List")))

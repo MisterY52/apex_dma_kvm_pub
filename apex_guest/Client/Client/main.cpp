@@ -31,7 +31,14 @@ int aim_key = VK_LBUTTON; //Left Click
 int aim_key2 = VK_RBUTTON; //Right Click
 int shoot_key = VK_LBUTTON; //Left Click
 int shoot_key2 = VK_RBUTTON; //Right Click
-
+//Left and Right Aim key toggle
+bool toggleaim = false;
+bool toggleaim2 = false;
+extern int e;
+//World to Screen res
+int lengthws = 1920;
+int widthws = 1920;
+extern int wss;
 bool firing_range = false;
 bool use_nvidia = true; //Nvidia Shadowplay Overlay
 bool active = true;
@@ -53,6 +60,9 @@ float glowr = 120.0f; //Red Value
 float glowg = 0.0f; //Green Value
 float glowb = 0.0f; //Blue Value
 float glowcolor[3] = { 000.0f, 000.0f, 000.0f };
+//Radar multi res
+int wstimesx = 0;
+int wstimesy = 0;
 //MiniMap Radar
 extern int minimapradardotsize1;
 extern int minimapradardotsize2;
@@ -145,7 +155,7 @@ int allied_spectators = 0; //write
 bool valid = true; //write
 bool next2 = true; //read write
 
-uint64_t add[93];
+uint64_t add[95];
 
 bool k_f5 = 0;
 bool k_f6 = 0;
@@ -487,7 +497,8 @@ public:
 // 
 // First set is the x cord, then the y cord, then the screen pos from the screenshot, do the same for the second set.
 //Battel Royal
-world KingsCanyon(ImVec2(25223.177734, 28906.144531), ImVec2(1197, 185), ImVec2(10399.223633, 13334.792969), ImVec2(1014, 381)); //could be more accurate 
+//Screen res multi
+world KingsCanyon(ImVec2(25223.177734, 28906.144531), ImVec2(1197 * wstimesx, 185 * wstimesy), ImVec2(10399.223633, 13334.792969), ImVec2(1014 * wstimesx, 381 * wstimesy)); //could be more accurate 
 world WorldsEdge(ImVec2(-9190.608398, 8443.554688), ImVec2(824, 412), ImVec2(-19529.794922, -8933.173828), ImVec2(707, 608));
 world Olympus(ImVec2(0, 0), ImVec2(0, 0), ImVec2(0, 0), ImVec2(0, 0)); //to be measured
 world StormPoint(ImVec2(-21264.427734, -47086.878906), ImVec2(711, 983), ImVec2(40298.070313, 21163.728516), ImVec2(1321, 306));
@@ -766,6 +777,8 @@ int main(int argc, char** argv)
 	add[89] = (uintptr_t)&weapon_3030_repeater;
 	add[90] = (uintptr_t)&weapon_rampage;
 	add[91] = (uintptr_t)&weapon_car_smg;
+	add[92] = (uintptr_t)&lengthws;
+	add[93] = (uintptr_t)&widthws;
 
 
 
@@ -900,6 +913,14 @@ int main(int argc, char** argv)
 				config >> weapon_3030_repeater;
 				config >> weapon_rampage;
 				config >> weapon_car_smg;
+				config >> toggleaim;
+				config >> toggleaim2;
+				config >> e;
+				config >> lengthws;
+				config >> widthws;
+				config >> wss;
+				config >> wstimesx;
+				config >> wstimesy;
 				config.close();
 			}
 		}
@@ -949,12 +970,12 @@ int main(int argc, char** argv)
 			mainradartoggle = 0;
 		}
 		
-		if (IsKeyDown(aim_key))
+		if (IsKeyDown(aim_key) && toggleaim)
 		{
 				aiming = true;
 		}
 
-		else if (IsKeyDown(aim_key2))
+		else if (IsKeyDown(aim_key2) && toggleaim2)
 				aiming = true;
 		else
 		{
