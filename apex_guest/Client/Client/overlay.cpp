@@ -118,6 +118,8 @@ extern bool weapon_bow;
 extern bool weapon_3030_repeater;
 extern bool weapon_rampage;
 extern bool weapon_car_smg;
+//Aim Dist check
+extern float aimdist;
 
 
 int width;
@@ -218,6 +220,11 @@ void Overlay::RenderMenu()
 			ImGui::Sliderbox(XorStr("ESP Toggle"), &esp);
 
 			ImGui::Sliderbox(XorStr("AIM Toggle"), &aim_enable);
+			ImGui::Text(XorStr("Aim Distance:"));
+			ImGui::SameLine();
+			ImGui::SliderFloat(XorStr("##Aim Distance"), &aimdist, 10.0f * 39.62, 1600.0f * 39.62, "##");
+			ImGui::SameLine();
+			ImGui::TextColored(GREEN, "%.0f ", aimdist / 39.62);
 			ImGui::RadioButton("Left Mouse Aim", &e, 1); ImGui::SameLine();
 			ImGui::RadioButton("Right Mouse Aim", &e, 2); ImGui::SameLine();
 			ImGui::RadioButton("Left and Right Mouse Aim", &e, 3);
@@ -413,7 +420,8 @@ void Overlay::RenderMenu()
 					config << wstimesx << "\n";
 					config << wstimesy << "\n";
 					config << minimapradardotsize1 << "\n";
-					config << minimapradardotsize2;
+					config << minimapradardotsize2 << "\n";
+					config << aimdist;
 					config.close();
 				}
 			}
@@ -530,6 +538,7 @@ void Overlay::RenderMenu()
 					config >> wstimesy;
 					config >> minimapradardotsize1;
 					config >> minimapradardotsize2;
+					config >> aimdist;
 					config.close();
 					
 				}
@@ -727,15 +736,18 @@ void Overlay::RenderMenu()
 void Overlay::RenderInfo()
 {	
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
-	ImGui::SetNextWindowSize(ImVec2(160, 25));
+	ImGui::SetNextWindowSize(ImVec2(300, 25));
 	ImGui::Begin(XorStr("##info"), (bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar);
-	DrawLine(ImVec2(1, 5), ImVec2(160, 5), RED, 2);
+	DrawLine(ImVec2(1, 5), ImVec2(300, 5), RED, 2);
 	ImGui::TextColored(RED, "%d", spectators);
 	ImGui::SameLine();
 	ImGui::Text("--");
 	ImGui::SameLine();
 	ImGui::TextColored(GREEN, "%d", allied_spectators);
 	ImGui::SameLine();
+	ImGui::Text("--");
+	ImGui::SameLine();
+	ImGui::TextColored(GREEN, "%.0f ", aimdist / 39.62);
 	ImGui::Text("--");
 	ImGui::SameLine();
 	//Aim is on = 2, On but No Vis Check = 1, Off = 0
@@ -747,6 +759,7 @@ void Overlay::RenderInfo()
 	{
 		ImGui::TextColored(RED, "Aim Off %d", aim);
 	}
+
 	ImGui::End();
 }
 

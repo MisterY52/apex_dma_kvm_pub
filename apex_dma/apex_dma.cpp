@@ -118,6 +118,9 @@ bool weapon_bow  = false;
 bool weapon_3030_repeater = false; 
 bool weapon_rampage  = false;
 bool weapon_car_smg  = false;
+//aim dist check
+float aimdist = 200.0f * 40.0f;
+
 
 
 
@@ -192,7 +195,7 @@ void ProcessPlayer(Entity& LPlayer, Entity& target, uint64_t entitylist, int ind
 	Vector LocalPlayerPosition = LPlayer.getPosition();
 	float dist = LocalPlayerPosition.DistTo(EntityPosition);
 	//std::printf("  X: %.6f   ||    Y:%.6f",LocalPlayerPosition.x, LocalPlayerPosition.y); //Prints x and y cords of localplayer to get mainmap radar stuff.
-	if (dist > max_dist) return;
+	if (dist > aimdist) return;
 
 	if(!firing_range)
 		if (entity_team < 0 || entity_team>50 || entity_team == team_player) return;
@@ -845,6 +848,8 @@ static void set_vars(uint64_t add_addr)
 	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*92, lengthws_addr);
 	uint64_t widthws_addr = 0;
 	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*93, widthws_addr);
+	uint64_t aimdist_addr = 0;
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*94, aimdist_addr);
 	
 	
 	
@@ -959,6 +964,7 @@ static void set_vars(uint64_t add_addr)
 			client_mem.Read<bool>(weapon_car_smg_addr, weapon_car_smg);
 			client_mem.Read<int>(lengthws_addr, lengthws);
 			client_mem.Read<int>(widthws_addr, widthws);
+			client_mem.Read<float>(aimdist_addr, aimdist);
 
 			
 			
@@ -1677,7 +1683,7 @@ static void item_glow_t()
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						
+						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
  
 						apex_mem.Write<float>(centity + 0x1D0, 144); // r
 						apex_mem.Write<float>(centity + 0x1D4, 238); // g
@@ -1731,7 +1737,7 @@ int main(int argc, char *argv[])
 	//const char* ap_proc = "EasyAntiCheat_launcher.exe";
 
 	//Client "add" offset
-	uint64_t add_off = 0x1409a0;
+	uint64_t add_off = 0x1409b0;
 
 	std::thread aimbot_thr;
 	std::thread esp_thr;

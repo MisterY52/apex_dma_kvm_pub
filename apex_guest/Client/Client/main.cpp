@@ -147,6 +147,8 @@ bool weapon_bow = false;
 bool weapon_3030_repeater = false;
 bool weapon_rampage = false;
 bool weapon_car_smg = false;
+// Aim distance check
+float aimdist = 9905.0f;
 
 
 bool thirdperson = false;
@@ -155,7 +157,7 @@ int allied_spectators = 0; //write
 bool valid = true; //write
 bool next2 = true; //read write
 
-uint64_t add[95];
+uint64_t add[96];
 
 bool k_f5 = 0;
 bool k_f6 = 0;
@@ -779,6 +781,7 @@ int main(int argc, char** argv)
 	add[91] = (uintptr_t)&weapon_car_smg;
 	add[92] = (uintptr_t)&lengthws;
 	add[93] = (uintptr_t)&widthws;
+	add[94] = (uintptr_t)&aimdist;
 
 
 
@@ -921,6 +924,9 @@ int main(int argc, char** argv)
 				config >> wss;
 				config >> wstimesx;
 				config >> wstimesy;
+				config >> minimapradardotsize1;
+				config >> minimapradardotsize2;
+				config >> aimdist;
 				config.close();
 			}
 		}
@@ -972,15 +978,16 @@ int main(int argc, char** argv)
 		
 		if (IsKeyDown(aim_key) && toggleaim)
 		{
-				aiming = true;
+			aiming = true;
 		}
 
 		else if (IsKeyDown(aim_key2) && toggleaim2)
-				aiming = true;
+			aiming = true;
 		else
 		{
-				aiming = false;
+			aiming = false;
 		}
+		
 	}
 	ready = false;
 	ov1.Clear();
