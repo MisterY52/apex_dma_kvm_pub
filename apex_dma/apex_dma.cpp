@@ -1117,6 +1117,18 @@ static void item_glow_t()
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 2);
 						
 					}
+					
+					
+					if (strstr(glowName, "mdl/props/caustic_gas_tank/caustic_gas_tank.rmdl")) 
+					{
+					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
+						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
+ 
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 255 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 0 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 0 / itemglowbrightness); // b
+					}
 					if (healthlarge && strstr(glowName, "mdl/weapons_r5/loot/w_loot_wep_iso_health_main_large.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
@@ -1742,7 +1754,7 @@ int main(int argc, char *argv[])
 	//const char* ap_proc = "EasyAntiCheat_launcher.exe";
 
 	//Client "add" offset
-	uint64_t add_off = 0x1419b0;
+	uint64_t add_off = 0x1419c0;
 
 	std::thread aimbot_thr;
 	std::thread esp_thr;

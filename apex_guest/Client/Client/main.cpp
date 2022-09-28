@@ -63,7 +63,11 @@ float glowcolor[3] = { 000.0f, 000.0f, 000.0f };
 //Radar multi res
 int wstimesx = 0;
 int wstimesy = 0;
+float fwstimesx = 170.0f;
+float fwstimesy = 170.0f;
 //MiniMap Radar
+int minimapposx = 0;
+int minimapposy = 0;
 extern int minimapradardotsize1;
 extern int minimapradardotsize2;
 bool minimapradar = false;
@@ -74,7 +78,8 @@ float radarcolor[3];
 //Full Map Radar
 bool mainradartoggle = 0; //Toggle for Main Map radar
 bool mainradarmap = false; //if the Main Map Radar is enabled
-bool kingscanyon = true; //Set for map, ONLY ONE THO
+bool kingscanyon = false; //Set for map, ONLY ONE THO
+bool stormpoint = true; //Set for map, ONLY ONE THO
 extern int mainmapradardotsize1;
 extern int mainmapradardotsize2;
 //Ha think i was done ?
@@ -433,22 +438,17 @@ void DrawRadarPoint(D3DXVECTOR3 EneamyPos, D3DXVECTOR3 LocalPos, float LocalPlay
 //MiniMap Radar Stuff
 void MiniMapRadar(D3DXVECTOR3 EneamyPos, D3DXVECTOR3 LocalPos, float LocalPlayerY, float eneamyDist, int TeamId)
 {
-	ImGuiStyle* style = &ImGui::GetStyle();
-	style->WindowRounding = 0.2f;
-	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.13529413f, 0.14705884f, 0.15490198f, 0.82f));
+	
 	ImGuiWindowFlags TargetFlags;
 	//Radar Window Flags: No Move, Resize, Title bar, Background etc. makes it so you can change it once set.
 
 	//slash out  | ImGuiWindowFlags_::ImGuiWindowFlags_NoMove to move the minimap
-	TargetFlags = ImGuiWindowFlags_::ImGuiWindowFlags_NoResize | ImGuiWindowFlags_::ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_::ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_::ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_::ImGuiWindowFlags_NoMove;
+	TargetFlags = ImGuiWindowFlags_::ImGuiWindowFlags_NoResize | ImGuiWindowFlags_::ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_::ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_::ImGuiWindowFlags_NoTitleBar;
 
-	if (!firstS) //dunno
-	{
-		ImGui::SetNextWindowPos(ImVec2{ 1200, 60 }, ImGuiCond_Once);
-		firstS = true;
-	}
+	
 	if (RadarSettings::Radar == true)
 	{
+		ImGui::SetNextWindowPos(ImVec2{ fwstimesx - 125, fwstimesy - 125});
 		ImGui::SetNextWindowSize({ 250, 250 });
 		ImGui::Begin(("Radar"), 0, TargetFlags);
 		//if (ImGui::Begin(xorstr("Radar", 0, ImVec2(200, 200), -1.f, TargetFlags))) {
@@ -466,7 +466,7 @@ void MiniMapRadar(D3DXVECTOR3 EneamyPos, D3DXVECTOR3 LocalPos, float LocalPlayer
 		}
 		ImGui::End();
 	}
-	ImGui::PopStyleColor();
+	
 }
 bool IsKeyDown(int vk)
 {
@@ -505,7 +505,7 @@ public:
 world KingsCanyon(ImVec2(25223.177734, 28906.144531), ImVec2(1197 * wstimesx, 185 * wstimesy), ImVec2(10399.223633, 13334.792969), ImVec2(1014 * wstimesx, 381 * wstimesy)); //could be more accurate 
 world WorldsEdge(ImVec2(-9190.608398, 8443.554688), ImVec2(824, 412), ImVec2(-19529.794922, -8933.173828), ImVec2(707, 608));
 world Olympus(ImVec2(0, 0), ImVec2(0, 0), ImVec2(0, 0), ImVec2(0, 0)); //to be measured
-world StormPoint(ImVec2(-21264.427734, -47086.878906), ImVec2(711, 983), ImVec2(40298.070313, 21163.728516), ImVec2(1321, 306));
+world StormPoint(ImVec2(-21264.427734, -47086.878906), ImVec2(711 * wstimesx, 983 * wstimesy), ImVec2(40298.070313, 21163.728516), ImVec2(1321 * wstimesx, 306 * wstimesy));
 //Arena
 world Overflow(ImVec2(-3344.994629, -4018.093018), ImVec2(552, 431), ImVec2(5039.592773, -4639.289063), ImVec2(1322, 489));
 world DropOff(ImVec2(3135.113281, 1654.107666), ImVec2(1151, 603), ImVec2(-2920.918701, 811.240479), ImVec2(722, 663));
@@ -519,13 +519,19 @@ ImVec2 worldToScreenMap(D3DXVECTOR3 origin, int TeamID) {
 		ImVec2 w1;
 		ImVec2 s1;
 		//Is it me being lazy? or that i dont know how? prob both. True or False for the map detection, set in the overlay menu.
-		if (kingscanyon == true) { //KingsCanyon
+		/*if (kingscanyon == true) { //KingsCanyon
 			ratioX = KingsCanyon.ratioX;
 			ratioY = KingsCanyon.ratioY;
 			w1 = KingsCanyon.w1;
 			s1 = KingsCanyon.s1;
 		}
-
+		*/
+		if (stormpoint == true) { //Storm Point
+			ratioX = StormPoint.ratioX;
+			ratioY = StormPoint.ratioY;
+			w1 = StormPoint.w1;
+			s1 = StormPoint.s1;
+		}
 		
 		else {
 			return ImVec2(0, 0);

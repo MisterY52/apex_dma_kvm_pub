@@ -35,6 +35,8 @@ extern float glowcolor[3];
 //Radar multi res
 extern int wstimesx;
 extern int wstimesy;
+extern float fwstimesx;
+extern float fwstimesy;
 //MiniMap Radar
 int minimapradardotsize1 = 5;
 int minimapradardotsize2 = 5;
@@ -584,17 +586,23 @@ void Overlay::RenderMenu()
 			if (wss == 1)
 			{
 				wstimesx = 0;
+				fwstimesx = 170.0f;
 				wstimesy = 0;
+				fwstimesy = 170.0f;
 			}
 			if (wss == 2)
 			{
 				wstimesx = 1.3333333;
+				fwstimesx = 226.0f;
 				wstimesy = 1.3333333;
+				fwstimesy = 226.0f;
 			}
 			if (wss == 3)
 			{
 				wstimesx = 2;
+				fwstimesx = 340.0f;
 				wstimesy = 2;
+				fwstimesy = 340.0f;
 			}
 			ImGui::EndTabItem();
 		}
