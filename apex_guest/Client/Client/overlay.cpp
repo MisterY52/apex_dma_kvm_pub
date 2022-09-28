@@ -743,18 +743,15 @@ void Overlay::RenderMenu()
 void Overlay::RenderInfo()
 {	
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
-	ImGui::SetNextWindowSize(ImVec2(300, 25));
+	ImGui::SetNextWindowSize(ImVec2(154, 25));
 	ImGui::Begin(XorStr("##info"), (bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar);
-	DrawLine(ImVec2(1, 5), ImVec2(300, 5), RED, 2);
+	DrawLine(ImVec2(1, 5), ImVec2(154, 5), RED, 2);
 	ImGui::TextColored(RED, "%d", spectators);
 	ImGui::SameLine();
 	ImGui::Text("--");
 	ImGui::SameLine();
 	ImGui::TextColored(GREEN, "%d", allied_spectators);
 	ImGui::SameLine();
-	ImGui::Text("--");
-	ImGui::SameLine();
-	ImGui::TextColored(GREEN, "%.0f ", aimdist / 39.62);
 	ImGui::Text("--");
 	ImGui::SameLine();
 	//Aim is on = 2, On but No Vis Check = 1, Off = 0
