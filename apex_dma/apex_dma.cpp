@@ -120,6 +120,8 @@ bool weapon_rampage  = false;
 bool weapon_car_smg  = false;
 //aim dist check
 float aimdist = 200.0f * 40.0f;
+//item glow brightness
+int itemglowbrightness = 10;
 
 
 
@@ -850,6 +852,8 @@ static void set_vars(uint64_t add_addr)
 	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*93, widthws_addr);
 	uint64_t aimdist_addr = 0;
 	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*94, aimdist_addr);
+	uint64_t itemglowbrightness_addr = 0;
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*95, itemglowbrightness_addr);
 	
 	
 	
@@ -965,6 +969,7 @@ static void set_vars(uint64_t add_addr)
 			client_mem.Read<int>(lengthws_addr, lengthws);
 			client_mem.Read<int>(widthws_addr, widthws);
 			client_mem.Read<float>(aimdist_addr, aimdist);
+			client_mem.Read<int>(itemglowbrightness_addr, itemglowbrightness);
 
 			
 			
@@ -1027,7 +1032,7 @@ static void item_glow_t()
 					
 					char glowName[200] = { 0 };
 					uint64_t name_ptr;
-					apex_mem.Read<uint64_t>(centity + 0x30, name_ptr);
+					apex_mem.Read<uint64_t>(centity + OFFSET_MODELNAME, name_ptr);
 					apex_mem.ReadArray<char>(name_ptr, glowName, 200);
 					//if (strstr(glowName, "mdl/weapons/")) 
 					//{
@@ -1037,17 +1042,17 @@ static void item_glow_t()
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 0); // r
-						apex_mem.Write<float>(centity + 0x1D4, 0); // g
-						apex_mem.Write<float>(centity + 0x1D8, 0); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 0 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 0 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 0 / itemglowbrightness); // b
 					
 					}
 					else 
 					{
-						apex_mem.Write<int>(centity + 0x3c8, 0);
-						apex_mem.Write<int>(centity + 0x3d0, 0);
+						apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 0);
+						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 0);
 						item.disableGlow();
 					}
 				
@@ -1055,22 +1060,22 @@ static void item_glow_t()
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 0); // r
-						apex_mem.Write<float>(centity + 0x1D4, 191); // g
-						apex_mem.Write<float>(centity + 0x1D8, 255); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 0 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 191 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 255 / itemglowbrightness); // b
 					
 					}
 					if (heavybackpack && strstr(glowName, "mdl/humans_r5/loot/w_loot_char_backpack_heavy.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 148); // r
-						apex_mem.Write<float>(centity + 0x1D4, 0); // g
-						apex_mem.Write<float>(centity + 0x1D8, 211); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 128 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 0 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 128 / itemglowbrightness); // b
 					
 					}
 					if (shieldupgrade && strstr(glowName, "mdl/weapons_r5/loot/_master/w_loot_cha_shield_upgrade_body.rmdl")) 
@@ -1085,11 +1090,11 @@ static void item_glow_t()
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 0); // r
-						apex_mem.Write<float>(centity + 0x1D4, 191); // g
-						apex_mem.Write<float>(centity + 0x1D8, 255); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 0 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 191 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 255 / itemglowbrightness); // b
 					}
 					if (phoenix && strstr(glowName, "mdl/weapons_r5/loot/w_loot_wep_iso_phoenix_kit_v1.rmdl")) 
 					{
@@ -1097,120 +1102,120 @@ static void item_glow_t()
 					}
 					if (item.isBox())
 					{
-						apex_mem.Write<int>(centity + 0x262, 16256);
-						apex_mem.Write<int>(centity + 0x2dc, 1193322764);
-						apex_mem.Write<int>(centity + 0x3c8, 7);
-						apex_mem.Write<int>(centity + 0x3d0, 2);
+						apex_mem.Write<int>(centity + OFFSET_GLOW_T1, 16256);
+						apex_mem.Write<int>(centity + OFFSET_GLOW_T2, 1193322764);
+						apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 7);
+						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 2);
 						
 					}
 					
 					if (item.isTrap())
 					{
-						apex_mem.Write<int>(centity + 0x262, 16256);
-						apex_mem.Write<int>(centity + 0x2dc, 1193322764);
-						apex_mem.Write<int>(centity + 0x3c8, 7);
-						apex_mem.Write<int>(centity + 0x3d0, 2);
+						apex_mem.Write<int>(centity + OFFSET_GLOW_T1, 16256);
+						apex_mem.Write<int>(centity + OFFSET_GLOW_T2, 1193322764);
+						apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 7);
+						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 2);
 						
 					}
 					if (healthlarge && strstr(glowName, "mdl/weapons_r5/loot/w_loot_wep_iso_health_main_large.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 0); // r
-						apex_mem.Write<float>(centity + 0x1D4, 128); // g
-						apex_mem.Write<float>(centity + 0x1D8, 0); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 0 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 128 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 0 / itemglowbrightness); // b
 					}
 					if (healthsmall && strstr(glowName, "mdl/weapons_r5/loot/w_loot_wep_iso_health_main_small.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 0); // r
-						apex_mem.Write<float>(centity + 0x1D4, 128); // g
-						apex_mem.Write<float>(centity + 0x1D8, 0); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 0 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 128 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 0 / itemglowbrightness); // b
 					}
 					if (shieldbattsmall && strstr(glowName, "mdl/weapons_r5/loot/w_loot_wep_iso_shield_battery_small.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 0); // r
-						apex_mem.Write<float>(centity + 0x1D4, 0); // g
-						apex_mem.Write<float>(centity + 0x1D8, 225); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 0 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 0 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 225 / itemglowbrightness); // b
 					}
 					if (shieldbattlarge && strstr(glowName, "mdl/weapons_r5/loot/w_loot_wep_iso_shield_battery_large.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 0); // r
-						apex_mem.Write<float>(centity + 0x1D4, 0); // g
-						apex_mem.Write<float>(centity + 0x1D8, 225); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 0 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 0 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 225 / itemglowbrightness); // b
 					}
 					if (ammosniper && strstr(glowName, "mdl/weapons_r5/loot/_master/w_loot_wep_ammo_sniper.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 92); // r
-						apex_mem.Write<float>(centity + 0x1D4, 92); // g
-						apex_mem.Write<float>(centity + 0x1D8, 255); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 92 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 92 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 255 / itemglowbrightness); // b
 					}
 					if (ammohc && strstr(glowName, "mdl/weapons_r5/loot/_master/w_loot_wep_ammo_hc.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 144); // r
-						apex_mem.Write<float>(centity + 0x1D4, 238); // g
-						apex_mem.Write<float>(centity + 0x1D8, 144); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 144 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 238 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 144 / itemglowbrightness); // b
 					}
 					if (optic && strstr(glowName, "mdl/weapons_r5/loot/_master/w_loot_wep_mods_optic_cq_hcog_r1.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 0); // r
-						apex_mem.Write<float>(centity + 0x1D4, 0); // g
-						apex_mem.Write<float>(centity + 0x1D8, 0); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 0 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 0 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 0 / itemglowbrightness); // b
 					}
 					if (ammosc && strstr(glowName, "mdl/weapons_r5/loot/_master/w_loot_wep_ammo_sc.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 255); // r
-						apex_mem.Write<float>(centity + 0x1D4, 165); // g
-						apex_mem.Write<float>(centity + 0x1D8, 0); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 255 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 165 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 0 / itemglowbrightness); // b
 					}
 					if (ammonrg && strstr(glowName, "mdl/weapons_r5/loot/_master/w_loot_wep_ammo_nrg.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 173); // r
-						apex_mem.Write<float>(centity + 0x1D4, 255); // g
-						apex_mem.Write<float>(centity + 0x1D8, 47); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 173 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 255 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 47 / itemglowbrightness); // b
 					}
 					if (ammoshotgun && strstr(glowName, "mdl/weapons_r5/loot/_master/w_loot_wep_ammo_shg.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 255); // r
-						apex_mem.Write<float>(centity + 0x1D4, 68); // g
-						apex_mem.Write<float>(centity + 0x1D8, 51); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 255 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 68 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 51 / itemglowbrightness); // b
 					}
 					if (lasersight && strstr(glowName, "mdl/weapons_r5/loot/_master/w_loot_wep_mods_lasersight_v1.rmdl")) 
 					{
@@ -1220,21 +1225,21 @@ static void item_glow_t()
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 92); // r
-						apex_mem.Write<float>(centity + 0x1D4, 92); // g
-						apex_mem.Write<float>(centity + 0x1D8, 255); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 92 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 92 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 255 / itemglowbrightness); // b
 					}
 					if (magenergy && strstr(glowName, "mdl/weapons_r5/loot/_master/w_loot_wep_mods_mag_energy_v1.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 173); // r
-						apex_mem.Write<float>(centity + 0x1D4, 255); // g
-						apex_mem.Write<float>(centity + 0x1D8, 47); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 173 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 255 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 47 / itemglowbrightness); // b
 					}
 					if (stocksniper && strstr(glowName, "mdl/weapons_r5/loot/w_loot_wep_iso_stock_folded_sniper.rmdl")) 
 					{
@@ -1252,111 +1257,111 @@ static void item_glow_t()
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 255); // r
-						apex_mem.Write<float>(centity + 0x1D4, 165); // g
-						apex_mem.Write<float>(centity + 0x1D8, 0); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 255 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 165 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 0 / itemglowbrightness); // b
 					}
 					if (heavyammomag && strstr(glowName, "mdl/weapons_r5/loot/_master/w_loot_wep_mods_mag_v2b.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 144); // r
-						apex_mem.Write<float>(centity + 0x1D4, 238); // g
-						apex_mem.Write<float>(centity + 0x1D8, 144); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 144 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 238 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 144 / itemglowbrightness); // b
 					}
 					if (optic2x && strstr(glowName, "mdl/weapons_r5/loot/_master/w_loot_wep_mods_optic_cq_hcog_r2.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 0); // r
-						apex_mem.Write<float>(centity + 0x1D4, 191); // g
-						apex_mem.Write<float>(centity + 0x1D8, 255); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 0 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 191 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 255 / itemglowbrightness); // b
 					}
 					if (opticholo1x && strstr(glowName, "mdl/weapons_r5/loot/_master/w_loot_wep_mods_optic_cq_holo_var.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 0); // r
-						apex_mem.Write<float>(centity + 0x1D4, 191); // g
-						apex_mem.Write<float>(centity + 0x1D8, 255); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 0 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 191 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 255 / itemglowbrightness); // b
 					}
 					if (opticholo1x2x && strstr(glowName, "mdl/weapons_r5/loot/_master/w_loot_wep_mods_optic_cq_holo_var_2x.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 0); // r
-						apex_mem.Write<float>(centity + 0x1D4, 191); // g
-						apex_mem.Write<float>(centity + 0x1D8, 255); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 0 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 191 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 255 / itemglowbrightness); // b
 					}
 					if (opticthreat && strstr(glowName, "mdl/weapons_r5/loot/_master/w_loot_wep_mods_optic_cq_threat.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 255); // r
-						apex_mem.Write<float>(centity + 0x1D4, 215); // g
-						apex_mem.Write<float>(centity + 0x1D8, 32); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 255 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 215 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 32 / itemglowbrightness); // b
 					}
 					if (optic3x && strstr(glowName, "mdl/weapons_r5/loot/_master/w_loot_wep_mods_optic_rng_hcog_acgs.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 148); // r
-						apex_mem.Write<float>(centity + 0x1D4, 0); // g
-						apex_mem.Write<float>(centity + 0x1D8, 211); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 148 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 0 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 211 / itemglowbrightness); // b
 					}
 					if (optic2x4x && strstr(glowName, "mdl/weapons_r5/loot/_master/w_loot_wep_mods_optic_rng_aog_var_r1.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 148); // r
-						apex_mem.Write<float>(centity + 0x1D4, 0); // g
-						apex_mem.Write<float>(centity + 0x1D8, 211); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 148 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 0 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 211 / itemglowbrightness); // b
 					}
 					if (opticsniper6x && strstr(glowName, "mdl/weapons_r5/loot/_master/w_loot_wep_mods_optic_sni_dcom.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 0); // r
-						apex_mem.Write<float>(centity + 0x1D4, 191); // g
-						apex_mem.Write<float>(centity + 0x1D8, 255); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 0 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 191 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 255 / itemglowbrightness); // b
 					}
 					if (opticsniper4x8x && strstr(glowName, "mdl/weapons_r5/loot/_master/w_loot_wep_mods_optic_sni_var_talon.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 148); // r
-						apex_mem.Write<float>(centity + 0x1D4, 0); // g
-						apex_mem.Write<float>(centity + 0x1D8, 211); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 148 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 0 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 211 / itemglowbrightness); // b
 					}
 					if (opticsniperthreat && strstr(glowName, "mdl/weapons_r5/loot/_master/w_loot_wep_mods_optic_sni_threat_wyeon.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 255); // r
-						apex_mem.Write<float>(centity + 0x1D4, 215); // g
-						apex_mem.Write<float>(centity + 0x1D8, 32); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 255 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 215 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 32 / itemglowbrightness); // b
 					}
 					if (suppressor && strstr(glowName, "mdl/weapons_r5/loot/_master/w_loot_wep_mods_suppr_v2b.rmdl")) 
 					{
@@ -1370,324 +1375,324 @@ static void item_glow_t()
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 255); // r
-						apex_mem.Write<float>(centity + 0x1D4, 68); // g
-						apex_mem.Write<float>(centity + 0x1D8, 51); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 255 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 68 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 51 / itemglowbrightness); // b
 					}
 					//Nades
 					if (grenade_frag && strstr(glowName, "mdl/weapons/grenades/w_loot_m20_f_grenade_projectile.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 255); // r
-						apex_mem.Write<float>(centity + 0x1D4, 68); // g
-						apex_mem.Write<float>(centity + 0x1D8, 51); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 255 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 68 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 51 / itemglowbrightness); // b
 					}
 					
 					if (grenade_thermite  && strstr(glowName, "mdl/Weapons/grenades/w_thermite_grenade.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 255); // r
-						apex_mem.Write<float>(centity + 0x1D4, 68); // g
-						apex_mem.Write<float>(centity + 0x1D8, 51); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 255 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 68 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 51 / itemglowbrightness); // b
 					}
 					if (grenade_arc_star && strstr(glowName, "mdl/weapons_r5/loot/w_loot_wep_iso_shuriken.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 255); // r
-						apex_mem.Write<float>(centity + 0x1D4, 68); // g
-						apex_mem.Write<float>(centity + 0x1D8, 51); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 255 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 68 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 51 / itemglowbrightness); // b
 					}
 					//Weapons
 					if (weapon_kraber && strstr(glowName, "mdl/weapons/at_rifle/w_at_rifle.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 255); // r
-						apex_mem.Write<float>(centity + 0x1D4, 255); // g
-						apex_mem.Write<float>(centity + 0x1D8, 255); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 255 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 255 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 255 / itemglowbrightness); // b
 					}
 					if (weapon_mastiff && strstr(glowName, "mdl/weapons/mastiff_stgn/w_mastiff.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 255); // r
-						apex_mem.Write<float>(centity + 0x1D4, 68); // g
-						apex_mem.Write<float>(centity + 0x1D8, 51); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 255 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 68 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 51 / itemglowbrightness); // b
 					}
 					if (weapon_lstar && strstr(glowName, "mdl/weapons/lstar/w_lstar.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 173); // r
-						apex_mem.Write<float>(centity + 0x1D4, 255); // g
-						apex_mem.Write<float>(centity + 0x1D8, 47); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 173 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 255 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 47 / itemglowbrightness); // b
 					}
 					if (weapon_havoc && strstr(glowName, "mdl/Weapons/beam_ar/w_beam_ar.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 173); // r
-						apex_mem.Write<float>(centity + 0x1D4, 255); // g
-						apex_mem.Write<float>(centity + 0x1D8, 47); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 173 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 255 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 47 / itemglowbrightness); // b
 					}
 					if (weapon_devotion && strstr(glowName, "mdl/weapons/hemlock_br/w_hemlock_br.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 173); // r
-						apex_mem.Write<float>(centity + 0x1D4, 255); // g
-						apex_mem.Write<float>(centity + 0x1D8, 47); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 173 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 255 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 47 / itemglowbrightness); // b
 					}
 					if (weapon_triple_take && strstr(glowName, "mdl/weapons/doubletake/w_doubletake.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 173); // r
-						apex_mem.Write<float>(centity + 0x1D4, 255); // g
-						apex_mem.Write<float>(centity + 0x1D8, 47); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 173 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 255 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 47 / itemglowbrightness); // b
 					}
 					if (weapon_flatline  && strstr(glowName, "mdl/techart/mshop/weapons/class/assault/flatline/flatline_base_w.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 144); // r
-						apex_mem.Write<float>(centity + 0x1D4, 238); // g
-						apex_mem.Write<float>(centity + 0x1D8, 144); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 144 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 238 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 144 / itemglowbrightness); // b
 					}
 					if (weapon_hemlock && strstr(glowName, "mdl/weapons/m1a1_hemlok/w_hemlok.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 144); // r
-						apex_mem.Write<float>(centity + 0x1D4, 238); // g
-						apex_mem.Write<float>(centity + 0x1D8, 144); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 144 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 238 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 144 / itemglowbrightness); // b
 					}
 					if (weapon_g7_scout && strstr(glowName, "mdl/weapons/g2/w_g2a4.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 255); // r
-						apex_mem.Write<float>(centity + 0x1D4, 165); // g
-						apex_mem.Write<float>(centity + 0x1D8, 0); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 255 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 165 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 0 / itemglowbrightness); // b
 					}
 					if (weapon_alternator && strstr(glowName, "mdl/weapons/alternator_smg/w_alternator_smg.rmdl")) 
 					{
 						apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 255); // r
-						apex_mem.Write<float>(centity + 0x1D4, 165); // g
-						apex_mem.Write<float>(centity + 0x1D8, 0); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 255 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 165 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 0 / itemglowbrightness); // b
 					}
 					if (weapon_r99 && strstr(glowName, "mdl/weapons/r97/w_r97.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 255); // r
-						apex_mem.Write<float>(centity + 0x1D4, 165); // g
-						apex_mem.Write<float>(centity + 0x1D8, 0); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 255 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 165 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 0 / itemglowbrightness); // b
 					}
 					if (weapon_prowler && strstr(glowName, "mdl/Weapons/prowler_smg/w_prowler_smg.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 144); // r
-						apex_mem.Write<float>(centity + 0x1D4, 238); // g
-						apex_mem.Write<float>(centity + 0x1D8, 144); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 144 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 238 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 144 / itemglowbrightness); // b
 					}
 					if (weapon_volt && strstr(glowName, "mdl/weapons/hemlok_smg/w_hemlok_smg.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 173); // r
-						apex_mem.Write<float>(centity + 0x1D4, 255); // g
-						apex_mem.Write<float>(centity + 0x1D8, 47); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 173 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 255 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 47 / itemglowbrightness); // b
 					}
 					if (weapon_longbow && strstr(glowName, "mdl/weapons/rspn101_dmr/w_rspn101_dmr.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 92); // r
-						apex_mem.Write<float>(centity + 0x1D4, 92); // g
-						apex_mem.Write<float>(centity + 0x1D8, 255); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 92 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 92 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 255 / itemglowbrightness); // b
 					}
 					if (weapon_charge_rifle && strstr(glowName, "mdl/weapons/defender/w_defender.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 92); // r
-						apex_mem.Write<float>(centity + 0x1D4, 92); // g
-						apex_mem.Write<float>(centity + 0x1D8, 255); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 92 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 92 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 255 / itemglowbrightness); // b
 					}
 					if (weapon_spitfire && strstr(glowName, "mdl/weapons/lmg_hemlok/w_lmg_hemlok.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 255); // r
-						apex_mem.Write<float>(centity + 0x1D4, 165); // g
-						apex_mem.Write<float>(centity + 0x1D8, 0); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 255 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 165 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 0 / itemglowbrightness); // b
 					}
 					if (weapon_r301 && strstr(glowName, "mdl/weapons/rspn101/w_rspn101.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 255); // r
-						apex_mem.Write<float>(centity + 0x1D4, 165); // g
-						apex_mem.Write<float>(centity + 0x1D8, 0); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 255 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 165 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 0 / itemglowbrightness); // b
 					}
 					if (weapon_eva8 && strstr(glowName, "mdl/weapons/w1128/w_w1128.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 255); // r
-						apex_mem.Write<float>(centity + 0x1D4, 68); // g
-						apex_mem.Write<float>(centity + 0x1D8, 51); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 255 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 68 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 51 / itemglowbrightness); // b
 					}
 					if (weapon_peacekeeper && strstr(glowName, "mdl/weapons/peacekeeper/w_peacekeeper.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 255); // r
-						apex_mem.Write<float>(centity + 0x1D4, 68); // g
-						apex_mem.Write<float>(centity + 0x1D8, 51); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 255 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 68 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 51 / itemglowbrightness); // b
 					}
 					if (weapon_mozambique && strstr(glowName, "mdl/weapons/pstl_sa3/w_pstl_sa3.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 255); // r
-						apex_mem.Write<float>(centity + 0x1D4, 68); // g
-						apex_mem.Write<float>(centity + 0x1D8, 51); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 255 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 68 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 51 / itemglowbrightness); // b
 					}
 					if (weapon_wingman && strstr(glowName, "mdl/weapons/b3wing/w_b3wing.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 92); // r
-						apex_mem.Write<float>(centity + 0x1D4, 92); // g
-						apex_mem.Write<float>(centity + 0x1D8, 255); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 92 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 92 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 255 / itemglowbrightness); // b
 					}
 					if (weapon_p2020 && strstr(glowName, "mdl/weapons/p2011/w_p2011.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 255); // r
-						apex_mem.Write<float>(centity + 0x1D4, 165); // g
-						apex_mem.Write<float>(centity + 0x1D8, 0); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 255 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 165 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 0 / itemglowbrightness); // b
 					}
 					if (weapon_re45 && strstr(glowName, "mdl/weapons/p2011_auto/w_p2011_auto.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 255); // r
-						apex_mem.Write<float>(centity + 0x1D4, 165); // g
-						apex_mem.Write<float>(centity + 0x1D8, 0); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 255 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 165 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 0 / itemglowbrightness); // b
 					}
 					if (weapon_sentinel && strstr(glowName, "mdl/Weapons/sentinel/w_sentinel.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 92); // r
-						apex_mem.Write<float>(centity + 0x1D4, 92); // g
-						apex_mem.Write<float>(centity + 0x1D8, 255); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 92 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 92 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 255 / itemglowbrightness); // b
 					}
 					if (weapon_bow && strstr(glowName, "mdl/Weapons/compound_bow/w_compound_bow.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 255); // r
-						apex_mem.Write<float>(centity + 0x1D4, 255); // g
-						apex_mem.Write<float>(centity + 0x1D8, 0); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 255 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 255 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 0 / itemglowbrightness); // b
 					}
 					if (weapon_3030_repeater && strstr(glowName, "mdl/weapons/3030repeater/w_3030repeater.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 144); // r
-						apex_mem.Write<float>(centity + 0x1D4, 238); // g
-						apex_mem.Write<float>(centity + 0x1D8, 144); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 144 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 238 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 144 / itemglowbrightness); // b
 					}
 					if (weapon_rampage && strstr(glowName, "mdl/techart/mshop/weapons/class/lmg/dragon/dragon_base_w.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 144); // r
-						apex_mem.Write<float>(centity + 0x1D4, 238); // g
-						apex_mem.Write<float>(centity + 0x1D8, 144); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 144 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 238 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 144 / itemglowbrightness); // b
 					}
 					if (weapon_car_smg && strstr(glowName, "mdl/techart/mshop/weapons/class/smg/car/car_base_w.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 1); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + 0x2C4, { 101,101,99,90 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
-						apex_mem.Write<float>(centity + 0x1D0, 144); // r
-						apex_mem.Write<float>(centity + 0x1D4, 238); // g
-						apex_mem.Write<float>(centity + 0x1D8, 144); // b
+						apex_mem.Write<float>(centity + GLOW_COLOR_R, 144 / itemglowbrightness); // r
+						apex_mem.Write<float>(centity + GLOW_COLOR_G, 238 / itemglowbrightness); // g
+						apex_mem.Write<float>(centity + GLOW_COLOR_B, 144 / itemglowbrightness); // b
 					}
 					
 					
@@ -1737,7 +1742,7 @@ int main(int argc, char *argv[])
 	//const char* ap_proc = "EasyAntiCheat_launcher.exe";
 
 	//Client "add" offset
-	uint64_t add_off = 0x1409b0;
+	uint64_t add_off = 0x1419b0;
 
 	std::thread aimbot_thr;
 	std::thread esp_thr;

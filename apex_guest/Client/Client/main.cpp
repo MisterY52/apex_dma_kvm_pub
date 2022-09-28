@@ -149,6 +149,8 @@ bool weapon_rampage = false;
 bool weapon_car_smg = false;
 // Aim distance check
 float aimdist = 9905.0f;
+//item glow brightness
+int itemglowbrightness = 10;
 
 
 bool thirdperson = false;
@@ -157,7 +159,7 @@ int allied_spectators = 0; //write
 bool valid = true; //write
 bool next2 = true; //read write
 
-uint64_t add[96];
+uint64_t add[97];
 
 bool k_f5 = 0;
 bool k_f6 = 0;
@@ -782,6 +784,8 @@ int main(int argc, char** argv)
 	add[92] = (uintptr_t)&lengthws;
 	add[93] = (uintptr_t)&widthws;
 	add[94] = (uintptr_t)&aimdist;
+	add[95] = (uintptr_t)&itemglowbrightness
+		;
 
 
 
@@ -927,6 +931,7 @@ int main(int argc, char** argv)
 				config >> minimapradardotsize1;
 				config >> minimapradardotsize2;
 				config >> aimdist;
+				config >> itemglowbrightness;
 				config.close();
 			}
 		}

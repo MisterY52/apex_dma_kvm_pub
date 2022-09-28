@@ -64,6 +64,7 @@
 #define GLOW_COLOR_R 0x1D0 
 #define GLOW_COLOR_G 0x1D4 
 #define GLOW_COLOR_B 0x1D8
+#define GLOW_START_TIME 0x2c4 //m_playerFloatLookStartTime=0x02c4
 
 
 

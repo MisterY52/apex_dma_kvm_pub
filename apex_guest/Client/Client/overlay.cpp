@@ -120,6 +120,8 @@ extern bool weapon_rampage;
 extern bool weapon_car_smg;
 //Aim Dist check
 extern float aimdist;
+//item glow brightness
+extern int itemglowbrightness;
 
 
 int width;
@@ -292,6 +294,8 @@ void Overlay::RenderMenu()
 			ImGui::SameLine();
 			ImGui::Sliderbox(XorStr("Shield bar"), &v.shieldbar);
 			//Glow Color
+			ImGui::Text(XorStr("Item Glow Brightness:"));
+			ImGui::SliderInt(XorStr("##itemglowbright"), &itemglowbrightness, 2, 40, "%d");
 			ImGui::Text(XorStr("Glow Color Picker:"));
 			ImGui::ColorEdit3("##Glow Color Picker", glowcolor);
 			{
@@ -421,7 +425,9 @@ void Overlay::RenderMenu()
 					config << wstimesy << "\n";
 					config << minimapradardotsize1 << "\n";
 					config << minimapradardotsize2 << "\n";
-					config << aimdist;
+					config << aimdist << "\n";
+					config << itemglowbrightness;
+
 					config.close();
 				}
 			}
@@ -539,6 +545,7 @@ void Overlay::RenderMenu()
 					config >> minimapradardotsize1;
 					config >> minimapradardotsize2;
 					config >> aimdist;
+					config >> itemglowbrightness;
 					config.close();
 					
 				}
