@@ -33,8 +33,8 @@ extern float glowg; //Green Value
 extern float glowb; //Blue Value
 extern float glowcolor[3];
 //Radar multi res
-extern int wstimesx;
-extern int wstimesy;
+int wstimesx = 1;
+int wstimesy = 1;
 extern float fwstimesx;
 extern float fwstimesy;
 //MiniMap Radar
@@ -572,33 +572,24 @@ void Overlay::RenderMenu()
 			{
 				lengthws = 1080;
 				widthws = 1920;
+				wstimesx = 1;
+				fwstimesx = 170.0f;
+				wstimesy = 1;
+				fwstimesy = 170.0f;
 			}
 			else if (wss == 2)
 			{
 				lengthws = 1440;
 				widthws = 2560;
-			}
-			else if (wss == 3)
-			{
-				lengthws = 3840;
-				widthws = 2160;
-			}
-			if (wss == 1)
-			{
-				wstimesx = 0;
-				fwstimesx = 170.0f;
-				wstimesy = 0;
-				fwstimesy = 170.0f;
-			}
-			if (wss == 2)
-			{
 				wstimesx = 1.3333333;
 				fwstimesx = 226.0f;
 				wstimesy = 1.3333333;
 				fwstimesy = 226.0f;
 			}
-			if (wss == 3)
+			else if (wss == 3)
 			{
+				lengthws = 3840;
+				widthws = 2160;
 				wstimesx = 2;
 				fwstimesx = 340.0f;
 				wstimesy = 2;

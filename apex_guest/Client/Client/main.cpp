@@ -61,8 +61,8 @@ float glowg = 0.0f; //Green Value
 float glowb = 0.0f; //Blue Value
 float glowcolor[3] = { 000.0f, 000.0f, 000.0f };
 //Radar multi res
-int wstimesx = 0;
-int wstimesy = 0;
+extern int wstimesx;
+extern int wstimesy;
 float fwstimesx = 170.0f;
 float fwstimesy = 170.0f;
 //MiniMap Radar
@@ -321,6 +321,14 @@ static void Team20(int x, int y, int w, int h, RGBA color)
 {
 	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x, y), ImVec2(x + w, y + h), ImGui::ColorConvertFloat4ToU32(ImVec4(color.R / 255.0, color.G / 255.0, color.B / 255.0, color.A / 255.0)), 0, 0);
 }
+static void Team21(int x, int y, int w, int h, RGBA color)
+{
+	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x, y), ImVec2(x + w, y + h), ImGui::ColorConvertFloat4ToU32(ImVec4(color.R / 255.0, color.G / 255.0, color.B / 255.0, color.A / 255.0)), 0, 0);
+}
+static void Team22(int x, int y, int w, int h, RGBA color)
+{
+	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x, y), ImVec2(x + w, y + h), ImGui::ColorConvertFloat4ToU32(ImVec4(color.R / 255.0, color.G / 255.0, color.B / 255.0, color.A / 255.0)), 0, 0);
+}
 
 bool menu = true;
 bool firstS = true;
@@ -433,6 +441,14 @@ void DrawRadarPoint(D3DXVECTOR3 EneamyPos, D3DXVECTOR3 LocalPos, float LocalPlay
 			{
 				Team20(single.x, single.y, minimapradardotsize1, minimapradardotsize2, { 218, 73, 145, 255 });
 			}
+			if (TeamID == 21)
+			{
+				Team20(single.x, single.y, minimapradardotsize1, minimapradardotsize2, { 218, 73, 145, 255 });
+			}
+			if (TeamID == 22)
+			{
+				Team20(single.x, single.y, minimapradardotsize1, minimapradardotsize2, { 218, 73, 145, 255 });
+			}
 	}
 }
 //MiniMap Radar Stuff
@@ -501,11 +517,11 @@ public:
 // 
 // First set is the x cord, then the y cord, then the screen pos from the screenshot, do the same for the second set.
 //Battel Royal
-//Screen res multi
-world KingsCanyon(ImVec2(25223.177734, 28906.144531), ImVec2(1197 * wstimesx, 185 * wstimesy), ImVec2(10399.223633, 13334.792969), ImVec2(1014 * wstimesx, 381 * wstimesy)); //could be more accurate 
+//Screen res 1080p
+world KingsCanyon(ImVec2(25223.177734, 28906.144531), ImVec2(1197, 185), ImVec2(10399.223633, 13334.792969), ImVec2(1014, 381)); //could be more accurate 
 world WorldsEdge(ImVec2(-9190.608398, 8443.554688), ImVec2(824, 412), ImVec2(-19529.794922, -8933.173828), ImVec2(707, 608));
 world Olympus(ImVec2(0, 0), ImVec2(0, 0), ImVec2(0, 0), ImVec2(0, 0)); //to be measured
-world StormPoint(ImVec2(-21264.427734, -47086.878906), ImVec2(711 * wstimesx, 983 * wstimesy), ImVec2(40298.070313, 21163.728516), ImVec2(1321 * wstimesx, 306 * wstimesy));
+world StormPoint(ImVec2(-21264.427734, -47086.878906), ImVec2(711, 983), ImVec2(40298.070313, 21163.728516), ImVec2(1321, 306));
 //Arena
 world Overflow(ImVec2(-3344.994629, -4018.093018), ImVec2(552, 431), ImVec2(5039.592773, -4639.289063), ImVec2(1322, 489));
 world DropOff(ImVec2(3135.113281, 1654.107666), ImVec2(1151, 603), ImVec2(-2920.918701, 811.240479), ImVec2(722, 663));
@@ -627,6 +643,14 @@ ImVec2 worldToScreenMap(D3DXVECTOR3 origin, int TeamID) {
 			Team19(pos_x, pos_y, mainmapradardotsize1, mainmapradardotsize2, { 102, 61, 174, 255 });
 		}
 		if (TeamID == 20)
+		{
+			Team20(pos_x, pos_y, mainmapradardotsize1, mainmapradardotsize2, { 218, 73, 145, 255 });
+		}
+		if (TeamID == 21)
+		{
+			Team20(pos_x, pos_y, mainmapradardotsize1, mainmapradardotsize2, { 218, 73, 145, 255 });
+		}
+		if (TeamID == 22)
 		{
 			Team20(pos_x, pos_y, mainmapradardotsize1, mainmapradardotsize2, { 218, 73, 145, 255 });
 		}
