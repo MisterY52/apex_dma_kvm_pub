@@ -484,12 +484,12 @@ static void EspLoop()
 						}
 						
 						Vector bs = Vector();
-						WorldToScreen(EntityPosition, m.matrix, 1920, 1080, bs);
+						WorldToScreen(EntityPosition, m.matrix, 1920, 1080, bs); //2560, 1440
 						if (esp)
 						{
 							Vector hs = Vector();
 							Vector HeadPosition = Target.getBonePositionByHitbox(0);
-							WorldToScreen(HeadPosition, m.matrix, 1920, 1080, hs);
+							WorldToScreen(HeadPosition, m.matrix, 1920, 1080, hs); //2560, 1440
 							float height = abs(abs(hs.y) - abs(bs.y));
 							float width = height / 2.0f;
 							float boxMiddle = bs.x - (width / 2.0f);
@@ -564,12 +564,12 @@ static void EspLoop()
 						}
 
 						Vector bs = Vector();
-						WorldToScreen(EntityPosition, m.matrix, 1920, 1080, bs);
+						WorldToScreen(EntityPosition, m.matrix, 1920, 1080, bs); //2560, 1440
 						if (esp)
 						{
 							Vector hs = Vector();
 							Vector HeadPosition = Target.getBonePositionByHitbox(0);
-							WorldToScreen(HeadPosition, m.matrix, 1920, 1080, hs);
+							WorldToScreen(HeadPosition, m.matrix, 1920, 1080, hs); //2560, 1440
 							float height = abs(abs(hs.y) - abs(bs.y));
 							float width = height / 2.0f;
 							float boxMiddle = bs.x - (width / 2.0f);
@@ -1740,7 +1740,7 @@ static void item_glow_t()
 					
 				}
 				k=1;
-				std::this_thread::sleep_for(std::chrono::milliseconds(1));
+				std::this_thread::sleep_for(std::chrono::milliseconds(300));
 			}
 			else
 			{		
