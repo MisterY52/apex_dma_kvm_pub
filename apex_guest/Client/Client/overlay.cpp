@@ -23,20 +23,11 @@ extern int allied_spectators;
 extern bool toggleaim;
 extern bool toggleaim2;
 int e = 0;
-//World to Screen Res
-extern int lengthws;
-extern int widthws;
-int wss = 0;
 //glow color and type
 extern float glowr; //Red Value
 extern float glowg; //Green Value
 extern float glowb; //Blue Value
 extern float glowcolor[3];
-//Radar multi res
-int wstimesx = 1;
-int wstimesy = 1;
-extern float fwstimesx;
-extern float fwstimesy;
 //MiniMap Radar
 int minimapradardotsize1 = 5;
 int minimapradardotsize2 = 5;
@@ -419,12 +410,7 @@ void Overlay::RenderMenu()
 					config << std::boolalpha << weapon_car_smg << "\n";
 					config << toggleaim << "\n";
 					config << toggleaim2 << "\n";
-					config << e << "\n";
-					config << lengthws << "\n";
-					config << widthws << "\n";
-					config << wss << "\n";
-					config << wstimesx << "\n";
-					config << wstimesy << "\n";
+					config << e << "\n";					
 					config << minimapradardotsize1 << "\n";
 					config << minimapradardotsize2 << "\n";
 					config << aimdist << "\n";
@@ -538,12 +524,7 @@ void Overlay::RenderMenu()
 					config >> weapon_car_smg;
 					config >> toggleaim;
 					config >> toggleaim2;
-					config >> e;
-					config >> lengthws;
-					config >> widthws;
-					config >> wss;
-					config >> wstimesx;
-					config >> wstimesy;
+					config >> e;					
 					config >> minimapradardotsize1;
 					config >> minimapradardotsize2;
 					config >> aimdist;
@@ -563,38 +544,7 @@ void Overlay::RenderMenu()
 			ImGui::Text(XorStr("Main Map Radar Dot Size"));
 			ImGui::SliderInt(XorStr("Main Map Dot Width"), &mainmapradardotsize1, 1, 10);
 			ImGui::SliderInt(XorStr("Main Map Dot length"), &mainmapradardotsize2, 1, 10);
-			ImGui::Text(XorStr("Radar Screen Res"));
-			ImGui::RadioButton("1080p", &wss, 1); ImGui::SameLine();
-			ImGui::RadioButton("1440p", &wss, 2); ImGui::SameLine();
-			ImGui::RadioButton("4k", &wss, 3);
-			//Setting one and unsetting the other
-			if (wss == 1)
-			{
-				lengthws = 1080;
-				widthws = 1920;
-				wstimesx = 1;
-				fwstimesx = 170.0f;
-				wstimesy = 1;
-				fwstimesy = 170.0f;
-			}
-			else if (wss == 2)
-			{
-				lengthws = 1440;
-				widthws = 2560;
-				wstimesx = 1.3333333;
-				fwstimesx = 226.0f;
-				wstimesy = 1.3333333;
-				fwstimesy = 226.0f;
-			}
-			else if (wss == 3)
-			{
-				lengthws = 3840;
-				widthws = 2160;
-				wstimesx = 2;
-				fwstimesx = 340.0f;
-				wstimesy = 2;
-				fwstimesy = 340.0f;
-			}
+			
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem(XorStr("Item Filter List")))

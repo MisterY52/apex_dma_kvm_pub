@@ -35,10 +35,6 @@ int shoot_key2 = VK_RBUTTON; //Right Click
 bool toggleaim = false;
 bool toggleaim2 = false;
 extern int e;
-//World to Screen res
-int lengthws = 1920;
-int widthws = 1920;
-extern int wss;
 bool firing_range = false;
 bool use_nvidia = true; //Nvidia Shadowplay Overlay
 bool active = true;
@@ -60,14 +56,6 @@ float glowr = 120.0f; //Red Value
 float glowg = 0.0f; //Green Value
 float glowb = 0.0f; //Blue Value
 float glowcolor[3] = { 000.0f, 000.0f, 000.0f };
-//Radar multi res
-extern int wstimesx;
-extern int wstimesy;
-float fwstimesx = 170.0f;
-float fwstimesy = 170.0f;
-//MiniMap Radar
-int minimapposx = 0;
-int minimapposy = 0;
 extern int minimapradardotsize1;
 extern int minimapradardotsize2;
 bool minimapradar = false;
@@ -454,17 +442,23 @@ void DrawRadarPoint(D3DXVECTOR3 EneamyPos, D3DXVECTOR3 LocalPos, float LocalPlay
 //MiniMap Radar Stuff
 void MiniMapRadar(D3DXVECTOR3 EneamyPos, D3DXVECTOR3 LocalPos, float LocalPlayerY, float eneamyDist, int TeamId)
 {
+	ImGuiStyle* style = &ImGui::GetStyle();
+	style->WindowRounding = 0.2f;
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.13529413f, 0.14705884f, 0.15490198f, 0.82f));
 	
 	ImGuiWindowFlags TargetFlags;
 	//Radar Window Flags: No Move, Resize, Title bar, Background etc. makes it so you can change it once set.
 
 	//slash out  | ImGuiWindowFlags_::ImGuiWindowFlags_NoMove to move the minimap
 	TargetFlags = ImGuiWindowFlags_::ImGuiWindowFlags_NoResize | ImGuiWindowFlags_::ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_::ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_::ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_::ImGuiWindowFlags_NoMove;
-
+	if (!firstS) //dunno
+	{
+		ImGui::SetNextWindowPos(ImVec2{ 1200, 60 }, ImGuiCond_Once);
+		firstS = true;
+	}
 	
 	if (RadarSettings::Radar == true)
 	{
-		ImGui::SetNextWindowPos(ImVec2{ fwstimesx - 125, fwstimesy - 125});
 		ImGui::SetNextWindowSize({ 250, 250 });
 		ImGui::Begin(("Radar"), 0, TargetFlags);
 		//if (ImGui::Begin(xorstr("Radar", 0, ImVec2(200, 200), -1.f, TargetFlags))) {
@@ -482,7 +476,7 @@ void MiniMapRadar(D3DXVECTOR3 EneamyPos, D3DXVECTOR3 LocalPos, float LocalPlayer
 		}
 		ImGui::End();
 	}
-	
+	ImGui::PopStyleColor();
 }
 bool IsKeyDown(int vk)
 {
@@ -811,11 +805,8 @@ int main(int argc, char** argv)
 	add[89] = (uintptr_t)&weapon_3030_repeater;
 	add[90] = (uintptr_t)&weapon_rampage;
 	add[91] = (uintptr_t)&weapon_car_smg;
-	add[92] = (uintptr_t)&lengthws;
-	add[93] = (uintptr_t)&widthws;
-	add[94] = (uintptr_t)&aimdist;
-	add[95] = (uintptr_t)&itemglowbrightness
-		;
+	add[92] = (uintptr_t)&aimdist;
+	add[93] = (uintptr_t)&itemglowbrightness;
 
 
 
@@ -953,11 +944,6 @@ int main(int argc, char** argv)
 				config >> toggleaim;
 				config >> toggleaim2;
 				config >> e;
-				config >> lengthws;
-				config >> widthws;
-				config >> wss;
-				config >> wstimesx;
-				config >> wstimesy;
 				config >> minimapradardotsize1;
 				config >> minimapradardotsize2;
 				config >> aimdist;

@@ -31,9 +31,7 @@ bool aiming = false;
 extern float smooth;
 extern int bone;
 bool thirdperson = false;
-//WorldtoScreen res
-int lengthws = 1080;
-int widthws = 1920;
+
 
 
 //chargerifle hack
@@ -486,12 +484,12 @@ static void EspLoop()
 						}
 						
 						Vector bs = Vector();
-						WorldToScreen(EntityPosition, m.matrix, widthws, lengthws, bs);
+						WorldToScreen(EntityPosition, m.matrix, 1920, 1080, bs);
 						if (esp)
 						{
 							Vector hs = Vector();
 							Vector HeadPosition = Target.getBonePositionByHitbox(0);
-							WorldToScreen(HeadPosition, m.matrix, widthws, lengthws, hs);
+							WorldToScreen(HeadPosition, m.matrix, 1920, 1080, hs);
 							float height = abs(abs(hs.y) - abs(bs.y));
 							float width = height / 2.0f;
 							float boxMiddle = bs.x - (width / 2.0f);
@@ -566,12 +564,12 @@ static void EspLoop()
 						}
 
 						Vector bs = Vector();
-						WorldToScreen(EntityPosition, m.matrix, widthws, lengthws, bs);
+						WorldToScreen(EntityPosition, m.matrix, 1920, 1080, bs);
 						if (esp)
 						{
 							Vector hs = Vector();
 							Vector HeadPosition = Target.getBonePositionByHitbox(0);
-							WorldToScreen(HeadPosition, m.matrix, widthws, lengthws, hs);
+							WorldToScreen(HeadPosition, m.matrix, 1920, 1080, hs);
 							float height = abs(abs(hs.y) - abs(bs.y));
 							float width = height / 2.0f;
 							float boxMiddle = bs.x - (width / 2.0f);
@@ -846,14 +844,10 @@ static void set_vars(uint64_t add_addr)
 	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*90, weapon_rampage_addr);
 	uint64_t weapon_car_smg_addr = 0;
 	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*91, weapon_car_smg_addr);
-	uint64_t lengthws_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*92, lengthws_addr);
-	uint64_t widthws_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*93, widthws_addr);
 	uint64_t aimdist_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*94, aimdist_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*92, aimdist_addr);
 	uint64_t itemglowbrightness_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*95, itemglowbrightness_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*93, itemglowbrightness_addr);
 	
 	
 	
@@ -966,8 +960,6 @@ static void set_vars(uint64_t add_addr)
 			client_mem.Read<bool>(weapon_3030_repeater_addr, weapon_3030_repeater);
 			client_mem.Read<bool>(weapon_rampage_addr, weapon_rampage);
 			client_mem.Read<bool>(weapon_car_smg_addr, weapon_car_smg);
-			client_mem.Read<int>(lengthws_addr, lengthws);
-			client_mem.Read<int>(widthws_addr, widthws);
 			client_mem.Read<float>(aimdist_addr, aimdist);
 			client_mem.Read<int>(itemglowbrightness_addr, itemglowbrightness);
 
@@ -1015,7 +1007,7 @@ static void item_glow_t()
 			uint64_t entitylist = g_Base + OFFSET_ENTITYLIST;
 			if (item_glow)
 			{
-				for (int i = 0; i < 20000; i++)
+				for (int i = 0; i < 15000; i++)
 				{
 					uint64_t centity = 0;
 					apex_mem.Read<uint64_t>(entitylist + ((uint64_t)i << 5), centity);
@@ -1754,7 +1746,7 @@ static void item_glow_t()
 			{		
 				if(k==1)
 				{
-					for (int i = 0; i < 20000; i++)
+					for (int i = 0; i < 15000; i++)
 					{
 						uint64_t centity = 0;
 						apex_mem.Read<uint64_t>(entitylist + ((uint64_t)i << 5), centity);
@@ -1789,7 +1781,7 @@ int main(int argc, char *argv[])
 	//const char* ap_proc = "EasyAntiCheat_launcher.exe";
 
 	//Client "add" offset
-	uint64_t add_off = 0x1419d0;
+	uint64_t add_off = 0x140990;
 
 	std::thread aimbot_thr;
 	std::thread esp_thr;
