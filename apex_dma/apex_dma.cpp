@@ -657,7 +657,7 @@ static void AimbotLoop()
 
 static void set_vars(uint64_t add_addr)
 {
-	printf("Reading client vars...\n");
+	printf("Reading the client vars...\n");
 	std::this_thread::sleep_for(std::chrono::milliseconds(50));
 	//Get addresses of client vars
 	uint64_t check_addr = 0;
@@ -696,158 +696,154 @@ static void set_vars(uint64_t add_addr)
 	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*16, spectators_addr);
 	uint64_t allied_spectators_addr = 0;
 	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*17, allied_spectators_addr);
-	uint64_t chargerifle_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*18, chargerifle_addr);
-	uint64_t shooting_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*19, shooting_addr);
 	uint64_t glowr_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*20, glowr_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*18, glowr_addr);
 	uint64_t glowg_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*21, glowg_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*19, glowg_addr);
 	uint64_t glowb_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*22, glowb_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*20, glowb_addr);
 	uint64_t firing_range_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*23, firing_range_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*21, firing_range_addr);
 	uint64_t lightbackpack_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*24, lightbackpack_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*22, lightbackpack_addr);
 	uint64_t medbackpack_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*25, medbackpack_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*23, medbackpack_addr);
 	uint64_t heavybackpack_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*26, heavybackpack_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*24, heavybackpack_addr);
 	uint64_t shieldupgrade_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*27, shieldupgrade_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*25, shieldupgrade_addr);
 	uint64_t shieldupgradehead_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*28, shieldupgradehead_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*26, shieldupgradehead_addr);
 	uint64_t accelerant_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*29, accelerant_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*27, accelerant_addr);
 	uint64_t phoenix_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*30, phoenix_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*28, phoenix_addr);
 	uint64_t healthlarge_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*31, healthlarge_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*29, healthlarge_addr);
 	uint64_t healthsmall_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*32, healthsmall_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*30, healthsmall_addr);
 	uint64_t shieldbattsmall_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*33, shieldbattsmall_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*31, shieldbattsmall_addr);
 	uint64_t shieldbattlarge_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*34, shieldbattlarge_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*32, shieldbattlarge_addr);
 	uint64_t ammosniper_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*35, ammosniper_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*33, ammosniper_addr);
 	uint64_t ammohc_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*36, ammohc_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*34, ammohc_addr);
 	uint64_t optic_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*37, optic_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*35, optic_addr);
 	uint64_t ammosc_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*38, ammosc_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*36, ammosc_addr);
 	uint64_t ammonrg_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*39, ammonrg_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*37, ammonrg_addr);
 	uint64_t ammoshotgun_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*40, ammoshotgun_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*38, ammoshotgun_addr);
 	uint64_t lasersight_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*41, lasersight_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*39, lasersight_addr);
 	uint64_t magsniper_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*42, magsniper_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*40, magsniper_addr);
 	uint64_t magenergy_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*43, magenergy_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*41, magenergy_addr);
 	uint64_t stocksniper_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*44, stocksniper_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*42, stocksniper_addr);
 	uint64_t stockregular_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*45, stockregular_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*43, stockregular_addr);
 	uint64_t shielddown_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*46, shielddown_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*44, shielddown_addr);
 	uint64_t lightammomag_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*47, lightammomag_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*45, lightammomag_addr);
 	uint64_t heavyammomag_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*48, heavyammomag_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*46, heavyammomag_addr);
 	uint64_t optic2x_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*49, optic2x_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*47, optic2x_addr);
 	uint64_t opticholo1x_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*50, opticholo1x_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*48, opticholo1x_addr);
 	uint64_t opticholo1x2x_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*51, opticholo1x2x_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*49, opticholo1x2x_addr);
 	uint64_t opticthreat_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*52, opticthreat_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*50, opticthreat_addr);
 	uint64_t optic3x_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*53, optic3x_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*51, optic3x_addr);
 	uint64_t optic2x4x_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*54, optic2x4x_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*52, optic2x4x_addr);
 	uint64_t opticsniper6x_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*55, opticsniper6x_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*53, opticsniper6x_addr);
 	uint64_t opticsniper4x8x_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*56, opticsniper4x8x_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*54, opticsniper4x8x_addr);
 	uint64_t opticsniperthreat_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*57, opticsniperthreat_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*55, opticsniperthreat_addr);
 	uint64_t suppressor_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*58, suppressor_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*56, suppressor_addr);
 	uint64_t weaponmod_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*59, weaponmod_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*57, weaponmod_addr);
 	uint64_t grenade_frag_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*60, grenade_frag_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*58, grenade_frag_addr);
 	uint64_t grenade_arc_star_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*61, grenade_arc_star_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*59, grenade_arc_star_addr);
 	uint64_t grenade_thermite_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*62, grenade_thermite_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*60, grenade_thermite_addr);
 	uint64_t shotgunbolt_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*63, shotgunbolt_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*61, shotgunbolt_addr);
 	uint64_t weapon_kraber_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*64, weapon_kraber_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*62, weapon_kraber_addr);
 	uint64_t weapon_mastiff_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*65, weapon_mastiff_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*63, weapon_mastiff_addr);
 	uint64_t weapon_lstar_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*66, weapon_lstar_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*64, weapon_lstar_addr);
 	uint64_t weapon_havoc_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*67, weapon_havoc_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*65, weapon_havoc_addr);
 	uint64_t weapon_devotion_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*68, weapon_devotion_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*66, weapon_devotion_addr);
 	uint64_t weapon_triple_take_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*69, weapon_triple_take_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*67, weapon_triple_take_addr);
 	uint64_t weapon_flatline_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*70, weapon_flatline_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*68, weapon_flatline_addr);
 	uint64_t weapon_hemlock_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*71, weapon_hemlock_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*69, weapon_hemlock_addr);
 	uint64_t weapon_g7_scout_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*72, weapon_g7_scout_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*70, weapon_g7_scout_addr);
 	uint64_t weapon_alternator_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*73, weapon_alternator_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*71, weapon_alternator_addr);
 	uint64_t weapon_r99_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*74, weapon_r99_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*72, weapon_r99_addr);
 	uint64_t weapon_prowler_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*75, weapon_prowler_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*73, weapon_prowler_addr);
 	uint64_t weapon_volt_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*76, weapon_volt_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*74, weapon_volt_addr);
 	uint64_t weapon_longbow_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*77, weapon_longbow_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*75, weapon_longbow_addr);
 	uint64_t weapon_charge_rifle_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*78, weapon_charge_rifle_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*76, weapon_charge_rifle_addr);
 	uint64_t weapon_spitfire_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*79, weapon_spitfire_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*77, weapon_spitfire_addr);
 	uint64_t weapon_r301_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*80, weapon_r301_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*78, weapon_r301_addr);
 	uint64_t weapon_eva8_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*81, weapon_eva8_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*79, weapon_eva8_addr);
 	uint64_t weapon_peacekeeper_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*82, weapon_peacekeeper_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*80, weapon_peacekeeper_addr);
 	uint64_t weapon_mozambique_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*83, weapon_mozambique_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*81, weapon_mozambique_addr);
 	uint64_t weapon_wingman_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*84, weapon_wingman_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*82, weapon_wingman_addr);
 	uint64_t weapon_p2020_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*85, weapon_p2020_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*83, weapon_p2020_addr);
 	uint64_t weapon_re45_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*86, weapon_re45_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*84, weapon_re45_addr);
 	uint64_t weapon_sentinel_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*87, weapon_sentinel_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*85, weapon_sentinel_addr);
 	uint64_t weapon_bow_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*88, weapon_bow_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*86, weapon_bow_addr);
 	uint64_t weapon_3030_repeater_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*89, weapon_3030_repeater_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*87, weapon_3030_repeater_addr);
 	uint64_t weapon_rampage_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*90, weapon_rampage_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*88, weapon_rampage_addr);
 	uint64_t weapon_car_smg_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*91, weapon_car_smg_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*89, weapon_car_smg_addr);
 	uint64_t aimdist_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*92, aimdist_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*90, aimdist_addr);
 	uint64_t itemglowbrightness_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*93, itemglowbrightness_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*91, itemglowbrightness_addr);
 	
 	
 	
@@ -868,7 +864,7 @@ static void set_vars(uint64_t add_addr)
 		if(c_Base!=0 && g_Base!=0)
 		{
 			client_mem.Write<uint32_t>(check_addr, 0);
-			printf("\nReady\n");
+			printf("\nLet the fun begin!\n");
 		}
 
 		while(c_Base!=0 && g_Base!=0)
@@ -1007,7 +1003,7 @@ static void item_glow_t()
 			uint64_t entitylist = g_Base + OFFSET_ENTITYLIST;
 			if (item_glow)
 			{
-				for (int i = 0; i < 15000; i++)
+				for (int i = 0; i < 10000; i++)
 				{
 					uint64_t centity = 0;
 					apex_mem.Read<uint64_t>(entitylist + ((uint64_t)i << 5), centity);
@@ -1049,9 +1045,9 @@ static void item_glow_t()
 				
 					if (medbackpack && strstr(glowName, "mdl/humans_r5/loot/w_loot_char_backpack_medium.rmdl")) 
 					{
-					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
+						apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
 						apex_mem.Write<int>(centity + OFFSET_GLOW_THROUGH_WALLS, 2); // 1 = far, 2 = close
-						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,127 });
+						apex_mem.Write<GlowMode>(centity + GLOW_START_TIME, { 101,101,99,90 });
  
 						apex_mem.Write<float>(centity + GLOW_COLOR_R, 0 / itemglowbrightness); // r
 						apex_mem.Write<float>(centity + GLOW_COLOR_G, 191 / itemglowbrightness); // g
@@ -1740,13 +1736,13 @@ static void item_glow_t()
 					
 				}
 				k=1;
-				std::this_thread::sleep_for(std::chrono::milliseconds(300));
+				std::this_thread::sleep_for(std::chrono::milliseconds(60));
 			}
 			else
 			{		
 				if(k==1)
 				{
-					for (int i = 0; i < 15000; i++)
+					for (int i = 0; i < 10000; i++)
 					{
 						uint64_t centity = 0;
 						apex_mem.Read<uint64_t>(entitylist + ((uint64_t)i << 5), centity);

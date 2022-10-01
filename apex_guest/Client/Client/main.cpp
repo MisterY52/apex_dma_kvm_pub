@@ -1,3 +1,7 @@
+#pragma warning (disable : 4715)
+#pragma warning (disable : 4005)
+#pragma warning (disable : 4305)
+#pragma warning (disable : 4244)
 #include "main.h"
 
 typedef struct player
@@ -152,7 +156,7 @@ int allied_spectators = 0; //write
 bool valid = true; //write
 bool next2 = true; //read write
 
-uint64_t add[97];
+uint64_t add[92];
 
 bool k_f5 = 0;
 bool k_f6 = 0;
@@ -510,7 +514,7 @@ public:
 // Take screenshot, First is top right random pos, then bttm left random pos from screen shot
 // 
 // First set is the x cord, then the y cord, then the screen pos from the screenshot, do the same for the second set.
-//Battel Royal
+//Battel Royal Test
 //default creen res 1080p
 // 1440p is x1.333333
 world KingsCanyon(ImVec2(25223.177734, 28906.144531), ImVec2(1197, 185), ImVec2(10399.223633, 13334.792969), ImVec2(1014, 381)); //could be more accurate 
@@ -652,8 +656,8 @@ ImVec2 worldToScreenMap(D3DXVECTOR3 origin, int TeamID) {
 		{
 			Team20(pos_x, pos_y, mainmapradardotsize1, mainmapradardotsize2, { 218, 73, 145, 255 });
 		}
-		
 	
+
 }
 
 void Overlay::RenderEsp()
@@ -737,80 +741,80 @@ int main(int argc, char** argv)
 	add[15] = (uintptr_t)&thirdperson;
 	add[16] = (uintptr_t)&spectators;
 	add[17] = (uintptr_t)&allied_spectators;
-	add[20] = (uintptr_t)&glowr;
-	add[21] = (uintptr_t)&glowg;
-	add[22] = (uintptr_t)&glowb;
-	add[23] = (uintptr_t)&firing_range;
-	add[24] = (uintptr_t)&lightbackpack;
-	add[25] = (uintptr_t)&medbackpack;
-	add[26] = (uintptr_t)&heavybackpack;
-	add[27] = (uintptr_t)&shieldupgrade;
-	add[28] = (uintptr_t)&shieldupgradehead;
-	add[29] = (uintptr_t)&accelerant;
-	add[30] = (uintptr_t)&phoenix;
-	add[31] = (uintptr_t)&healthlarge;
-	add[32] = (uintptr_t)&healthsmall;
-	add[33] = (uintptr_t)&shieldbattsmall;
-	add[34] = (uintptr_t)&shieldbattlarge;
-	add[35] = (uintptr_t)&ammosniper;
-	add[36] = (uintptr_t)&ammohc;
-	add[37] = (uintptr_t)&optic;
-	add[38] = (uintptr_t)&ammosc;
-	add[39] = (uintptr_t)&ammonrg;
-	add[40] = (uintptr_t)&ammoshotgun;
-	add[41] = (uintptr_t)&lasersight;
-	add[42] = (uintptr_t)&magsniper;
-	add[43] = (uintptr_t)&magenergy;
-	add[44] = (uintptr_t)&stocksniper;
-	add[45] = (uintptr_t)&stockregular;
-	add[46] = (uintptr_t)&shielddown;
-	add[47] = (uintptr_t)&lightammomag;
-	add[48] = (uintptr_t)&heavyammomag;
-	add[49] = (uintptr_t)&optic2x;
-	add[50] = (uintptr_t)&opticholo1x;
-	add[51] = (uintptr_t)&opticholo1x2x;
-	add[52] = (uintptr_t)&opticthreat;
-	add[53] = (uintptr_t)&optic3x;
-	add[54] = (uintptr_t)&optic2x4x;
-	add[55] = (uintptr_t)&opticsniper6x;
-	add[56] = (uintptr_t)&opticsniper4x8x;
-	add[57] = (uintptr_t)&opticsniperthreat;
-	add[58] = (uintptr_t)&suppressor;
-	add[59] = (uintptr_t)&weaponmod;
-	add[60] = (uintptr_t)&grenade_frag;
-	add[61] = (uintptr_t)&grenade_arc_star;
-	add[62] = (uintptr_t)&grenade_thermite;
-	add[63] = (uintptr_t)&shotgunbolt;
-	add[64] = (uintptr_t)&weapon_kraber;
-	add[65] = (uintptr_t)&weapon_mastiff;
-	add[66] = (uintptr_t)&weapon_lstar;
-	add[67] = (uintptr_t)&weapon_havoc;
-	add[68] = (uintptr_t)&weapon_devotion;
-	add[69] = (uintptr_t)&weapon_triple_take;
-	add[70] = (uintptr_t)&weapon_flatline;
-	add[71] = (uintptr_t)&weapon_hemlock;
-	add[72] = (uintptr_t)&weapon_g7_scout;
-	add[73] = (uintptr_t)&weapon_alternator;
-	add[74] = (uintptr_t)&weapon_r99;
-	add[75] = (uintptr_t)&weapon_prowler;
-	add[76] = (uintptr_t)&weapon_volt;
-	add[77] = (uintptr_t)&weapon_longbow;
-	add[78] = (uintptr_t)&weapon_charge_rifle;
-	add[79] = (uintptr_t)&weapon_spitfire;
-	add[80] = (uintptr_t)&weapon_r301;
-	add[81] = (uintptr_t)&weapon_eva8;
-	add[82] = (uintptr_t)&weapon_peacekeeper;
-	add[83] = (uintptr_t)&weapon_mozambique;
-	add[84] = (uintptr_t)&weapon_wingman;
-	add[85] = (uintptr_t)&weapon_p2020;
-	add[86] = (uintptr_t)&weapon_re45;
-	add[87] = (uintptr_t)&weapon_sentinel;
-	add[88] = (uintptr_t)&weapon_bow;
-	add[89] = (uintptr_t)&weapon_3030_repeater;
-	add[90] = (uintptr_t)&weapon_rampage;
-	add[91] = (uintptr_t)&weapon_car_smg;
-	add[92] = (uintptr_t)&aimdist;
-	add[93] = (uintptr_t)&itemglowbrightness;
+	add[18] = (uintptr_t)&glowr;
+	add[19] = (uintptr_t)&glowg;
+	add[20] = (uintptr_t)&glowb;
+	add[21] = (uintptr_t)&firing_range;
+	add[22] = (uintptr_t)&lightbackpack;
+	add[23] = (uintptr_t)&medbackpack;
+	add[24] = (uintptr_t)&heavybackpack;
+	add[25] = (uintptr_t)&shieldupgrade;
+	add[26] = (uintptr_t)&shieldupgradehead;
+	add[27] = (uintptr_t)&accelerant;
+	add[28] = (uintptr_t)&phoenix;
+	add[29] = (uintptr_t)&healthlarge;
+	add[30] = (uintptr_t)&healthsmall;
+	add[31] = (uintptr_t)&shieldbattsmall;
+	add[32] = (uintptr_t)&shieldbattlarge;
+	add[33] = (uintptr_t)&ammosniper;
+	add[34] = (uintptr_t)&ammohc;
+	add[35] = (uintptr_t)&optic;
+	add[36] = (uintptr_t)&ammosc;
+	add[37] = (uintptr_t)&ammonrg;
+	add[38] = (uintptr_t)&ammoshotgun;
+	add[39] = (uintptr_t)&lasersight;
+	add[40] = (uintptr_t)&magsniper;
+	add[41] = (uintptr_t)&magenergy;
+	add[42] = (uintptr_t)&stocksniper;
+	add[43] = (uintptr_t)&stockregular;
+	add[44] = (uintptr_t)&shielddown;
+	add[45] = (uintptr_t)&lightammomag;
+	add[46] = (uintptr_t)&heavyammomag;
+	add[47] = (uintptr_t)&optic2x;
+	add[48] = (uintptr_t)&opticholo1x;
+	add[49] = (uintptr_t)&opticholo1x2x;
+	add[50] = (uintptr_t)&opticthreat;
+	add[51] = (uintptr_t)&optic3x;
+	add[52] = (uintptr_t)&optic2x4x;
+	add[53] = (uintptr_t)&opticsniper6x;
+	add[54] = (uintptr_t)&opticsniper4x8x;
+	add[55] = (uintptr_t)&opticsniperthreat;
+	add[56] = (uintptr_t)&suppressor;
+	add[57] = (uintptr_t)&weaponmod;
+	add[58] = (uintptr_t)&grenade_frag;
+	add[59] = (uintptr_t)&grenade_arc_star;
+	add[60] = (uintptr_t)&grenade_thermite;
+	add[61] = (uintptr_t)&shotgunbolt;
+	add[62] = (uintptr_t)&weapon_kraber;
+	add[63] = (uintptr_t)&weapon_mastiff;
+	add[64] = (uintptr_t)&weapon_lstar;
+	add[65] = (uintptr_t)&weapon_havoc;
+	add[66] = (uintptr_t)&weapon_devotion;
+	add[67] = (uintptr_t)&weapon_triple_take;
+	add[68] = (uintptr_t)&weapon_flatline;
+	add[69] = (uintptr_t)&weapon_hemlock;
+	add[70] = (uintptr_t)&weapon_g7_scout;
+	add[71] = (uintptr_t)&weapon_alternator;
+	add[72] = (uintptr_t)&weapon_r99;
+	add[73] = (uintptr_t)&weapon_prowler;
+	add[74] = (uintptr_t)&weapon_volt;
+	add[75] = (uintptr_t)&weapon_longbow;
+	add[76] = (uintptr_t)&weapon_charge_rifle;
+	add[77] = (uintptr_t)&weapon_spitfire;
+	add[78] = (uintptr_t)&weapon_r301;
+	add[79] = (uintptr_t)&weapon_eva8;
+	add[80] = (uintptr_t)&weapon_peacekeeper;
+	add[81] = (uintptr_t)&weapon_mozambique;
+	add[82] = (uintptr_t)&weapon_wingman;
+	add[83] = (uintptr_t)&weapon_p2020;
+	add[84] = (uintptr_t)&weapon_re45;
+	add[85] = (uintptr_t)&weapon_sentinel;
+	add[86] = (uintptr_t)&weapon_bow;
+	add[87] = (uintptr_t)&weapon_3030_repeater;
+	add[88] = (uintptr_t)&weapon_rampage;
+	add[89] = (uintptr_t)&weapon_car_smg;
+	add[90] = (uintptr_t)&aimdist;
+	add[91] = (uintptr_t)&itemglowbrightness;
 
 
 
@@ -992,8 +996,6 @@ int main(int argc, char** argv)
 				mainradarmap = false;
 				minimapradar = true;
 				break;
-			default:
-				break;
 			}
 		}
 		else if (!IsKeyDown(0x4D) && mainradartoggle == 1)
@@ -1016,8 +1018,8 @@ int main(int argc, char** argv)
 	}
 	ready = false;
 	ov1.Clear();
-	if (!use_nvidia)
-		system(XorStr("taskkill /F /T /IM Nvspcaps64.exe")); //custom overlay process name
+	if (use_nvidia)
+		system(XorStr("taskkill /T /IM \"NVIDIA Share.exe\" /F")); //custom overlay process name
 	return 0;
 }
 

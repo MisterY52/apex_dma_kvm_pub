@@ -24,6 +24,8 @@
 #define BLUE ImColor(0, 0, 255)
 #define ORANGE ImColor(255, 165, 0)
 #define WHITE ImColor(255, 255, 255)
+#define TEAL ImColor(0, 128, 128)
+#define YELLOW ImColor(255, 255, 0)
 
 typedef struct visuals
 {

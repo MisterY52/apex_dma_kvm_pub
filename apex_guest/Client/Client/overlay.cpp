@@ -1,3 +1,7 @@
+#pragma warning (disable : 4715)
+#pragma warning (disable : 4005)
+#pragma warning (disable : 4305)
+#pragma warning (disable : 4244)
 #include "overlay.h"
 #include <fstream>
 #include <iomanip>
@@ -76,7 +80,6 @@ extern bool optic2x4x;
 extern bool opticthreat;
 extern bool optic3x;
 extern bool opticholo1x2x;
-
 extern bool suppressor;
 extern bool weaponmod;
 extern bool grenade_frag;
@@ -115,6 +118,12 @@ extern bool weapon_car_smg;
 extern float aimdist;
 //item glow brightness
 extern int itemglowbrightness;
+//Menu Stuff
+int menu1 = 0;
+int menu2 = 0;
+int menu3 = 0;
+int menu4 = 0;
+
 
 
 int width;
@@ -208,482 +217,557 @@ void Overlay::RenderMenu()
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
 	ImGui::SetNextWindowSize(ImVec2(450, 860), ImGuiCond_Once);
 	ImGui::Begin(XorStr("##title"), (bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
-	if (ImGui::BeginTabBar(XorStr("Tab")))
-	{
-		if (ImGui::BeginTabItem(XorStr("Main")))
-		{
-			ImGui::Sliderbox(XorStr("ESP Toggle"), &esp);
-
-			ImGui::Sliderbox(XorStr("AIM Toggle"), &aim_enable);
-			ImGui::Text(XorStr("Aim Distance:"));
-			ImGui::SameLine();
-			ImGui::SliderFloat(XorStr("##Aim Distance"), &aimdist, 10.0f * 39.62, 1600.0f * 39.62, "##");
-			ImGui::SameLine();
-			ImGui::TextColored(GREEN, "%.0f ", aimdist / 39.62);
-			ImGui::RadioButton("Left Mouse Aim", &e, 1); ImGui::SameLine();
-			ImGui::RadioButton("Right Mouse Aim", &e, 2); ImGui::SameLine();
-			ImGui::RadioButton("Left and Right Mouse Aim", &e, 3);
-			//Setting one and unsetting the other
-			if (e == 1)
-			{
-				toggleaim = true;
-				toggleaim2 = false;			
-			}
-			else if (e == 2)
-			{
-				toggleaim = false;
-				toggleaim2 = true;
-			}
-			else if (e == 3)
-			{
-				toggleaim = true;
-				toggleaim2 = true;
-			}
-			
-
-			if (aim_enable)
-			{
-				ImGui::SameLine();
-				ImGui::Sliderbox(XorStr("Visibility Check"), &vis_check);
-				ImGui::SameLine();
-				ImGui::Sliderbox(XorStr("No Recoil/Sway"), &aim_no_recoil);
-				if (vis_check)
+	//if (ImGui::BeginTabBar(XorStr("Tab")))
+	//{
+		//if (ImGui::BeginTabItem(XorStr("##")))
+		//{
+				if (ImGui::CollapsingHeader("Main Toggle Settings"))
 				{
-					aim = 2;
-				}
-				else
-				{
-					aim = 1;
-				}
-			}
-			else
-			{
-				aim = 0;
-			}
+					menu1 = 1;
+					ImGui::Sliderbox(XorStr("ESP On/Off"), &esp);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("AIM On/Off"), &aim_enable);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Glow Items"), &item_glow);
+					ImGui::Sliderbox(XorStr("Glow Players"), &player_glow);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Thirdperson"), &thirdperson);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Mini-Map Radar"), &minimapradar);
+					if (aim_enable)
+					{
+						ImGui::Sliderbox(XorStr("Visibility Check"), &vis_check);
+						ImGui::SameLine();
+						ImGui::Sliderbox(XorStr("No Recoil"), &aim_no_recoil);
+						if (vis_check)
+						{
+							aim = 2;
+						}
+						else
+						{
+							aim = 1;
+						}
+					}
+					else
+					{
+						aim = 0;
+					}
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Firing Range"), &firing_range);
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::Text(XorStr("Aiming Distance:"));
+					ImGui::SameLine();
+					ImGui::TextColored(GREEN, "%.f meters", aimdist / 39.62);
+					ImGui::SliderFloat(XorStr("##Aim Distance"), &aimdist, 10.0f * 39.62, 1600.0f * 39.62, "##");
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::Text(XorStr("Aiming Keys:"));
+					ImGui::RadioButton("Left Mouse", &e, 1); ImGui::SameLine();
+					ImGui::RadioButton("Right Mouse ", &e, 2); ImGui::SameLine();
+					ImGui::RadioButton("Left/Right Mouse", &e, 3);
+					//Setting one and unsetting the other
+					if (e == 1)
+					{
+						toggleaim = true;
+						toggleaim2 = false;
+					}
+					else if (e == 2)
+					{
+						toggleaim = false;
+						toggleaim2 = true;
+					}
+					else if (e == 3)
+					{
+						toggleaim = true;
+						toggleaim2 = true;
+					}
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::Text(XorStr("Max distance for everything:"));
+					ImGui::SameLine();
+					ImGui::TextColored(GREEN,"%d meters", (int)(max_dist / 40));
+					ImGui::SliderFloat(XorStr("##1"), &max_dist, 100.0f * 40, 3800.0f * 40, "##");
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::Text(XorStr("Smooth Aim Value:"));
+					ImGui::SameLine();
+					ImGui::TextColored(GREEN, "%.f", smooth);
+					ImGui::SliderFloat(XorStr("##2"), &smooth, 85.0f, 150.0f, "##");
+					ImGui::SameLine();
+					ImGui::Text(XorStr("85 To 100 Is Safe"));
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::Text(XorStr("Max FOV:"));
+					ImGui::SameLine();
+					ImGui::TextColored(GREEN, "%.f", max_fov);
+					ImGui::SliderFloat(XorStr("##3"), &max_fov, 1.0f, 50.0f, "##");
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::Text(XorStr("Aiming Bone:"));
+					ImGui::Text(XorStr("0=Head, 1=Neck, 2=Chest, 3=Stomach"));
+					ImGui::SliderInt(XorStr("##bone slider"), &bone, 0, 3);
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::Text(XorStr("ESP Options:"));
+					ImGui::Sliderbox(XorStr("Distance"), &v.distance);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Health bar"), &v.healthbar);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Shield bar"), &v.shieldbar);					
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::Text(XorStr("Player Glow Color:"));
+					ImGui::ColorEdit3("##Glow Color Picker", glowcolor);
+					{
+						glowr = glowcolor[0] * 250;
+						glowg = glowcolor[1] * 250;
+						glowb = glowcolor[2] * 250;
+					}
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::Text(XorStr("Saving and Loading. Need to Save Once to make the file."));
+					//Saving
+					if (ImGui::Button("Save Config"))
+					{
+						ofstream config("Settings.txt");
+						if (config.is_open())
+						{
+							config << std::boolalpha << firing_range << "\n";
+							config << aim << "\n";
+							config << std::boolalpha << esp << "\n";
+							config << std::boolalpha << item_glow << "\n";
+							config << std::boolalpha << player_glow << "\n";
+							config << std::boolalpha << aim_no_recoil << "\n";
+							config << max_dist << "\n";
+							config << smooth << "\n";
+							config << max_fov << "\n";
+							config << bone << "\n";
+							config << glowr << "\n";
+							config << glowg << "\n";
+							config << glowb << "\n";
+							config << glowcolor[0] << "\n";
+							config << glowcolor[1] << "\n";
+							config << glowcolor[2] << "\n";
+							config << radarcolorr << "\n";
+							config << radarcolorg << "\n";
+							config << radarcolorb << "\n";
+							config << radarcolor[0] << "\n";
+							config << radarcolor[1] << "\n";
+							config << radarcolor[2] << "\n";
+							config << v.healthbar << "\n";
+							config << v.shieldbar << "\n";
+							config << v.distance << "\n";
+							config << thirdperson << "\n";
+							config << std::boolalpha << minimapradar << "\n";
 
-			ImGui::Sliderbox(XorStr("Glow Items"), &item_glow);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("Glow Players"), &player_glow);
-			ImGui::Sliderbox(XorStr("Thirdperson"), &thirdperson);
-			ImGui::Sliderbox(XorStr("Firing Range Toggle"), &firing_range);
-			ImGui::Sliderbox(XorStr("Mini-Map Radar"), &minimapradar);
-			ImGui::Text(XorStr("Max distance:"));
-			ImGui::SliderFloat(XorStr("##1"), &max_dist, 100.0f * 40, 3800.0f * 40, "%.2f");
-			ImGui::SameLine();
-			ImGui::Text("(%d meters)", (int)(max_dist / 40));
-			ImGui::Text(XorStr("Smooth Aim Value:"));
-			ImGui::SliderFloat(XorStr("##2"), &smooth, 85.0f, 150.0f, "%.2f");
-			ImGui::SameLine();
-			ImGui::Text(XorStr("85 To 100 Is Safe"));
-			ImGui::Text(XorStr("Max FOV:"));
-			ImGui::SliderFloat(XorStr("##3"), &max_fov, 1.0f, 50.0f, "%.2f");
-			ImGui::Text(XorStr("Aiming Bone:"));
-			ImGui::Text(XorStr("0=Head, 1=Neck, 2=Chest, 3=Stomach"));
-			ImGui::SliderInt(XorStr("##bone slider"), &bone, 0, 3);
-			ImGui::Text(XorStr("ESP options:"));
-			ImGui::Sliderbox(XorStr("Distance"), &v.distance);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("Health bar"), &v.healthbar);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("Shield bar"), &v.shieldbar);
-			//Glow Color
-			ImGui::Text(XorStr("Item Glow Brightness:"));
-			ImGui::SliderInt(XorStr("##itemglowbright"), &itemglowbrightness, 2, 40, "%d");
-			ImGui::Text(XorStr("Glow Color Picker:"));
-			ImGui::ColorEdit3("##Glow Color Picker", glowcolor);
-			{
-				glowr = glowcolor[0] * 250;
-				glowg = glowcolor[1] * 250;
-				glowb = glowcolor[2] * 250;
-			}
-			//Radar Color
-			ImGui::Text(XorStr("Radar Color Picker:"));
-			ImGui::ColorEdit3("##Radar Color Picker", radarcolor);
-			{
-				radarcolorr = radarcolor[0] * 250;
-				radarcolorg = radarcolor[1] * 250;
-				radarcolorb = radarcolor[2] * 250;
-			}
-			ImGui::Text(XorStr("Saving and Loading. Need to Save Once to make the file."));
-			//Saving
-			if (ImGui::Button("Save Config"))
-			{
-				ofstream config("Settings.txt");
-				if (config.is_open())
-				{
-					config << std::boolalpha << firing_range << "\n";
-					config << aim << "\n";
-					config << std::boolalpha << esp << "\n";
-					config << std::boolalpha << item_glow << "\n";
-					config << std::boolalpha << player_glow << "\n";
-					config << std::boolalpha << aim_no_recoil << "\n";
-					config << max_dist << "\n";
-					config << smooth << "\n";
-					config << max_fov << "\n";
-					config << bone << "\n";
-					config << glowr << "\n";
-					config << glowg << "\n";
-					config << glowb << "\n";
-					config << glowcolor[0] << "\n";
-					config << glowcolor[1] << "\n";
-					config << glowcolor[2] << "\n";
-					config << radarcolorr << "\n";
-					config << radarcolorg << "\n";
-					config << radarcolorb << "\n";
-					config << radarcolor[0] << "\n";
-					config << radarcolor[1] << "\n";
-					config << radarcolor[2] << "\n";
-					config << v.healthbar << "\n";
-					config << v.shieldbar << "\n";
-					config << v.distance << "\n";
-					config << thirdperson << "\n";
-					config << std::boolalpha << minimapradar << "\n";
+							config << std::boolalpha << lightbackpack << "\n";
+							config << std::boolalpha << medbackpack << "\n";
+							config << std::boolalpha << heavybackpack << "\n";
+							config << std::boolalpha << shieldupgrade << "\n";
+							config << std::boolalpha << shieldupgradehead << "\n";
+							config << std::boolalpha << accelerant << "\n";
+							config << std::boolalpha << phoenix << "\n";
+							config << std::boolalpha << healthlarge << "\n";
+							config << std::boolalpha << healthsmall << "\n";
+							config << std::boolalpha << shieldbattsmall << "\n";
+							config << std::boolalpha << shieldbattlarge << "\n";
+							config << std::boolalpha << ammosniper << "\n";
+							config << std::boolalpha << ammohc << "\n";
+							config << std::boolalpha << optic << "\n";
+							config << std::boolalpha << ammosc << "\n";
+							config << std::boolalpha << ammonrg << "\n";
+							config << std::boolalpha << ammoshotgun << "\n";
+							config << std::boolalpha << lasersight << "\n";
+							config << std::boolalpha << magsniper << "\n";
+							config << std::boolalpha << magenergy << "\n";
+							config << std::boolalpha << stocksniper << "\n";
+							config << std::boolalpha << stockregular << "\n";
+							config << std::boolalpha << shielddown << "\n";
+							config << std::boolalpha << lightammomag << "\n";
+							config << std::boolalpha << heavyammomag << "\n";
+							config << std::boolalpha << optic2x << "\n";
+							config << std::boolalpha << opticholo1x << "\n";
+							config << std::boolalpha << opticsniper6x << "\n";
+							config << std::boolalpha << opticsniper4x8x << "\n";
+							config << std::boolalpha << opticsniperthreat << "\n";
+							config << std::boolalpha << optic2x4x << "\n";
+							config << std::boolalpha << opticthreat << "\n";
+							config << std::boolalpha << optic3x << "\n";
+							config << std::boolalpha << opticholo1x2x << "\n";
 
-					config << std::boolalpha << lightbackpack << "\n";
-					config << std::boolalpha << medbackpack << "\n";
-					config << std::boolalpha << heavybackpack << "\n";
-					config << std::boolalpha << shieldupgrade << "\n";
-					config << std::boolalpha << shieldupgradehead << "\n";
-					config << std::boolalpha << accelerant << "\n";
-					config << std::boolalpha << phoenix << "\n";
-					config << std::boolalpha << healthlarge << "\n";
-					config << std::boolalpha << healthsmall << "\n";
-					config << std::boolalpha << shieldbattsmall << "\n";
-					config << std::boolalpha << shieldbattlarge << "\n";
-					config << std::boolalpha << ammosniper << "\n";
-					config << std::boolalpha << ammohc << "\n";
-					config << std::boolalpha << optic << "\n";
-					config << std::boolalpha << ammosc << "\n";
-					config << std::boolalpha << ammonrg << "\n";
-					config << std::boolalpha << ammoshotgun << "\n";
-					config << std::boolalpha << lasersight << "\n";
-					config << std::boolalpha << magsniper << "\n";
-					config << std::boolalpha << magenergy << "\n";
-					config << std::boolalpha << stocksniper << "\n";
-					config << std::boolalpha << stockregular << "\n";
-					config << std::boolalpha << shielddown << "\n";
-					config << std::boolalpha << lightammomag << "\n";
-					config << std::boolalpha << heavyammomag << "\n";
-					config << std::boolalpha << optic2x << "\n";
-					config << std::boolalpha << opticholo1x << "\n";
-					config << std::boolalpha << opticsniper6x << "\n";
-					config << std::boolalpha << opticsniper4x8x << "\n";
-					config << std::boolalpha << opticsniperthreat << "\n";
-					config << std::boolalpha << optic2x4x << "\n";
-					config << std::boolalpha << opticthreat << "\n";
-					config << std::boolalpha << optic3x << "\n";
-					config << std::boolalpha << opticholo1x2x << "\n";
+							config << std::boolalpha << suppressor << "\n";
+							config << std::boolalpha << weaponmod << "\n";
+							config << std::boolalpha << grenade_frag << "\n";
+							config << std::boolalpha << grenade_arc_star << "\n";
+							config << std::boolalpha << grenade_thermite << "\n";
+							config << std::boolalpha << shotgunbolt << "\n";
+							config << std::boolalpha << weapon_kraber << "\n";
+							config << std::boolalpha << weapon_mastiff << "\n";
+							config << std::boolalpha << weapon_lstar << "\n";
+							config << std::boolalpha << weapon_havoc << "\n";
+							config << std::boolalpha << weapon_devotion << "\n";
+							config << std::boolalpha << weapon_triple_take << "\n";
+							config << std::boolalpha << weapon_flatline << "\n";
+							config << std::boolalpha << weapon_hemlock << "\n";
+							config << std::boolalpha << weapon_g7_scout << "\n";
+							config << std::boolalpha << weapon_alternator << "\n";
+							config << std::boolalpha << weapon_r99 << "\n";
+							config << std::boolalpha << weapon_prowler << "\n";
+							config << std::boolalpha << weapon_volt << "\n";
+							config << std::boolalpha << weapon_longbow << "\n";
+							config << std::boolalpha << weapon_charge_rifle << "\n";
+							config << std::boolalpha << weapon_spitfire << "\n";
+							config << std::boolalpha << weapon_r301 << "\n";
+							config << std::boolalpha << weapon_eva8 << "\n";
+							config << std::boolalpha << weapon_peacekeeper << "\n";
+							config << std::boolalpha << weapon_mozambique << "\n";
+							config << std::boolalpha << weapon_wingman << "\n";
+							config << std::boolalpha << weapon_p2020 << "\n";
+							config << std::boolalpha << weapon_re45 << "\n";
+							config << std::boolalpha << weapon_sentinel << "\n";
+							config << std::boolalpha << weapon_bow << "\n";
+							config << std::boolalpha << weapon_3030_repeater << "\n";
+							config << std::boolalpha << weapon_rampage << "\n";
+							config << std::boolalpha << weapon_car_smg << "\n";
+							config << toggleaim << "\n";
+							config << toggleaim2 << "\n";
+							config << e << "\n";
+							config << minimapradardotsize1 << "\n";
+							config << minimapradardotsize2 << "\n";
+							config << aimdist << "\n";
+							config << itemglowbrightness;
 
-					config << std::boolalpha << suppressor << "\n";
-					config << std::boolalpha << weaponmod << "\n";
-					config << std::boolalpha << grenade_frag << "\n";
-					config << std::boolalpha << grenade_arc_star << "\n";
-					config << std::boolalpha << grenade_thermite << "\n";
-					config << std::boolalpha << shotgunbolt << "\n";
-					config << std::boolalpha << weapon_kraber << "\n";
-					config << std::boolalpha << weapon_mastiff << "\n";
-					config << std::boolalpha << weapon_lstar << "\n";
-					config << std::boolalpha << weapon_havoc << "\n";
-					config << std::boolalpha << weapon_devotion << "\n";
-					config << std::boolalpha << weapon_triple_take << "\n";
-					config << std::boolalpha << weapon_flatline << "\n";
-					config << std::boolalpha << weapon_hemlock << "\n";
-					config << std::boolalpha << weapon_g7_scout << "\n";
-					config << std::boolalpha << weapon_alternator << "\n";
-					config << std::boolalpha << weapon_r99 << "\n";
-					config << std::boolalpha << weapon_prowler << "\n";
-					config << std::boolalpha << weapon_volt << "\n";
-					config << std::boolalpha << weapon_longbow << "\n";
-					config << std::boolalpha << weapon_charge_rifle << "\n";
-					config << std::boolalpha << weapon_spitfire << "\n";
-					config << std::boolalpha << weapon_r301 << "\n";
-					config << std::boolalpha << weapon_eva8 << "\n";
-					config << std::boolalpha << weapon_peacekeeper << "\n";
-					config << std::boolalpha << weapon_mozambique << "\n";
-					config << std::boolalpha << weapon_wingman << "\n";
-					config << std::boolalpha << weapon_p2020 << "\n";
-					config << std::boolalpha << weapon_re45 << "\n";
-					config << std::boolalpha << weapon_sentinel << "\n";
-					config << std::boolalpha << weapon_bow << "\n";
-					config << std::boolalpha << weapon_3030_repeater << "\n";
-					config << std::boolalpha << weapon_rampage << "\n";
-					config << std::boolalpha << weapon_car_smg << "\n";
-					config << toggleaim << "\n";
-					config << toggleaim2 << "\n";
-					config << e << "\n";					
-					config << minimapradardotsize1 << "\n";
-					config << minimapradardotsize2 << "\n";
-					config << aimdist << "\n";
-					config << itemglowbrightness;
+							config.close();
+						}
+					}
+					ImGui::SameLine();
+					//Loading
+					if (ImGui::Button("Load Config"))
+					{
+						ifstream config("Settings.txt");
+						if (config.is_open())
+						{
+							config >> std::boolalpha >> firing_range;
+							config >> aim;
+							config >> std::boolalpha >> esp;
+							config >> std::boolalpha >> item_glow;
+							config >> std::boolalpha >> player_glow;
+							config >> std::boolalpha >> aim_no_recoil;
+							config >> max_dist;
+							config >> smooth;
+							config >> max_fov;
+							config >> bone;
+							config >> glowr;
+							config >> glowg;
+							config >> glowb;
+							config >> glowcolor[0];
+							config >> glowcolor[1];
+							config >> glowcolor[2];
+							config >> radarcolorr;
+							config >> radarcolorg;
+							config >> radarcolorb;
+							config >> radarcolor[0];
+							config >> radarcolor[1];
+							config >> radarcolor[2];
+							config >> v.healthbar;
+							config >> v.shieldbar;
+							config >> v.distance;
+							config >> thirdperson;
+							config >> minimapradar;
+							config >> lightbackpack;
+							config >> medbackpack;
+							config >> heavybackpack;
+							config >> shieldupgrade;
+							config >> shieldupgradehead;
+							config >> accelerant;
+							config >> phoenix;
+							config >> healthlarge;
+							config >> healthsmall;
+							config >> shieldbattsmall;
+							config >> shieldbattlarge;
+							config >> ammosniper;
+							config >> ammohc;
+							config >> optic;
+							config >> ammosc;;
+							config >> ammonrg;
+							config >> ammoshotgun;
+							config >> lasersight;;
+							config >> magsniper;
+							config >> magenergy;
+							config >> stocksniper;
+							config >> stockregular;
+							config >> shielddown;
+							config >> lightammomag;
+							config >> heavyammomag;
+							config >> optic2x;
+							config >> opticholo1x;
+							config >> opticsniper6x;
+							config >> opticsniper4x8x;
+							config >> opticsniperthreat;
+							config >> optic2x4x;
+							config >> opticthreat;
+							config >> optic3x;
+							config >> opticholo1x2x;
 
-					config.close();
-				}
-			}
-			ImGui::SameLine();
-			//Loading
-			if (ImGui::Button("Load Config"))
-			{
-				ifstream config("Settings.txt");
-				if (config.is_open())
-				{
-					config >> std::boolalpha >> firing_range;
-					config >> aim;
-					config >> std::boolalpha >> esp;
-					config >> std::boolalpha >> item_glow;
-					config >> std::boolalpha >> player_glow;
-					config >> std::boolalpha >> aim_no_recoil;
-					config >> max_dist;
-					config >> smooth;
-					config >> max_fov;
-					config >> bone;
-					config >> glowr;
-					config >> glowg;
-					config >> glowb;
-					config >> glowcolor[0];
-					config >> glowcolor[1];
-					config >> glowcolor[2];
-					config >> radarcolorr;
-					config >> radarcolorg;
-					config >> radarcolorb;
-					config >> radarcolor[0];
-					config >> radarcolor[1];
-					config >> radarcolor[2];
-					config >> v.healthbar;
-					config >> v.shieldbar;
-					config >> v.distance;
-					config >> thirdperson;
-					config >> minimapradar;
-					config >> lightbackpack;
-					config >> medbackpack;
-					config >> heavybackpack;
-					config >> shieldupgrade;
-					config >> shieldupgradehead;
-					config >> accelerant;
-					config >> phoenix;
-					config >> healthlarge;
-					config >> healthsmall;
-					config >> shieldbattsmall;
-					config >> shieldbattlarge;
-					config >> ammosniper;
-					config >> ammohc;
-					config >> optic;
-					config >> ammosc;;
-					config >> ammonrg;
-					config >> ammoshotgun;
-					config >> lasersight;;
-					config >> magsniper;
-					config >> magenergy;
-					config >> stocksniper;
-					config >> stockregular;
-					config >> shielddown;
-					config >> lightammomag;
-					config >> heavyammomag;
-					config >> optic2x;
-					config >> opticholo1x;
-					config >> opticsniper6x;
-					config >> opticsniper4x8x;
-					config >> opticsniperthreat;
-					config >> optic2x4x;
-					config >> opticthreat;
-					config >> optic3x;
-					config >> opticholo1x2x;
+							config >> suppressor;
+							config >> weaponmod;
+							config >> grenade_frag;
+							config >> grenade_arc_star;
+							config >> grenade_thermite;
+							config >> shotgunbolt;
+							config >> weapon_kraber;
+							config >> weapon_mastiff;
+							config >> weapon_lstar;
+							config >> weapon_havoc;
+							config >> weapon_devotion;
+							config >> weapon_triple_take;
+							config >> weapon_flatline;
+							config >> weapon_hemlock;
+							config >> weapon_g7_scout;
+							config >> weapon_alternator;
+							config >> weapon_r99;
+							config >> weapon_prowler;
+							config >> weapon_volt;
+							config >> weapon_longbow;
+							config >> weapon_charge_rifle;
+							config >> weapon_spitfire;
+							config >> weapon_r301;
+							config >> weapon_eva8;
+							config >> weapon_peacekeeper;
+							config >> weapon_mozambique;
+							config >> weapon_wingman;
+							config >> weapon_p2020;
+							config >> weapon_re45;
+							config >> weapon_sentinel;
+							config >> weapon_bow;
+							config >> weapon_3030_repeater;
+							config >> weapon_rampage;
+							config >> weapon_car_smg;
+							config >> toggleaim;
+							config >> toggleaim2;
+							config >> e;
+							config >> minimapradardotsize1;
+							config >> minimapradardotsize2;
+							config >> aimdist;
+							config >> itemglowbrightness;
+							config.close();
 
-					config >> suppressor;
-					config >> weaponmod;
-					config >> grenade_frag;
-					config >> grenade_arc_star;
-					config >> grenade_thermite;
-					config >> shotgunbolt;
-					config >> weapon_kraber;
-					config >> weapon_mastiff;
-					config >> weapon_lstar;
-					config >> weapon_havoc;
-					config >> weapon_devotion;
-					config >> weapon_triple_take;
-					config >> weapon_flatline;
-					config >> weapon_hemlock;
-					config >> weapon_g7_scout;
-					config >> weapon_alternator;
-					config >> weapon_r99;
-					config >> weapon_prowler;
-					config >> weapon_volt;
-					config >> weapon_longbow;
-					config >> weapon_charge_rifle;
-					config >> weapon_spitfire;
-					config >> weapon_r301;
-					config >> weapon_eva8;
-					config >> weapon_peacekeeper;
-					config >> weapon_mozambique;
-					config >> weapon_wingman;
-					config >> weapon_p2020;
-					config >> weapon_re45;
-					config >> weapon_sentinel;
-					config >> weapon_bow;
-					config >> weapon_3030_repeater;
-					config >> weapon_rampage;
-					config >> weapon_car_smg;
-					config >> toggleaim;
-					config >> toggleaim2;
-					config >> e;					
-					config >> minimapradardotsize1;
-					config >> minimapradardotsize2;
-					config >> aimdist;
-					config >> itemglowbrightness;
-					config.close();
+						}
+					}
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					if (menu1 == 1)
+					{
+						ImGui::GetStateStorage()->SetInt(ImGui::GetID("Weapone Filter Settings"), 0);
+						ImGui::GetStateStorage()->SetInt(ImGui::GetID("Item Filter Settings"), 0);
+						ImGui::GetStateStorage()->SetInt(ImGui::GetID("Radar Settings"), 0);
+					}
 					
 				}
-			}
-			ImGui::EndTabItem();
-		}
-		if (ImGui::BeginTabItem(XorStr("Radar")))
-		{
-			//Dot Size for both mini and main map
-			ImGui::Text(XorStr("MiniMap Radar Dot Size"));
-			ImGui::SliderInt(XorStr("MiniMap Dot Width"), &minimapradardotsize1, 1, 10);
-			ImGui::SliderInt(XorStr("MiniMap Dot length"), &minimapradardotsize2, 1, 10);
-			ImGui::Text(XorStr("Main Map Radar Dot Size"));
-			ImGui::SliderInt(XorStr("Main Map Dot Width"), &mainmapradardotsize1, 1, 10);
-			ImGui::SliderInt(XorStr("Main Map Dot length"), &mainmapradardotsize2, 1, 10);
+				if (ImGui::CollapsingHeader("Radar Settings"))
+				{
+					menu2 = 1;
+					//Dot Size for both mini and main map
+					ImGui::Text(XorStr("MiniMap Radar Dot Size"));
+					ImGui::SliderInt(XorStr("MiniMap Dot Width"), &minimapradardotsize1, 1, 10);
+					ImGui::SliderInt(XorStr("MiniMap Dot length"), &minimapradardotsize2, 1, 10);
+					ImGui::Text(XorStr("Main Map Radar Dot Size"));
+					ImGui::SliderInt(XorStr("Main Map Dot Width"), &mainmapradardotsize1, 1, 10);
+					ImGui::SliderInt(XorStr("Main Map Dot length"), &mainmapradardotsize2, 1, 10);
+					/*//Radar Color
+					ImGui::Text(XorStr("Radar Color Picker:"));
+					ImGui::ColorEdit3("##Radar Color Picker", radarcolor);
+					{
+						radarcolorr = radarcolor[0] * 250;
+						radarcolorg = radarcolor[1] * 250;
+						radarcolorb = radarcolor[2] * 250;
+					}
+					*/
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					if (menu2 == 1)
+					{
+						ImGui::GetStateStorage()->SetInt(ImGui::GetID("Weapone Filter Settings"), 0);
+						ImGui::GetStateStorage()->SetInt(ImGui::GetID("Item Filter Settings"), 0);
+						ImGui::GetStateStorage()->SetInt(ImGui::GetID("Main Toggle Settings"), 0);
+					}
+				}
+				if (ImGui::CollapsingHeader("Item Filter Settings"))
+				{
+					menu3 = 1;
+					ImGui::Text(XorStr("Ammo"));
+					ImGui::Dummy(ImVec2(0.0f, 1.0f));
+					ImGui::Sliderbox(XorStr("Sniper Ammo"), &ammosniper);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Heavy Ammo"), &ammohc);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Light Ammo"), &ammosc);
+					ImGui::Sliderbox(XorStr("Energy Ammo"), &ammonrg);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Shotgun Ammo"), &ammoshotgun);
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::Text(XorStr("Ammo Mags"));
+					ImGui::Dummy(ImVec2(0.0f, 1.0f));
+					ImGui::Sliderbox(XorStr("Sniper"), &magsniper);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Heavy"), &heavyammomag);
+					ImGui::Sliderbox(XorStr("Light"), &lightammomag);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Energy "), &magenergy);
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::Text(XorStr("HCOGs"));
+					ImGui::Dummy(ImVec2(0.0f, 1.0f));
+					ImGui::Sliderbox(XorStr("1x HCOG"), &optic);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("2x HCOG"), &optic2x);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("3x HCOG"), &optic3x);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("2-4x"), &optic2x4x);
+					ImGui::Text(XorStr("Snipers"));
+					ImGui::Dummy(ImVec2(0.0f, 1.0f));
+					ImGui::Sliderbox(XorStr("Sniper 6x"), &opticsniper6x);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Sniper 4-8x"), &opticsniper4x8x);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Sniper Threat"), &opticsniperthreat);
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::Text(XorStr("Holo's"));
+					ImGui::Dummy(ImVec2(0.0f, 1.0f));
+					ImGui::Sliderbox(XorStr("1x Holo"), &opticholo1x);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("2x Holo"), &opticholo1x2x);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("1x Threat"), &opticthreat);
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::Text(XorStr("Backpacks"));
+					ImGui::Sliderbox(XorStr("Light"), &lightbackpack);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Medium"), &medbackpack);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Heavy"), &heavybackpack);
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::Text(XorStr("Shield's"));
+					ImGui::Sliderbox(XorStr("Armor"), &shieldupgrade);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Helmets"), &shieldupgradehead);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Knockdown"), &shielddown);
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::TextColored(GREEN, "Heals for Health");
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));					
+					ImGui::Sliderbox(XorStr("Large Health"), &healthlarge);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Small Health"), &healthsmall);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Phoenix Kit"), &phoenix);
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::TextColored(BLUE, "Heals for Shields");
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::Sliderbox(XorStr("Large Shield"), &shieldbattlarge);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Small Shield"), &shieldbattsmall);													
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Ultimate Accelerant"), &accelerant);
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::Text(XorStr("Attachements"));
+					ImGui::Dummy(ImVec2(0.0f, 5.0f));
+					ImGui::Sliderbox(XorStr("Lasersight"), &lasersight);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Sniper Stock"), &stocksniper);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Regular Stock"), &stockregular);
+					ImGui::Sliderbox(XorStr("Suppressor"), &suppressor);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Weapon Mods"), &weaponmod);
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::Text(XorStr("Item Glow Brightness:"));
+					ImGui::SliderInt(XorStr("##itemglowbright"), &itemglowbrightness, 2, 40, "%d");
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					if (menu3 == 1)
+					{
+						ImGui::GetStateStorage()->SetInt(ImGui::GetID("Weapone Filter Settings"), 0);
+						ImGui::GetStateStorage()->SetInt(ImGui::GetID("Radar Settings"), 0);
+						ImGui::GetStateStorage()->SetInt(ImGui::GetID("Main Toggle Settings"), 0);
+					}
+				}
+				if (ImGui::CollapsingHeader("Weapone Filter Settings"))
+				{
+					menu4 = 1;
+					//Light Weapons
+					ImGui::TextColored(ORANGE, "Light Weapons");
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::Sliderbox(XorStr("P2020"), &weapon_p2020);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("RE-45"), &weapon_re45);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("R-99"), &weapon_r99);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("G7 Scout"), &weapon_g7_scout);
+					ImGui::Sliderbox(XorStr("Spitfire"), &weapon_spitfire);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("R-301"), &weapon_r301);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Alternator "), &weapon_alternator);
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					//Heavy Weapons
+					ImGui::TextColored(TEAL, "Heavy Weapons");
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::Sliderbox(XorStr("C.A.R."), &weapon_car_smg);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Flatline"), &weapon_flatline);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Hemlok"), &weapon_hemlock);
+					ImGui::Sliderbox(XorStr("Prowler "), &weapon_prowler);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("30-30"), &weapon_3030_repeater);
+					//Energy Weapons
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::TextColored(YELLOW, "Energy Weapons");
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::Sliderbox(XorStr("Triple Take"), &weapon_triple_take);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("L-STAR"), &weapon_lstar);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Volt"), &weapon_volt);
+					ImGui::Sliderbox(XorStr("Devotion "), &weapon_devotion);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("HAVOC"), &weapon_havoc);
+					//Shotgun Weapons
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::TextColored(RED, "Shotgun Weapons");
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::Sliderbox(XorStr("EVA-8"), &weapon_eva8);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Mozambique"), &weapon_mozambique);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Peacekeeper"), &weapon_peacekeeper);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Mastiff"), &weapon_mastiff);
+					//Sniper Weapons
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::TextColored(BLUE, "Sniper Weapons");
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::Sliderbox(XorStr("Charge Rifle"), &weapon_charge_rifle);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Longbow"), &weapon_longbow);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Sentinel"), &weapon_sentinel);
+					ImGui::Sliderbox(XorStr("Wingman "), &weapon_wingman);
+					//KRABER
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::Text(XorStr("The Kraber"));
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::Sliderbox(XorStr("Kraber .50-Cal Sniper"), &weapon_kraber);
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					ImGui::Text(XorStr("Item Glow Brightness:"));
+					ImGui::SliderInt(XorStr("##itemglowbright"), &itemglowbrightness, 2, 40, "%d");
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+					if (menu4 == 1)
+					{
+						ImGui::GetStateStorage()->SetInt(ImGui::GetID("Item Filter Settings"), 0);
+						ImGui::GetStateStorage()->SetInt(ImGui::GetID("Radar Settings"), 0);
+						ImGui::GetStateStorage()->SetInt(ImGui::GetID("Main Toggle Settings"), 0);
+					}
+				}
+				//ImGui::EndTabItem();
 			
-			ImGui::EndTabItem();
-		}
-		if (ImGui::BeginTabItem(XorStr("Item Filter List")))
-		{
-			//Dot Size for both mini and main map
-			ImGui::Text(XorStr("Ammo"));
-			ImGui::Sliderbox(XorStr("Sniper"), &ammosniper);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("Heavy"), &ammohc);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("Light"), &ammosc);
-			ImGui::Sliderbox(XorStr("Energy"), &ammonrg);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("Shotgun"), &ammoshotgun);
-			ImGui::Text(XorStr("Ammo Mag's"));
-			ImGui::Sliderbox(XorStr("Sniper Mag"), &magsniper);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("Energy Mag"), &magenergy);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("Light Mag"), &lightammomag);
-			ImGui::Sliderbox(XorStr("Heavy Mag"), &heavyammomag);
-			ImGui::Text(XorStr("Optic's"));
-			ImGui::Sliderbox(XorStr("Optic's 1x HCOG"), &optic);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("Optic's 1x Holo"), &opticholo1x);
-			ImGui::Sliderbox(XorStr("Optic's 2x HCOG"), &optic2x);
-			ImGui::Sliderbox(XorStr("Sniper 6x"), &opticsniper6x);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("Sniper 4-8x"), &opticsniper4x8x);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("Sniper Threat"), &opticsniperthreat);
-			ImGui::Sliderbox(XorStr("Optic's 2-4x"), &optic2x4x);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("Optic's Threat"), &opticthreat);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("Optic's 3x HCOG"), &optic3x);
-			ImGui::Sliderbox(XorStr("Optic's 2x Holo"), &opticholo1x2x);
-			ImGui::Text(XorStr("Backpack's"));
-			ImGui::Sliderbox(XorStr("Light Backpack"), &lightbackpack);	
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("Medium Backpack"), &medbackpack);	
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("Heavy Backpack"), &heavybackpack);
-			ImGui::Text(XorStr("Shield's"));
-			ImGui::Sliderbox(XorStr("Shield's"), &shieldupgrade);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("Helmet's"), &shieldupgradehead);
-			ImGui::Text(XorStr("Heal's"));
-			ImGui::Sliderbox(XorStr("Phoenix Kit"), &phoenix);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("Large Health"), &healthlarge);
-			ImGui::SameLine();	
-			ImGui::Sliderbox(XorStr("Small Health"), &healthsmall);
-			ImGui::Sliderbox(XorStr("Small Shield"), &shieldbattsmall);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("Large Shield"), &shieldbattlarge);
-			ImGui::Sliderbox(XorStr("Knockdown Shield"), &shielddown);
-			ImGui::Sliderbox(XorStr("Ultimate Accelerant"), &accelerant);			
-			ImGui::Text(XorStr("Attachement's"));
-			ImGui::Sliderbox(XorStr("Lasersight"), &lasersight);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("Sniper Stock"), &stocksniper);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("Regular Stock"), &stockregular);
-			ImGui::Sliderbox(XorStr("Suppressor"), &suppressor);
-			ImGui::Sliderbox(XorStr("Weapon Mod's"), &weaponmod);
 
+		//}
 
-			
-
-
-			ImGui::EndTabItem();
-		}
-		if (ImGui::BeginTabItem(XorStr("Weapon Filter List")))
-		{
-			
-			//Light Weapons
-			ImGui::Text(XorStr("Light Ammo Weapon's"));
-			ImGui::Sliderbox(XorStr("P2020"), &weapon_p2020);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("RE-45"), &weapon_re45);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("R-99"), &weapon_r99);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("G7 Scout"), &weapon_g7_scout);
-			ImGui::Sliderbox(XorStr("Spitfire"), &weapon_spitfire);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("R-301"), &weapon_r301);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("Alternator "), &weapon_alternator);
-			
-			//Heavy Weapons
-			ImGui::Text(XorStr("Heavy Ammo Weapon's"));
-			ImGui::Sliderbox(XorStr("C.A.R."), &weapon_car_smg);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("Flatline"), &weapon_flatline);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("Hemlok"), &weapon_hemlock);
-			ImGui::Sliderbox(XorStr("Prowler "), &weapon_prowler);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("30-30"), &weapon_3030_repeater);
-			//Energy Weapons
-			ImGui::Text(XorStr("Energy Ammo Weapon's"));
-			ImGui::Sliderbox(XorStr("Triple Take"), &weapon_triple_take);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("L-STAR"), &weapon_lstar);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("Volt"), &weapon_volt);
-			ImGui::Sliderbox(XorStr("Devotion "), &weapon_devotion);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("HAVOC"), &weapon_havoc);
-			//Shotgun Weapons
-			ImGui::Text(XorStr("Shotgun Ammo Weapon's"));
-			ImGui::Sliderbox(XorStr("EVA-8"), &weapon_eva8);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("Mozambique"), &weapon_mozambique);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("Peacekeeper"), &weapon_peacekeeper);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("Mastiff"), &weapon_mastiff);
-			//Sniper Weapons
-			ImGui::Text(XorStr("Sniper Ammo Weapon's"));
-			ImGui::Sliderbox(XorStr("Charge Rifle"), &weapon_charge_rifle);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("Longbow"), &weapon_longbow);
-			ImGui::SameLine();
-			ImGui::Sliderbox(XorStr("Sentinel"), &weapon_sentinel);
-			ImGui::Sliderbox(XorStr("Wingman "), &weapon_wingman);
-			//KRABER
-			ImGui::Text(XorStr("The Kraber"));
-			ImGui::Sliderbox(XorStr("Kraber .50-Cal Sniper"), &weapon_kraber);
-
-			
-			
-
-			ImGui::EndTabItem();
-		}
-		ImGui::EndTabBar();
-	}
+		//ImGui::EndTabBar();
+	//}
+	ImGui::Dummy(ImVec2(0.0f, 10.0f));
 	ImGui::Text(XorStr("Overlay FPS: %.3f ms/frame (%.1f FPS)"), 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	ImGui::End();
 }
