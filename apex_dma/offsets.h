@@ -1,14 +1,14 @@
 
 #define VERSION STEAM
 
-//GameVersion v3.0.12.19
+//GameVersion v3.0.13.29
 
 #if VERSION == STEAM
 
-#define OFFSET_ENTITYLIST 0x1a98778 //cl_entitylist
-#define OFFSET_LOCAL_ENT 0x1e49288 //LocalPlayer
-#define OFFSET_NAME_LIST 0xbac9510 //NameList
-#define OFFSET_THIRDPERSON 0x01a7da50 + 0x6c //thirdperson_override + 0x6c
+#define OFFSET_ENTITYLIST 0x1a98758 //cl_entitylist
+#define OFFSET_LOCAL_ENT 0x1e49268 //LocalPlayer
+#define OFFSET_NAME_LIST 0xbac9580 //NameList
+#define OFFSET_THIRDPERSON 0x01a7da30 + 0x6c //thirdperson_override + 0x6c
 #define OFFSET_TIMESCALE 0x0143e580 //host_timescale
 
 #define OFFSET_TEAM 0x044c //m_iTeamNum
@@ -42,7 +42,7 @@
 #define OFFSET_OBSERVING_TARGET 0x3470 //m_hObserverTarget
 
 #define OFFSET_MATRIX 0x11a210 //ViewMatrix
-#define OFFSET_RENDER 0x75c6190 //ViewRender
+#define OFFSET_RENDER 0x75c6210 //ViewRender
 
 #define OFFSET_WEAPON 0x19ec //m_latestPrimaryWeapons
 #define OFFSET_BULLET_SPEED 0x1ed0 //CWeaponX!m_flProjectileSpeed

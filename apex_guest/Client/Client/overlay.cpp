@@ -635,11 +635,11 @@ void Overlay::RenderMenu()
 					ImGui::Sliderbox(XorStr("1x Threat"), &opticthreat);
 					ImGui::Dummy(ImVec2(0.0f, 10.0f));
 					ImGui::Text(XorStr("Backpacks"));
-					ImGui::Sliderbox(XorStr("Light"), &lightbackpack);
+					ImGui::Sliderbox(XorStr("Light Backpack"), &lightbackpack);
 					ImGui::SameLine();
-					ImGui::Sliderbox(XorStr("Medium"), &medbackpack);
+					ImGui::Sliderbox(XorStr("Medium Backpack"), &medbackpack);
 					ImGui::SameLine();
-					ImGui::Sliderbox(XorStr("Heavy"), &heavybackpack);
+					ImGui::Sliderbox(XorStr("Heavy Backpack"), &heavybackpack);
 					ImGui::Dummy(ImVec2(0.0f, 10.0f));
 					ImGui::Text(XorStr("Shield's"));
 					ImGui::Sliderbox(XorStr("Armor"), &shieldupgrade);
