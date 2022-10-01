@@ -956,6 +956,8 @@ int main(int argc, char** argv)
 				config >> minimapradardotsize2;
 				config >> aimdist;
 				config >> itemglowbrightness;
+				config >> mainmapradardotsize1;
+				config >> mainmapradardotsize2;
 				config.close();
 			}
 		}

@@ -427,7 +427,9 @@ void Overlay::RenderMenu()
 							config << minimapradardotsize1 << "\n";
 							config << minimapradardotsize2 << "\n";
 							config << aimdist << "\n";
-							config << itemglowbrightness;
+							config << itemglowbrightness << "\n";
+							config << mainmapradardotsize1 << "\n";
+							config << mainmapradardotsize2;
 
 							config.close();
 						}
@@ -542,6 +544,8 @@ void Overlay::RenderMenu()
 							config >> minimapradardotsize2;
 							config >> aimdist;
 							config >> itemglowbrightness;
+							config >> mainmapradardotsize1;
+							config >> mainmapradardotsize2;
 							config.close();
 
 						}
