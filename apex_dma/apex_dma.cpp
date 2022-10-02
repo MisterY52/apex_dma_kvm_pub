@@ -12,6 +12,7 @@
 Memory apex_mem;
 Memory client_mem;
 
+//Just setting things up, dont edit.
 bool firing_range = false;
 bool active = true;
 uintptr_t aimentity = 0;
@@ -33,44 +34,54 @@ extern int bone;
 bool thirdperson = false;
 
 
-
-//chargerifle hack
+//chargerifle hack, removed but not all the way, dont edit.
 bool chargerifle = false;
 bool shooting = false;
 
-//Player Glow Color and Brightness
-float glowr = 0.0f;
-float glowg = 120.0f;
-float glowb = 120.0f;
+
+//Player Glow Color and Brightness. Just setting things up, dont edit.
+float glowr = 0.0f; //Red 0-255, higher is brighter color.
+float glowg = 120.0f; //Green 0-255, higher is brighter color.
+float glowb = 120.0f; //Blue 0-255, higher is brighter color.
+
+
+//Removed but not all the way, dont edit.
 int glowtype = 1;
 int glowtype2 = 2;
 
+
 //Ha think i was done ?
+//Backpacks
 bool lightbackpack = false;
 bool medbackpack = false;
 bool heavybackpack = false;
+
+
+//Shield upgrades
 bool shieldupgrade = false;
 bool shieldupgradehead = false;
+bool shielddown = false;
+
+
+//heaing and Misc
 bool accelerant = false;
 bool phoenix = false;
 bool healthlarge = false;
 bool healthsmall = false;
 bool shieldbattsmall = false;
 bool shieldbattlarge = false;
+
+
+//Ammo
 bool ammosniper = false;
 bool ammohc = false;
-bool optic = false;
 bool ammosc = false;
 bool ammonrg = false;
 bool ammoshotgun = false;
-bool lasersight = false;
-bool magsniper = false;
-bool magenergy = false;
-bool stocksniper = false;
-bool stockregular = false;
-bool shielddown = false;
-bool lightammomag = false;
-bool heavyammomag = false;
+
+
+//Optics
+bool optic = false;
 bool optic2x = false;
 bool opticholo1x = false;
 bool opticholo1x2x = false;
@@ -80,50 +91,85 @@ bool optic2x4x = false;
 bool opticsniper6x = false;
 bool opticsniper4x8x = false;
 bool opticsniperthreat = false;
+
+
+//Magazines
+bool magsniper = false;
+bool magenergy = false;
+bool lightammomag = false;
+bool heavyammomag = false;
+
+
+//Attachments 
+bool lasersight = false;
+bool stocksniper = false;
+bool stockregular = false;
 bool suppressor = false;
 bool weaponmod = false;
+bool shotgunbolt = false;
 
 
+//Nades
 bool grenade_frag = false;
 bool grenade_arc_star = false;
 bool grenade_thermite = false;
-bool shotgunbolt = false;
+
+
+//Kraber
 bool weapon_kraber = false;
+
+
+//Shotguns
 bool weapon_mastiff = false;
+bool weapon_eva8  = false;
+bool weapon_peacekeeper  = false;
+bool weapon_mozambique  = false;
+
+
+//Energy weapons
 bool weapon_lstar = false;
 bool weapon_havoc = false;
 bool weapon_devotion = false;
 bool weapon_triple_take = false;
-bool weapon_flatline = false;
-bool weapon_hemlock  = false;
-bool weapon_g7_scout  = false;
-bool weapon_alternator  = false;
-bool weapon_r99  = false;
 bool weapon_prowler  = false;
 bool weapon_volt  = false;
-bool weapon_longbow  = false;
-bool weapon_charge_rifle  = false;
-bool weapon_spitfire  = false;
-bool weapon_r301 = false;
-bool weapon_eva8  = false;
-bool weapon_peacekeeper  = false;
-bool weapon_mozambique  = false;
-bool weapon_wingman  = false;
-bool weapon_p2020  = false;
-bool weapon_re45  = false;
-bool weapon_sentinel  = false;
-bool weapon_bow  = false;
+
+
+//Heavy Weapons
+bool weapon_flatline = false;
+bool weapon_hemlock  = false;
 bool weapon_3030_repeater = false; 
 bool weapon_rampage  = false;
 bool weapon_car_smg  = false;
-//aim dist check
+
+
+//Light weapons
+bool weapon_p2020  = false;
+bool weapon_re45  = false;
+bool weapon_g7_scout  = false;
+bool weapon_alternator  = false;
+bool weapon_r99  = false;
+bool weapon_spitfire  = false;
+bool weapon_r301 = false;
+
+
+//Snipers.. wingman is the odd one...and the bow..
+bool weapon_wingman  = false;
+bool weapon_longbow  = false;
+bool weapon_charge_rifle  = false;
+bool weapon_sentinel  = false;
+bool weapon_bow  = false;
+
+
+//aim dist check. Just setting things up, dont edit.
 float aimdist = 200.0f * 40.0f;
-//item glow brightness
+
+
+//item glow brightness. Just setting things up, dont edit.
 int itemglowbrightness = 10;
 
 
-
-
+//Just setting things up, dont edit.
 bool actions_t = false;
 bool esp_t = false;
 bool aim_t = false;
@@ -135,6 +181,8 @@ bool next2 = false;
 bool valid = false;
 bool lock = false;
 
+
+//Player Definitions, dont edit unless you know what you are doing.
 typedef struct player
 {
 	float dist = 0;
@@ -158,19 +206,25 @@ typedef struct player
 }player;
 
 
-
+//Your in the matrix neo.
 struct Matrix
 {
 	float matrix[16];
 };
 
+
+//Visual check and aim check.?
 float lastvis_esp[toRead];
 float lastvis_aim[toRead];
 
+
+//Specator stuff. Just setting things up, dont edit.
 int tmp_spec = 0, spectators = 0;
 int tmp_all_spec = 0, allied_spectators = 0;
 
+
 //////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 void ProcessPlayer(Entity& LPlayer, Entity& target, uint64_t entitylist, int index)
 {
@@ -194,12 +248,17 @@ void ProcessPlayer(Entity& LPlayer, Entity& target, uint64_t entitylist, int ind
 	Vector EntityPosition = target.getPosition();
 	Vector LocalPlayerPosition = LPlayer.getPosition();
 	float dist = LocalPlayerPosition.DistTo(EntityPosition);
+	//Prints POS of localplayer for map cords for full map radar. only enable when adding a new map or fixing a old one, will output to console.
 	//std::printf("  X: %.6f   ||    Y:%.6f",LocalPlayerPosition.x, LocalPlayerPosition.y); //Prints x and y cords of localplayer to get mainmap radar stuff.
 	if (dist > aimdist) return;
-
+	
+	
+	//Firing range stuff
 	if(!firing_range)
 		if (entity_team < 0 || entity_team>50 || entity_team == team_player) return;
 	
+	
+	//Vis check aiming? dunno
 	if(aim==2)
 	{
 		if((target.lastVisTime() > lastvis_aim[index]))
@@ -231,6 +290,8 @@ void ProcessPlayer(Entity& LPlayer, Entity& target, uint64_t entitylist, int ind
 	lastvis_aim[index] = target.lastVisTime();
 }
 
+
+//Main stuff, dont edit.
 void DoActions()
 {
 	actions_t = true;
@@ -284,7 +345,9 @@ void DoActions()
 			{
 				continue;
 			}
-
+			
+			
+			//Dont edit.
 			max = 999.0f;
 			tmp_aimentity = 0;
 			tmp_spec = 0;
@@ -292,6 +355,7 @@ void DoActions()
 			if(firing_range)
 			{
 				int c=0;
+				//Ammount of ents to loop, dont edit.
 				for (int i = 0; i < 10000; i++)
 				{
 					uint64_t centity = 0;
@@ -396,7 +460,7 @@ void DoActions()
 
 player players[toRead];
 
-
+//ESP loop.. this helps right?
 static void EspLoop()
 {
 	esp_t = true;
@@ -448,6 +512,7 @@ static void EspLoop()
 				if(firing_range)
 				{
 					int c=0;
+					//Ammount of ents to loop, dont edit.
 					for (int i = 0; i < 10000; i++)
 					{
 						uint64_t centity = 0;
@@ -484,11 +549,13 @@ static void EspLoop()
 						}
 						
 						Vector bs = Vector();
+						//Change res to your res here, default is 1080p but can copy paste 1440p here
 						WorldToScreen(EntityPosition, m.matrix, 1920, 1080, bs); //2560, 1440
 						if (esp)
 						{
 							Vector hs = Vector();
 							Vector HeadPosition = Target.getBonePositionByHitbox(0);
+							//Change res to your res here, default is 1080p but can copy paste 1440p here
 							WorldToScreen(HeadPosition, m.matrix, 1920, 1080, hs); //2560, 1440
 							float height = abs(abs(hs.y) - abs(bs.y));
 							float width = height / 2.0f;
@@ -564,11 +631,13 @@ static void EspLoop()
 						}
 
 						Vector bs = Vector();
+						//Change res to your res here, default is 1080p but can copy paste 1440p here
 						WorldToScreen(EntityPosition, m.matrix, 1920, 1080, bs); //2560, 1440
 						if (esp)
 						{
 							Vector hs = Vector();
 							Vector HeadPosition = Target.getBonePositionByHitbox(0);
+							//Change res to your res here, default is 1080p but can copy paste 1440p here
 							WorldToScreen(HeadPosition, m.matrix, 1920, 1080, hs); //2560, 1440
 							float height = abs(abs(hs.y) - abs(bs.y));
 							float width = height / 2.0f;
@@ -617,7 +686,7 @@ static void EspLoop()
 	}
 	esp_t = false;
 }
-
+//Aimbot Loop stuff
 static void AimbotLoop()
 {
 	aim_t = true;
@@ -654,7 +723,7 @@ static void AimbotLoop()
 	}
 	aim_t = false;
 }
-
+//Client memory vars/reads. HAVE to match windows client numbers.
 static void set_vars(uint64_t add_addr)
 {
 	printf("Reading the client vars...\n");
@@ -845,7 +914,7 @@ static void set_vars(uint64_t add_addr)
 	uint64_t itemglowbrightness_addr = 0;
 	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*91, itemglowbrightness_addr);
 	
-	
+	//good god 91 of em.. why
 	
 
 	uint32_t check = 0;
@@ -853,6 +922,7 @@ static void set_vars(uint64_t add_addr)
 	
 	if(check != 0xABCD)
 	{
+		//Add offset msg
 		printf("Incorrect values read. Check if the add_off is correct. Quitting.\n");
 		active = false;
 		return;
@@ -869,6 +939,7 @@ static void set_vars(uint64_t add_addr)
 
 		while(c_Base!=0 && g_Base!=0)
 		{
+			//same as above, has to match with eveything else
 			std::this_thread::sleep_for(std::chrono::milliseconds(1));
 			client_mem.Write<uint64_t>(g_Base_addr, g_Base);
 			client_mem.Write<int>(spectators_addr, spectators);
@@ -959,10 +1030,6 @@ static void set_vars(uint64_t add_addr)
 			client_mem.Read<float>(aimdist_addr, aimdist);
 			client_mem.Read<int>(itemglowbrightness_addr, itemglowbrightness);
 
-			
-			
-			
-	
 
 			if(esp && next2)
 			{
@@ -1003,7 +1070,8 @@ static void item_glow_t()
 			uint64_t entitylist = g_Base + OFFSET_ENTITYLIST;
 			if (item_glow)
 			{
-				for (int i = 0; i < 10000; i++)
+				//item ENTs to loop, 10k-15k is normal. 10k might be better but will not show all the death boxes i think.
+				for (int i = 0; i < 15000; i++)
 				{
 					uint64_t centity = 0;
 					apex_mem.Read<uint64_t>(entitylist + ((uint64_t)i << 5), centity);
@@ -1017,14 +1085,17 @@ static void item_glow_t()
 					{
 						//item.enableGlow();
 					}
+					//Item filter glow name setup and search.
 					char glowName[200] = { 0 };
 					uint64_t name_ptr;
 					apex_mem.Read<uint64_t>(centity + OFFSET_MODELNAME, name_ptr);
 					apex_mem.ReadArray<char>(name_ptr, glowName, 200);
+					//Prints stuff you want to console
 					//if (strstr(glowName, "mdl/weapons/")) 
 					//{
 					//printf("%s\n", glowName);
 					//}
+					//Search model name and if true sets glow, must be a better way to do this.. if only i got the item id to work..
 					if (lightbackpack && strstr(glowName, "mdl/humans_r5/loot/w_loot_char_backpack_light.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
@@ -1065,6 +1136,7 @@ static void item_glow_t()
 						apex_mem.Write<float>(centity + GLOW_COLOR_B, 128 / itemglowbrightness); // b
 					
 					}
+					//item id would help so much here, cant make them all the same color so went with loba glow for body shield and helmet
 					if (shieldupgrade && strstr(glowName, "mdl/weapons_r5/loot/_master/w_loot_cha_shield_upgrade_body.rmdl")) 
 					{
 					item.enableGlow();
@@ -1111,7 +1183,7 @@ static void item_glow_t()
 						
 					}
 					
-					
+					//Gas Trap
 					if (strstr(glowName, "mdl/props/caustic_gas_tank/caustic_gas_tank.rmdl")) 
 					{
 					apex_mem.Write<int>(centity + OFFSET_GLOW_ENABLE, 1);
@@ -1736,13 +1808,15 @@ static void item_glow_t()
 					
 				}
 				k=1;
+				//Change the 60 ms to lower to make the death boxes filker less.
 				std::this_thread::sleep_for(std::chrono::milliseconds(60));
 			}
 			else
 			{		
 				if(k==1)
 				{
-					for (int i = 0; i < 10000; i++)
+					//same and the ents above to turn the glow off
+					for (int i = 0; i < 15000; i++)
 					{
 						uint64_t centity = 0;
 						apex_mem.Read<uint64_t>(entitylist + ((uint64_t)i << 5), centity);
@@ -1768,6 +1842,7 @@ int main(int argc, char *argv[])
 {
 	if(geteuid() != 0)
 	{
+		//run as root..
 		printf("Error: %s is not running as root\n", argv[0]);
 		return 0;
 	}
@@ -1777,7 +1852,7 @@ int main(int argc, char *argv[])
 	//const char* ap_proc = "EasyAntiCheat_launcher.exe";
 
 	//Client "add" offset
-	uint64_t add_off = 0x140990;
+	uint64_t add_off = 0x1409a0; //todo make this auto update..
 
 	std::thread aimbot_thr;
 	std::thread esp_thr;

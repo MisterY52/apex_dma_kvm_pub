@@ -227,10 +227,10 @@ typedef struct
 	DWORD B;
 	DWORD A;
 }RGBA;
-static void FilledRectangle(int x, int y, int w, int h, RGBA color)
-{
-	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x, y), ImVec2(x + w, y + h), ImGui::ColorConvertFloat4ToU32(ImVec4(color.R / 255.0, color.G / 255.0, color.B / 255.0, color.A / 255.0)), 0, 0);
-}
+//static void FilledRectangle(int x, int y, int w, int h, RGBA color)
+//{
+//	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x, y), ImVec2(x + w, y + h), ImGui::ColorConvertFloat4ToU32(ImVec4(color.R / 255.0, color.G / 255.0, color.B / 255.0, color.A / 255.0)), 0, 0);
+//}
 
 //Color Team Radar Test. oh god why... This is stupid.. dont do this.. it works tho
 static void Team1(int x, int y, int w, int h, RGBA color)
@@ -815,8 +815,6 @@ int main(int argc, char** argv)
 	add[89] = (uintptr_t)&weapon_car_smg;
 	add[90] = (uintptr_t)&aimdist;
 	add[91] = (uintptr_t)&itemglowbrightness;
-
-
 
 	
 	printf(XorStr("Game Version v3.0.12.19 |-| Main Map Radar Test |-| Add me offset: 0x%I64x\n"), (uint64_t)&add[0] - (uint64_t)GetModuleHandle(NULL));
