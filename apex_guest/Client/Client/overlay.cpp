@@ -19,6 +19,10 @@ extern bool use_nvidia;
 extern float max_dist;
 extern float smooth;
 extern float max_fov;
+//Dynamic Fov
+extern float dynamicfov;
+extern float dynamicfovmax;
+extern float max_fov2;
 extern int bone;
 extern bool thirdperson;
 extern int spectators;
@@ -260,6 +264,19 @@ void Overlay::RenderMenu()
 					ImGui::TextColored(GREEN, "%.f meters", aimdist / 39.62);
 					ImGui::SliderFloat(XorStr("##Aim Distance"), &aimdist, 10.0f * 39.62, 1600.0f * 39.62, "##");
 					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+
+
+					ImGui::Text(XorStr("Set Dynamic Fov:"));
+					ImGui::SameLine();
+					ImGui::TextColored(GREEN, "%.f Fov", dynamicfov);
+					ImGui::SliderFloat(XorStr("##Dynamic Fov Max"), &dynamicfov, 5.0f, 150.0f, "##");
+					ImGui::Text(XorStr("Set Dynamic Fov Max Distance:"));
+					ImGui::SameLine();
+					ImGui::TextColored(GREEN, "%.f meters", dynamicfovmax);
+					ImGui::SliderFloat(XorStr("##Dynamic Fov"), &dynamicfovmax, 5.0f, 50.0f, "##");					
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));
+
+
 					ImGui::Text(XorStr("Aiming Keys:"));
 					ImGui::RadioButton("Left Mouse", &e, 1); ImGui::SameLine();
 					ImGui::RadioButton("Right Mouse ", &e, 2); ImGui::SameLine();
@@ -295,8 +312,8 @@ void Overlay::RenderMenu()
 					ImGui::Dummy(ImVec2(0.0f, 10.0f));
 					ImGui::Text(XorStr("Max FOV:"));
 					ImGui::SameLine();
-					ImGui::TextColored(GREEN, "%.f", max_fov);
-					ImGui::SliderFloat(XorStr("##3"), &max_fov, 1.0f, 50.0f, "##");
+					ImGui::TextColored(GREEN, "%.f", max_fov2);
+					ImGui::SliderFloat(XorStr("##3"), &max_fov2, 1.0f, 50.0f, "##");
 					ImGui::Dummy(ImVec2(0.0f, 10.0f));
 					ImGui::Text(XorStr("Aiming Bone:"));
 					ImGui::Text(XorStr("0=Head, 1=Neck, 2=Chest, 3=Stomach"));
@@ -429,8 +446,10 @@ void Overlay::RenderMenu()
 							config << aimdist << "\n";
 							config << itemglowbrightness << "\n";
 							config << mainmapradardotsize1 << "\n";
-							config << mainmapradardotsize2;
-
+							config << mainmapradardotsize2 << "\n";
+							config << dynamicfov << "\n";
+							config << dynamicfovmax << "\n";
+							config << max_fov2;
 							config.close();
 						}
 					}
@@ -546,6 +565,9 @@ void Overlay::RenderMenu()
 							config >> itemglowbrightness;
 							config >> mainmapradardotsize1;
 							config >> mainmapradardotsize2;
+							config >> dynamicfov;
+							config >> dynamicfovmax;
+							config >> max_fov2;
 							config.close();
 
 						}
@@ -780,14 +802,18 @@ void Overlay::RenderMenu()
 void Overlay::RenderInfo()
 {	
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
-	ImGui::SetNextWindowSize(ImVec2(154, 25));
+	ImGui::SetNextWindowSize(ImVec2(250, 25));
 	ImGui::Begin(XorStr("##info"), (bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar);
-	DrawLine(ImVec2(1, 5), ImVec2(154, 5), RED, 2);
+	DrawLine(ImVec2(1, 5), ImVec2(250, 5), RED, 2);
 	ImGui::TextColored(RED, "%d", spectators);
 	ImGui::SameLine();
 	ImGui::Text("--");
 	ImGui::SameLine();
 	ImGui::TextColored(GREEN, "%d", allied_spectators);
+	ImGui::SameLine();
+	ImGui::Text("--");
+	ImGui::SameLine();
+	ImGui::TextColored(WHITE, "%.f", max_fov);
 	ImGui::SameLine();
 	ImGui::Text("--");
 	ImGui::SameLine();

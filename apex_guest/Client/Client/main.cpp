@@ -54,6 +54,10 @@ uint64_t g_Base = 0; //write
 float max_dist = 3800.0f * 40.0f; //read //Max Distance of ESP 3800 is full map
 float smooth = 110.0f; //Min 100 for safe aimbotting
 float max_fov = 15.0f; //15 is the sweetspot for 1080p
+// Dynamic Fov
+float dynamicfov = 10;
+float dynamicfovmax = 15.0f;
+float max_fov2 = 15.f;
 int bone = 2; //0 Head, 1 Neck, 2 Body, 3 Stomace, 4 Nuts
 //Player Glow Color and Brightness
 float glowr = 120.0f; //Red Value
@@ -523,7 +527,7 @@ world Olympus(ImVec2(0, 0), ImVec2(0, 0), ImVec2(0, 0), ImVec2(0, 0)); //to be m
 // 1080p   world StormPoint(ImVec2(-21264.427734, -47086.878906), ImVec2(711, 983), ImVec2(40298.070313, 21163.728516), ImVec2(1321, 306));
 
 // 1440p   world StormPoint(ImVec2(-21264.427734, -47086.878906), ImVec2(948, 1310), ImVec2(40298.070313, 21163.728516), ImVec2(1761, 306));
-world StormPoint(ImVec2(-21264.427734, -47086.878906), ImVec2(711, 983), ImVec2(40298.070313, 21163.728516), ImVec2(1321, 408));
+world StormPoint(ImVec2(-21264.427734, -47086.878906), ImVec2(711, 983), ImVec2(40298.070313, 21163.728516), ImVec2(1321, 306));
 //Arena
 world Overflow(ImVec2(-3344.994629, -4018.093018), ImVec2(552, 431), ImVec2(5039.592773, -4639.289063), ImVec2(1322, 489));
 world DropOff(ImVec2(3135.113281, 1654.107666), ImVec2(1151, 603), ImVec2(-2920.918701, 811.240479), ImVec2(722, 663));
@@ -688,6 +692,15 @@ void Overlay::RenderEsp()
 					distance = distance.substr(0, distance.find('.')) + "m(" + std::to_string(players[i].entity_team) + ")";
 
 					float radardistance = (int)((players[i].LocalPlayerPosition, players[i].dist) / 39.62);
+					//Dynamic FOV
+					if (players[i].dist / 39.62 < dynamicfovmax)
+					{
+						max_fov = dynamicfov;
+					}
+					else
+					{
+						max_fov = max_fov2;
+					}
 					//Radar Stuff
 					if (minimapradar == true)
 					{
@@ -817,7 +830,7 @@ int main(int argc, char** argv)
 	add[91] = (uintptr_t)&itemglowbrightness;
 
 	
-	printf(XorStr("Game Version v3.0.12.19 |-| Main Map Radar Test |-| Add me offset: 0x%I64x\n"), (uint64_t)&add[0] - (uint64_t)GetModuleHandle(NULL));
+	printf(XorStr("Game Version v3.0.12.19 |-| Dynamic Fov Test |-| Add me offset: 0x%I64x\n"), (uint64_t)&add[0] - (uint64_t)GetModuleHandle(NULL));
 
 	Overlay ov1 = Overlay();
 	ov1.Start();
@@ -956,6 +969,9 @@ int main(int argc, char** argv)
 				config >> itemglowbrightness;
 				config >> mainmapradardotsize1;
 				config >> mainmapradardotsize2;
+				config >> dynamicfov;
+				config >> dynamicfovmax;
+				config >> max_fov2;
 				config.close();
 			}
 		}
