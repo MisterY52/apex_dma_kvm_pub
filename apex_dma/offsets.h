@@ -5,10 +5,10 @@
 
 #if VERSION == STEAM
 
-    #define OFFSET_ENTITYLIST			0x1a98778
-    #define OFFSET_LOCAL_ENT			0x1e49288 //LocalPlayer
-    #define OFFSET_NAME_LIST            0xbac9510
-    #define OFFSET_THIRDPERSON          0x01a7da50 + 0x6c //thirdperson_override + 0x6c
+    #define OFFSET_ENTITYLIST			0x1a98758
+    #define OFFSET_LOCAL_ENT			0x1e49268 //LocalPlayer
+    #define OFFSET_NAME_LIST            0xbac9580
+    #define OFFSET_THIRDPERSON          0x01a7da30 + 0x6c //thirdperson_override + 0x6c
     #define OFFSET_TIMESCALE            0x0143e580 //host_timescale
 
     #define OFFSET_TEAM					0x044c //m_iTeamNum
@@ -27,7 +27,7 @@
 
     #define OFFSET_ORIGIN				0x014c //m_vecAbsOrigin
     #define OFFSET_BONES				0x0e88 + 0x48 //m_nForceBone + 0x48
-    #define OFFSET_STUDIOHDR            0x10d8
+    #define OFFSET_STUDIOHDR            0x10d8 //CBaseAnimating!m_pStudioHdr
     #define OFFSET_AIMPUNCH				0x2440 //m_currentFrameLocalPlayer.m_vecPunchWeapon_Angle
     #define OFFSET_CAMERAPOS			0x1ee0 //CPlayer!camera_origin
     #define OFFSET_VIEWANGLES			0x253c - 0x14 //m_ammoPoolCapacity - 0x14
@@ -36,7 +36,7 @@
     #define OFFSET_OBSERVING_TARGET		0x3470 //m_hObserverTarget
 
     #define OFFSET_MATRIX				0x11a210
-    #define OFFSET_RENDER				0x75c6190
+    #define OFFSET_RENDER				0x75c6210
 
     #define OFFSET_WEAPON				0x19ec //m_latestPrimaryWeapons
     #define OFFSET_BULLET_SPEED         0x1ed0 //CWeaponX!m_flProjectileSpeed
@@ -53,10 +53,10 @@
 
 #elif VERSION == ORIGIN
 
-    #define OFFSET_ENTITYLIST			0x1a98778
-    #define OFFSET_LOCAL_ENT			0x1e49288 //LocalPlayer
-    #define OFFSET_NAME_LIST            0xbac9510
-    #define OFFSET_THIRDPERSON          0x01a7da50 + 0x6c //thirdperson_override + 0x6c
+    #define OFFSET_ENTITYLIST			0x1a98758
+    #define OFFSET_LOCAL_ENT			0x1e49268 //LocalPlayer
+    #define OFFSET_NAME_LIST            0xbac9580
+    #define OFFSET_THIRDPERSON          0x01a7da30 + 0x6c //thirdperson_override + 0x6c
     #define OFFSET_TIMESCALE            0x0143e580 //host_timescale
 
     #define OFFSET_TEAM					0x044c //m_iTeamNum
@@ -75,7 +75,7 @@
 
     #define OFFSET_ORIGIN				0x014c //m_vecAbsOrigin
     #define OFFSET_BONES				0x0e88 + 0x48 //m_nForceBone + 0x48
-    #define OFFSET_STUDIOHDR            0x10d8
+    #define OFFSET_STUDIOHDR            0x10d8 //CBaseAnimating!m_pStudioHdr
     #define OFFSET_AIMPUNCH				0x2440 //m_currentFrameLocalPlayer.m_vecPunchWeapon_Angle
     #define OFFSET_CAMERAPOS			0x1ee0 //CPlayer!camera_origin
     #define OFFSET_VIEWANGLES			0x253c - 0x14 //m_ammoPoolCapacity - 0x14
@@ -84,7 +84,7 @@
     #define OFFSET_OBSERVING_TARGET		0x3470 //m_hObserverTarget
 
     #define OFFSET_MATRIX				0x11a210
-    #define OFFSET_RENDER				0x75c6190
+    #define OFFSET_RENDER				0x75c6210
 
     #define OFFSET_WEAPON				0x19ec //m_latestPrimaryWeapons
     #define OFFSET_BULLET_SPEED         0x1ed0 //CWeaponX!m_flProjectileSpeed
