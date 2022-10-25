@@ -306,7 +306,7 @@ void Overlay::RenderMenu()
 					ImGui::Text(XorStr("Smooth Aim Value:"));
 					ImGui::SameLine();
 					ImGui::TextColored(GREEN, "%.f", smooth);
-					ImGui::SliderFloat(XorStr("##2"), &smooth, 85.0f, 150.0f, "##");
+					ImGui::SliderFloat(XorStr("##2"), &smooth, 35.0f, 150.0f, "##");
 					ImGui::SameLine();
 					ImGui::Text(XorStr("85 To 100 Is Safe"));
 					ImGui::Dummy(ImVec2(0.0f, 10.0f));
@@ -324,7 +324,12 @@ void Overlay::RenderMenu()
 					ImGui::SameLine();
 					ImGui::Sliderbox(XorStr("Health bar"), &v.healthbar);
 					ImGui::SameLine();
-					ImGui::Sliderbox(XorStr("Shield bar"), &v.shieldbar);					
+					ImGui::Sliderbox(XorStr("Shield bar"), &v.shieldbar);
+					ImGui::Sliderbox(XorStr("Line ESP"), &v.line);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Box ESP"), &v.box);
+					ImGui::SameLine();
+					ImGui::Sliderbox(XorStr("Name ESP"), &v.name);
 					ImGui::Dummy(ImVec2(0.0f, 10.0f));
 					ImGui::Text(XorStr("Player Glow Color:"));
 					ImGui::ColorEdit3("##Glow Color Picker", glowcolor);
@@ -366,9 +371,10 @@ void Overlay::RenderMenu()
 							config << v.healthbar << "\n";
 							config << v.shieldbar << "\n";
 							config << v.distance << "\n";
+							config << v.line << "\n";
+							config << v.box << "\n";
 							config << thirdperson << "\n";
 							config << std::boolalpha << minimapradar << "\n";
-
 							config << std::boolalpha << lightbackpack << "\n";
 							config << std::boolalpha << medbackpack << "\n";
 							config << std::boolalpha << heavybackpack << "\n";
@@ -485,6 +491,9 @@ void Overlay::RenderMenu()
 							config >> v.healthbar;
 							config >> v.shieldbar;
 							config >> v.distance;
+							config >> v.line;
+							config >> v.box;
+							config >> v.name;
 							config >> thirdperson;
 							config >> minimapradar;
 							config >> lightbackpack;
