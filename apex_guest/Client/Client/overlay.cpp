@@ -373,6 +373,7 @@ void Overlay::RenderMenu()
 							config << v.distance << "\n";
 							config << v.line << "\n";
 							config << v.box << "\n";
+							config << v.name << "\n";
 							config << thirdperson << "\n";
 							config << std::boolalpha << minimapradar << "\n";
 							config << std::boolalpha << lightbackpack << "\n";
