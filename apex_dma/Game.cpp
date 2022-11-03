@@ -127,6 +127,7 @@ Vector Entity::getBonePosition(int id)
 
 //https://www.unknowncheats.me/forum/apex-legends/496984-getting-hitbox-positions-cstudiohdr-externally.html
 //https://www.unknowncheats.me/forum/3499185-post1334.html
+//https://www.unknowncheats.me/forum/3562047-post11000.html
 Vector Entity::getBonePositionByHitbox(int id)
 {
 	Vector origin = getPosition();
@@ -139,15 +140,16 @@ Vector Entity::getBonePositionByHitbox(int id)
 	apex_mem.Read<uint64_t>(Model + 0x8, StudioHdr);
  
     //get hitbox array
-	int HitBoxsArray_set;
-	apex_mem.Read<int>(StudioHdr + 0xB4,HitBoxsArray_set);
-	uint64_t HitBoxsArray = StudioHdr + HitBoxsArray_set;
+	uint16_t HitboxCache;
+	apex_mem.Read<uint16_t>(StudioHdr + 0x34, HitboxCache);
+	uint64_t HitBoxsArray = StudioHdr + ((uint16_t)(HitboxCache & 0xFFFE) << (4 * (HitboxCache & 1)));
  
-	int HitboxIndex;
-	apex_mem.Read<int>(HitBoxsArray + 0x8, HitboxIndex);
+	uint16_t IndexCache;
+ 	apex_mem.Read<uint16_t>(HitBoxsArray + 0x4, IndexCache);
+	int HitboxIndex = ((uint16_t)(IndexCache & 0xFFFE) << (4 * (IndexCache & 1)));
  
-	int Bone;
-	apex_mem.Read<int>(HitBoxsArray + HitboxIndex + (id * 0x2C), Bone);
+	uint16_t Bone;
+	apex_mem.Read<uint16_t>(HitBoxsArray + HitboxIndex + (id * 0x20), Bone);
 
 	if(Bone < 0 || Bone > 255)
 		return Vector();
