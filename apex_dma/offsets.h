@@ -7,7 +7,7 @@
 
     #define OFFSET_ENTITYLIST			0x1b0e678
     #define OFFSET_LOCAL_ENT			0x1ebf488 //LocalPlayer
-    #define OFFSET_NAME_LIST            0xbbd1840
+    #define OFFSET_NAME_LIST            0xbc1c040
     #define OFFSET_THIRDPERSON          0x01af3520 + 0x6c //thirdperson_override + 0x6c
     #define OFFSET_TIMESCALE            0x014ad600 //host_timescale
 
@@ -36,7 +36,7 @@
     #define OFFSET_OBSERVING_TARGET		0x34b8 //m_hObserverTarget
 
     #define OFFSET_MATRIX				0x11a210
-    #define OFFSET_RENDER				0x763f830
+    #define OFFSET_RENDER				0x7641830
 
     #define OFFSET_WEAPON				0x1a14 //m_latestPrimaryWeapons
     #define OFFSET_BULLET_SPEED         0x1ef0 //CWeaponX!m_flProjectileSpeed
@@ -55,7 +55,7 @@
 
     #define OFFSET_ENTITYLIST			0x1b0e678
     #define OFFSET_LOCAL_ENT			0x1ebf488 //LocalPlayer
-    #define OFFSET_NAME_LIST            0xbbd1840
+    #define OFFSET_NAME_LIST            0xbc1c040
     #define OFFSET_THIRDPERSON          0x01af3520 + 0x6c //thirdperson_override + 0x6c
     #define OFFSET_TIMESCALE            0x014ad600 //host_timescale
 
@@ -84,7 +84,7 @@
     #define OFFSET_OBSERVING_TARGET		0x34b8 //m_hObserverTarget
 
     #define OFFSET_MATRIX				0x11a210
-    #define OFFSET_RENDER				0x763f830
+    #define OFFSET_RENDER				0x7641830
 
     #define OFFSET_WEAPON				0x1a14 //m_latestPrimaryWeapons
     #define OFFSET_BULLET_SPEED         0x1ef0 //CWeaponX!m_flProjectileSpeed
