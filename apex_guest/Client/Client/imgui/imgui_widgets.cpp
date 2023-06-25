@@ -1066,7 +1066,6 @@ bool ImGui::ImageButton(ImTextureID user_texture_id, const ImVec2& size, const I
     const ImVec2 padding = (frame_padding >= 0) ? ImVec2((float)frame_padding, (float)frame_padding) : g.Style.FramePadding;
     return ImageButtonEx(id, user_texture_id, size, uv0, uv1, padding, bg_col, tint_col);
 }
-
 bool ImGui::Checkbox(const char* label, bool* v)
 {
     ImGuiWindow* window = GetCurrentWindow();

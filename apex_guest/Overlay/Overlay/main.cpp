@@ -3,13 +3,14 @@
 #include <Dwmapi.h> 
 #pragma comment(lib, "dwmapi.lib")
 
+#define WDA_EXCLUDEFROMCAPTURE 0x00000011
 const MARGINS margins = { -1 ,-1, -1, -1 };
-const wchar_t g_szClassName[] = L"overlay";
+const wchar_t g_szClassName[] = L"B4A893Xoverlay";
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	WNDCLASSEX wc;
-	HWND hwnd;
+	HWND B4A893Xhwnd;
 	MSG Msg;
 
 	wc.cbSize = sizeof(WNDCLASSEX);
@@ -27,7 +28,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	RegisterClassEx(&wc);
 
-	hwnd = CreateWindowEx(
+	B4A893Xhwnd = CreateWindowEx(
 		WS_EX_LAYERED | WS_EX_TRANSPARENT,
 		g_szClassName,
 		g_szClassName,
@@ -35,8 +36,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		0, 0, 1920, 1080,
 		NULL, NULL, hInstance, NULL);
 
-	SetLayeredWindowAttributes(hwnd, RGB(0,0,0), 255, LWA_ALPHA);
-	DwmExtendFrameIntoClientArea(hwnd, &margins);
+	SetLayeredWindowAttributes(B4A893Xhwnd, RGB(0,0,0), 175, LWA_ALPHA);
+	SetWindowDisplayAffinity(B4A893Xhwnd, WDA_EXCLUDEFROMCAPTURE);
+	DwmExtendFrameIntoClientArea(B4A893Xhwnd, &margins);
 
 	while (GetMessage(&Msg, NULL, 0, 0) > 0)
 	{

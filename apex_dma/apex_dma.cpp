@@ -5,6 +5,8 @@
 #include <random>
 #include <chrono>
 #include <iostream>
+#include "json/json.h"
+#include "curl/curl.h"
 #include <cfloat>
 #include "Game.h"
 #include <thread>
@@ -12,12 +14,18 @@
 Memory apex_mem;
 Memory client_mem;
 
+uint64_t add_off = 0x411e0;
+
+bool freecam = false;
+bool lockall_enable = false;
+
+int recoil = 0.5;
 bool firing_range = false;
 bool active = true;
 uintptr_t aimentity = 0;
 uintptr_t tmp_aimentity = 0;
 uintptr_t lastaimentity = 0;
-float max = 999.0f;
+float kmax = 999.0f;
 float max_dist = 200.0f*40.0f;
 int team_player = 0;
 float max_fov = 15;
@@ -30,8 +38,6 @@ extern bool aim_no_recoil;
 bool aiming = false;
 extern float smooth;
 extern int bone;
-bool thirdperson = false;
-bool chargerifle = false;
 bool shooting = false;
 
 bool actions_t = false;
@@ -41,9 +47,9 @@ bool vars_t = false;
 bool item_t = false;
 uint64_t g_Base;
 uint64_t c_Base;
-bool next = false;
+bool knext = false;
 bool valid = false;
-bool lock = false;
+bool klock = false;
 
 typedef struct player
 {
@@ -59,6 +65,10 @@ typedef struct player
 	bool visible = false;
 	int health = 0;
 	int shield = 0;
+	int xp_level = 0;
+	int maxshield = 0;
+	int armortype = 0;
+	uint64_t uid = 0;
 	char name[33] = { 0 };
 }player;
 
@@ -67,13 +77,34 @@ struct Matrix
 	float matrix[16];
 };
 
-float lastvis_esp[toRead];
-float lastvis_aim[toRead];
+float lastvis_esp[toRead]; float lastvis_aim[toRead];
 
 int tmp_spec = 0, spectators = 0;
 int tmp_all_spec = 0, allied_spectators = 0;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
+
+static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
+{
+    ((std::string *)userp)->append((char *)contents, size * nmemb);
+    return size * nmemb;
+}
+std::string getJson(std::string url)
+{
+    CURL *curl;
+    CURLcode res;
+    std::string readBuffer;
+    curl = curl_easy_init();
+    if (curl)
+    {
+        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+    }
+    return readBuffer;
+}
 
 void ProcessPlayer(Entity& LPlayer, Entity& target, uint64_t entitylist, int index)
 {
@@ -99,7 +130,7 @@ void ProcessPlayer(Entity& LPlayer, Entity& target, uint64_t entitylist, int ind
 	float dist = LocalPlayerPosition.DistTo(EntityPosition);
 	if (dist > max_dist) return;
 
-	if(!firing_range)
+	if(!firing_range && !lockall_enable)
 		if (entity_team < 0 || entity_team>50 || entity_team == team_player) return;
 	
 	if(aim==2)
@@ -107,9 +138,9 @@ void ProcessPlayer(Entity& LPlayer, Entity& target, uint64_t entitylist, int ind
 		if((target.lastVisTime() > lastvis_aim[index]))
 		{
 			float fov = CalculateFov(LPlayer, target);
-			if (fov < max)
+			if (fov < kmax)
 			{
-				max = fov;
+				kmax = fov;
 				tmp_aimentity = target.ptr;
 			}
 		}
@@ -124,9 +155,9 @@ void ProcessPlayer(Entity& LPlayer, Entity& target, uint64_t entitylist, int ind
 	else
 	{
 		float fov = CalculateFov(LPlayer, target);
-		if (fov < max)
+		if (fov < kmax)
 		{
-			max = fov;
+			kmax = fov;
 			tmp_aimentity = target.ptr;
 		}
 	}
@@ -139,47 +170,58 @@ void DoActions()
 	while (actions_t)
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
-		bool tmp_thirdperson = false;
-		bool tmp_chargerifle = false;
 		uint32_t counter = 0;
 
 		while (g_Base!=0 && c_Base!=0)
 		{
 			std::this_thread::sleep_for(std::chrono::milliseconds(30));	
+		
+                        uint64_t LocalPlayer = 0;
+                        apex_mem.Read<uint64_t>(g_Base + OFFSET_LOCAL_ENT, LocalPlayer);
 
-			uint64_t LocalPlayer = 0;
-			apex_mem.Read<uint64_t>(g_Base + OFFSET_LOCAL_ENT, LocalPlayer);
 			if (LocalPlayer == 0) continue;
 
 			Entity LPlayer = getEntity(LocalPlayer);
 
 			team_player = LPlayer.getTeamId();
-			if (team_player < 0 || team_player>50)
+			if (team_player < 0 || team_player>50 && !lockall_enable)
 			{
 				continue;
 			}
 
-			if(thirdperson && !tmp_thirdperson)
-			{
-				if(!aiming)
-				{
-					apex_mem.Write<int>(g_Base + OFFSET_THIRDPERSON, 1);
-					apex_mem.Write<int>(LPlayer.ptr + OFFSET_THIRDPERSON_SV, 1);
-					tmp_thirdperson = true;
-				}			
-			}
-			else if((!thirdperson && tmp_thirdperson) || aiming)
-			{
-				if(tmp_thirdperson)
-				{
-					apex_mem.Write<int>(g_Base + OFFSET_THIRDPERSON, -1);
-					apex_mem.Write<int>(LPlayer.ptr + OFFSET_THIRDPERSON_SV, 0);
-					tmp_thirdperson = false;
-				}	
-			}
 
 			uint64_t entitylist = g_Base + OFFSET_ENTITYLIST;
 
+
+			//an model index dumper,but sometimecarsh game
+			/*
+			uint64_t viewmodel_handle = 0;
+			apex_mem.Read<uint64_t>(LocalPlayer + 0x2d78, viewmodel_handle);
+			viewmodel_handle &= 0xffff;
+			uint64_t viewmodel_entity = 0;
+			apex_mem.Read<uint64_t>(entitylist + (viewmodel_handle << 5), viewmodel_entity);
+				m_currentFrame.modelIndex=0x00a8
+				m_hViewModels=0x2d78
+				m_ModelName=0x00a8
+			apex_mem.Write<int>(viewmodel_entity + 0x00a8, 975);
+
+			index dumper
+				bool dump_loop = false;
+				if(model_index <= 2492 && dump_loop){
+					uint64_t name_ptr;
+					char ModelName[200] = { 0 };
+					model_index = model_index + 1;
+					apex_mem.Read<uint64_t>(viewmodel_entity + 0x0030, name_ptr); 
+					apex_mem.ReadArray<char>(name_ptr, ModelName, 200);
+					printf("model: %s , index: %u \n", ModelName,model_index);
+					if (strstr(ModelName, "mdl/Weapons/arms/pov_pilot_light_wraith_cyber_ninja.rmdl")) 
+					{
+						printf("%u\n", model_index);
+						dump_loop = false;
+					}
+				}
+			}			
+			*/
 			uint64_t baseent = 0;
 			apex_mem.Read<uint64_t>(entitylist, baseent);
 			if (baseent == 0)
@@ -187,10 +229,21 @@ void DoActions()
 				continue;
 			}
 
-			max = 999.0f;
+			kmax = 999.0f;
 			tmp_aimentity = 0;
 			tmp_spec = 0;
 			tmp_all_spec = 0;
+
+			int current_obid;
+			if (freecam){
+				apex_mem.Write<int>(LocalPlayer + OFFSET_OBSERVER_MODE, 7);
+			}
+			else{
+				apex_mem.Read<int>(LocalPlayer + OFFSET_OBSERVER_MODE, current_obid);
+				if(current_obid == 7){
+				apex_mem.Write<int>(LocalPlayer+OFFSET_OBSERVER_MODE, 0);
+				}
+			}
 			if(firing_range)
 			{
 				int c=0;
@@ -238,7 +291,7 @@ void DoActions()
 					ProcessPlayer(LPlayer, Target, entitylist, i);
 
 					int entity_team = Target.getTeamId();
-					if (entity_team == team_player)
+					if (entity_team == team_player && !lockall_enable)
 					{
 						continue;
 					}
@@ -271,24 +324,10 @@ void DoActions()
 				}
 			}
 
-			if(!lock)
+			if(!klock)
 				aimentity = tmp_aimentity;
 			else
 				aimentity = lastaimentity;
-
-			if(chargerifle)
-			{
-				charge_rifle_hack(LocalPlayer);
-				tmp_chargerifle = true;
-			}
-			else
-			{
-				if(tmp_chargerifle)
-				{
-					apex_mem.Write<float>(g_Base + OFFSET_TIMESCALE + 0x68, 1.f);
-					tmp_chargerifle = false;
-				}
-			}
 		}
 	}
 	actions_t = false;
@@ -315,8 +354,8 @@ static void EspLoop()
 				apex_mem.Read<uint64_t>(g_Base + OFFSET_LOCAL_ENT, LocalPlayer);
 				if (LocalPlayer == 0)
 				{
-					next = true;
-					while(next && g_Base!=0 && c_Base!=0 && esp)
+					knext = true;
+					while(knext && g_Base!=0 && c_Base!=0 && esp)
 					{
 						std::this_thread::sleep_for(std::chrono::milliseconds(1));
 					}
@@ -326,8 +365,8 @@ static void EspLoop()
 				int team_player = LPlayer.getTeamId();
 				if (team_player < 0 || team_player>50)
 				{
-					next = true;
-					while(next && g_Base!=0 && c_Base!=0 && esp)
+					knext = true;
+					while(knext && g_Base!=0 && c_Base!=0 && esp)
 					{
 						std::this_thread::sleep_for(std::chrono::milliseconds(1));
 					}
@@ -394,6 +433,14 @@ static void EspLoop()
 							float boxMiddle = bs.x - (width / 2.0f);
 							int health = Target.getHealth();
 							int shield = Target.getShield();
+							int maxshield = Target.getMaxshield();
+							int armortype = Target.getArmortype();
+							int xp;
+							apex_mem.Read<int>(centity + OFFSET_XP, xp);
+							int xp_level = calc_level(xp);
+							uint64_t uid = 0;
+							apex_mem.Read<uint64_t>(centity + OFFSET_UID, uid);
+							
 							players[c] = 
 							{
 								dist,
@@ -407,7 +454,11 @@ static void EspLoop()
 								0,
 								(Target.lastVisTime() > lastvis_esp[c]),
 								health,
-								shield	
+								shield,
+								xp_level,
+								maxshield,
+								armortype,
+								uid	
 							};
 							Target.get_name(g_Base, i-1, &players[c].name[0]);
 							lastvis_esp[c] = Target.lastVisTime();
@@ -445,9 +496,16 @@ static void EspLoop()
 						}
 
 						int entity_team = Target.getTeamId();
-						if (entity_team < 0 || entity_team>50 || entity_team == team_player)
-						{
-							continue;
+						if (!lockall_enable){
+							if (entity_team < 0 || entity_team>50 || entity_team == team_player)
+							{
+								continue;
+							}
+						}
+						else{
+							if (entity_team < 0 || entity_team>50){
+                                                                continue;
+                                                        }
 						}
 
 						Vector EntityPosition = Target.getPosition();
@@ -469,7 +527,15 @@ static void EspLoop()
 							float boxMiddle = bs.x - (width / 2.0f);
 							int health = Target.getHealth();
 							int shield = Target.getShield();
+							int maxshield = Target.getMaxshield();
+							int armortype = Target.getArmortype();
+							int xp;
+							apex_mem.Read<int>(centity + OFFSET_XP, xp);
 							
+							int xp_level = calc_level(xp);
+
+							uint64_t uid;
+							apex_mem.Read<uint64_t>(centity + OFFSET_UID, uid);
 							players[i] = 
 							{
 								dist,
@@ -483,7 +549,11 @@ static void EspLoop()
 								Target.isKnocked(),
 								(Target.lastVisTime() > lastvis_esp[i]),
 								health,
-								shield
+								shield,
+								xp_level,
+								maxshield,
+								armortype,
+								uid
 							};
 							Target.get_name(g_Base, i-1, &players[i].name[0]);
 							lastvis_esp[i] = Target.lastVisTime();
@@ -492,8 +562,8 @@ static void EspLoop()
 					}
 				}
 
-				next = true;
-				while(next && g_Base!=0 && c_Base!=0 && esp)
+				knext = true;
+				while(knext && g_Base!=0 && c_Base!=0 && esp)
 				{
 					std::this_thread::sleep_for(std::chrono::milliseconds(1));
 				}
@@ -516,20 +586,20 @@ static void AimbotLoop()
 			{
 				if (aimentity == 0 || !aiming)
 				{
-					lock=false;
+					klock=false;
 					lastaimentity=0;
 					continue;
 				}
-				lock=true;
+				klock=true;
 				lastaimentity = aimentity;
 				uint64_t LocalPlayer = 0;
 				apex_mem.Read<uint64_t>(g_Base + OFFSET_LOCAL_ENT, LocalPlayer);
 				if (LocalPlayer == 0) continue;
 				Entity LPlayer = getEntity(LocalPlayer);
-				QAngle Angles = CalculateBestBoneAim(LPlayer, aimentity, max_fov);
+				QAngle Angles = CalculateBestBoneAim(LPlayer, aimentity, max_fov, recoil);
 				if (Angles.x == 0 && Angles.y == 0)
 				{
-					lock=false;
+					klock=false;
 					lastaimentity=0;
 					continue;
 				}
@@ -542,7 +612,7 @@ static void AimbotLoop()
 
 static void set_vars(uint64_t add_addr)
 {
-	printf("Reading client vars...\n");
+	printf("Checking CLIENT...\n");
 	std::this_thread::sleep_for(std::chrono::milliseconds(50));
 	//Get addresses of client vars
 	uint64_t check_addr = 0;
@@ -585,14 +655,21 @@ static void set_vars(uint64_t add_addr)
 	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*18, chargerifle_addr);
 	uint64_t shooting_addr = 0;
 	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*19, shooting_addr);
-	
+	uint64_t freecam_addr = 0;
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*20, freecam_addr);
+	uint64_t lockall_addr = 0;
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*21, lockall_addr);
+	uint64_t firing_range_addr=0;
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*22, firing_range_addr);
+	uint64_t recoil_addr=0;
+        client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t)*23, recoil_addr);
 
 	uint32_t check = 0;
 	client_mem.Read<uint32_t>(check_addr, check);
 	
 	if(check != 0xABCD)
 	{
-		printf("Incorrect values read. Check if the add_off is correct. Quitting.\n");
+		printf("check add_off,or start client before start host\n");
 		active = false;
 		return;
 	}
@@ -603,7 +680,7 @@ static void set_vars(uint64_t add_addr)
 		if(c_Base!=0 && g_Base!=0)
 		{
 			client_mem.Write<uint32_t>(check_addr, 0);
-			printf("\nReady\n");
+			printf("\nsuccess.\n");
 		}
 
 		while(c_Base!=0 && g_Base!=0)
@@ -623,11 +700,12 @@ static void set_vars(uint64_t add_addr)
 			client_mem.Read<float>(smooth_addr, smooth);
 			client_mem.Read<float>(max_fov_addr, max_fov);
 			client_mem.Read<int>(bone_addr, bone);
-			client_mem.Read<bool>(thirdperson_addr, thirdperson);
 			client_mem.Read<bool>(shooting_addr, shooting);
-			client_mem.Read<bool>(chargerifle_addr, chargerifle);
-
-			if(esp && next)
+			client_mem.Read<bool>(freecam_addr, freecam);
+			client_mem.Read<bool>(lockall_addr, lockall_enable);
+			client_mem.Read<bool>(firing_range_addr, firing_range);
+			client_mem.Read<int>(recoil_addr, recoil);
+			if(esp && knext)
 			{
 				if(valid)
 					client_mem.WriteArray<player>(player_addr, players, toRead);
@@ -641,85 +719,31 @@ static void set_vars(uint64_t add_addr)
 					std::this_thread::sleep_for(std::chrono::milliseconds(1));
 				} while (next_val && g_Base!=0 && c_Base!=0);
 				
-				next = false;
+				knext = false;
 			}
 		}
 	}
 	vars_t = false;
 }
 
-static void item_glow_t()
-{
-	item_t = true;
-	while(item_t)
-	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(1));
-		int k = 0;
-		while(g_Base!=0 && c_Base!=0)
-		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(1));
-			uint64_t entitylist = g_Base + OFFSET_ENTITYLIST;
-			if (item_glow)
-			{
-				for (int i = 0; i < 10000; i++)
-				{
-					uint64_t centity = 0;
-					apex_mem.Read<uint64_t>(entitylist + ((uint64_t)i << 5), centity);
-					if (centity == 0) continue;
-					Item item = getItem(centity);
-
-					if(item.isItem() && !item.isGlowing())
-					{
-						item.enableGlow();
-					}
-				}
-				k=1;
-				std::this_thread::sleep_for(std::chrono::milliseconds(600));
-			}
-			else
-			{		
-				if(k==1)
-				{
-					for (int i = 0; i < 10000; i++)
-					{
-						uint64_t centity = 0;
-						apex_mem.Read<uint64_t>(entitylist + ((uint64_t)i << 5), centity);
-						if (centity == 0) continue;
-
-						Item item = getItem(centity);
-
-						if(item.isItem() && item.isGlowing())
-						{
-							item.disableGlow();
-						}
-					}
-					k=0;
-				}
-			}	
-		}
-	}
-	item_t = false;
-}
 
 int main(int argc, char *argv[])
 {
 	if(geteuid() != 0)
 	{
-		printf("Error: %s is not running as root\n", argv[0]);
+		printf("Error: %s please run in root\n", argv[0]);
 		return 0;
 	}
 
-	const char* cl_proc = "client_ap.exe";
+	const char* cl_proc = "client.exe";
 	const char* ap_proc = "R5Apex.exe";
 	//const char* ap_proc = "EasyAntiCheat_launcher.exe";
-
 	//Client "add" offset
-	uint64_t add_off = 0x3f880;
+	//uint64_t add_off = 0x40d20;
 
 	std::thread aimbot_thr;
 	std::thread esp_thr;
 	std::thread actions_thr;
-	std::thread itemglow_thr;
 	std::thread vars_thr;
 	while(active)
 	{
@@ -730,34 +754,30 @@ int main(int argc, char *argv[])
 				aim_t = false;
 				esp_t = false;
 				actions_t = false;
-				item_t = false;
 				g_Base = 0;
 
 				aimbot_thr.~thread();
 				esp_thr.~thread();
 				actions_thr.~thread();
-				itemglow_thr.~thread();
 			}
 
 			std::this_thread::sleep_for(std::chrono::seconds(1));
-			printf("Searching for apex process...\n");
+			printf("Wating for apex process...\n");
 
 			apex_mem.open_proc(ap_proc);
 
 			if(apex_mem.get_proc_status() == process_status::FOUND_READY)
 			{
 				g_Base = apex_mem.get_proc_baseaddr();
-				printf("\nApex process found\n");
-				printf("Base: %lx\n", g_Base);
+				printf("\nFounded Apex!\n");
 
 				aimbot_thr = std::thread(AimbotLoop);
 				esp_thr = std::thread(EspLoop);
 				actions_thr = std::thread(DoActions);
-				itemglow_thr = std::thread(item_glow_t);
+				
 				aimbot_thr.detach();
 				esp_thr.detach();
 				actions_thr.detach();
-				itemglow_thr.detach();
 			}
 		}
 		else
@@ -776,15 +796,14 @@ int main(int argc, char *argv[])
 			}
 			
 			std::this_thread::sleep_for(std::chrono::seconds(1));
-			printf("Searching for client process...\n");
+			printf("Waiting for client...\n");
 
 			client_mem.open_proc(cl_proc);
 
 			if(client_mem.get_proc_status() == process_status::FOUND_READY)
 			{
 				c_Base = client_mem.get_proc_baseaddr();
-				printf("\nClient process found\n");
-				printf("Base: %lx\n", c_Base);
+				printf("\nFounded client!\n");
 
 				vars_thr = std::thread(set_vars, c_Base + add_off);
 				vars_thr.detach();

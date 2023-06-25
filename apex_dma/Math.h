@@ -23,8 +23,9 @@ struct SVector
 
 namespace Math
 {
-	void NormalizeAngles(QAngle& angle);
-	double GetFov(const QAngle& viewAngle, const QAngle& aimAngle);
-	double DotProduct(const Vector& v1, const float* v2);
-	QAngle CalcAngle(const Vector& src, const Vector& dst);
+    Vector Bezier(const Vector& start, const Vector& mid1, const Vector& mid2, const Vector& end, float t);    
+    void NormalizeAngles(QAngle& angle);
+    double GetFov(const QAngle& viewAngle, const QAngle& aimAngle);
+    double DotProduct(const Vector& v1, const float* v2);
+    QAngle CalcAngle(const Vector& src, const Vector& dst);
 }

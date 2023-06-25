@@ -1,6 +1,6 @@
 CXX=g++
 CXXFLAGS=-I./memflow_lib/memflow-win32-ffi/ -I./memflow_lib/memflow-ffi/ -L./memflow_lib/target/release -Wno-multichar
-LIBS=-lm -Wl,--no-as-needed -ldl -lpthread -l:libmemflow_win32_ffi.a
+LIBS=-lm -Wl,--no-as-needed -ldl -lpthread -l:libmemflow_win32_ffi.a -lcurl -l:libjsoncpp.so
 
 OUTDIR=./build
 OBJDIR=$(OUTDIR)/obj

@@ -2,20 +2,25 @@
 
 extern int aim;
 extern bool esp;
-extern bool item_glow;
-extern bool player_glow;
 extern bool aim_no_recoil;
 extern bool ready;
 extern bool use_nvidia;
 extern float max_dist;
+extern float seer_dist;
 extern float smooth;
 extern float max_fov;
+extern float scale;
 extern int bone;
 extern bool thirdperson;
 extern int spectators;
 extern int allied_spectators;
 extern bool chargerifle;
-
+extern bool freecam;
+extern bool lockall_mode;
+extern bool display_spec;
+extern bool firing_range;
+extern int recoil_100;
+extern int index;
 int width;
 int height;
 bool k_leftclick = false;
@@ -103,24 +108,27 @@ void Overlay::RenderMenu()
 		aim_enable = false;
 		vis_check = false;
 	}
-
+	//ImGui::Begin("#FOVC", nullptr, ImGuiWindowFlags_NoMove | ImGuiInputTextFlags_ReadOnly | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar);
+	//auto draw = ImGui::GetBackgroundDrawList();
+	//draw->AddCircle(ImVec2(1920 / 2, 1080 / 2), max_fov * scale, IM_COL32(255, 0, 0, 255), 100, 0.0f);
+	//ImGui::End();
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
-	ImGui::SetNextWindowSize(ImVec2(490, 215));
+	ImGui::SetNextWindowSize(ImVec2(490, 245));
 	ImGui::Begin(XorStr("##title"), (bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar);
+
 	if (ImGui::BeginTabBar(XorStr("Tab")))
 	{
-		if (ImGui::BeginTabItem(XorStr("Main")))
+		if (ImGui::BeginTabItem(XorStr(u8"MainMenu")))
 		{
-			ImGui::Checkbox(XorStr("ESP"), &esp);
-
-			ImGui::Checkbox(XorStr("AIM"), &aim_enable);
+			ImGui::Checkbox(XorStr(u8"ESP"), &esp);
+			ImGui::Checkbox(XorStr(u8"Aimbot"), &aim_enable);
 
 			if (aim_enable)
 			{
 				ImGui::SameLine();
-				ImGui::Checkbox(XorStr("Visibility check"), &vis_check);
+				ImGui::Checkbox(XorStr(u8"Visible check"), &vis_check);
 				ImGui::SameLine();
-				ImGui::Checkbox(XorStr("No recoil/sway"), &aim_no_recoil);
+				ImGui::Checkbox(XorStr(u8"No recoil"), &aim_no_recoil);
 				if (vis_check)
 				{
 					aim = 2;
@@ -135,58 +143,70 @@ void Overlay::RenderMenu()
 				aim = 0;
 			}
 
-			ImGui::Checkbox(XorStr("Glow items"), &item_glow);
-			ImGui::Checkbox(XorStr("Glow players"), &player_glow);
-			ImGui::Checkbox(XorStr("Thirdperson"), &thirdperson);
-			ImGui::Checkbox(XorStr("Charge rifle hack"), &chargerifle);
+			ImGui::Checkbox(XorStr(u8"freecamera"), &freecam);
+			ImGui::Checkbox(XorStr(u8"Lock on teammates"), &lockall_mode);
+			ImGui::Checkbox(XorStr(u8"firing_range mode"), &firing_range);//firing_range
+			//ImGui::InputInt(XorStr("index"), &index);//index
 			ImGui::EndTabItem();
 		}
-		if (ImGui::BeginTabItem(XorStr("Config")))
+		if (ImGui::BeginTabItem(XorStr(u8"Aimbot")))
 		{
-			ImGui::Text(XorStr("Max distance:"));
+			ImGui::Text(XorStr(u8"Max distence:"));
 			ImGui::SliderFloat(XorStr("##1"), &max_dist, 100.0f * 40, 800.0f * 40, "%.2f");
 			ImGui::SameLine();
-			ImGui::Text("(%d meters)", (int)(max_dist / 40));
+			ImGui::Text(u8"(%d M)", (int)(max_dist / 40));
 
-			ImGui::Text(XorStr("Smooth aim value:"));
-			ImGui::SliderFloat(XorStr("##2"), &smooth, 12.0f, 150.0f, "%.2f");
+			ImGui::Text(XorStr(u8"Smooth"));
+			ImGui::SliderFloat(XorStr("##2"), &smooth, 75.0f, 100.0f, "%.2f");
 
-			ImGui::Text(XorStr("Max FOV:"));
+			ImGui::Text(XorStr(u8"FOV:"));
 			ImGui::SliderFloat(XorStr("##3"), &max_fov, 5.0f, 250.0f, "%.2f");
-			
-			ImGui::Text(XorStr("Aim at (bone id):"));
-			ImGui::SliderInt(XorStr("##4"), &bone, 0, 175);
+
+			ImGui::Text(XorStr(u8"Bone:"));
+			ImGui::SliderInt(XorStr("##4"), &bone, 0, 3);
+
+			ImGui::Text(XorStr(u8"NoRecoil:"));
+			ImGui::SliderInt(XorStr("##5"), &recoil_100, 0, 100);
+			//ImGui::Text(XorStr(u8"FOV Draw scale:"));
+			//ImGui::SliderFloat(XorStr("##5"), &scale, 0.0f, 140.0f, "%.2f");
 			ImGui::EndTabItem();
 		}
-		if (ImGui::BeginTabItem(XorStr("Visuals")))
+		if (ImGui::BeginTabItem(XorStr(u8"ESPHACK")))
 		{
-			ImGui::Text(XorStr("ESP options:"));
-			ImGui::Checkbox(XorStr("Box"), &v.box);
+			ImGui::Text(XorStr(u8"ESP"));
+			//ImGui::Checkbox
+			ImGui::Checkbox(XorStr(u8"BOX"), &v.box);
 			ImGui::SameLine(0, 70.0f);
-			ImGui::Checkbox(XorStr("Name"), &v.name);
-			ImGui::Checkbox(XorStr("Line"), &v.line);
-			ImGui::Checkbox(XorStr("Distance"), &v.distance);
-			ImGui::Checkbox(XorStr("Health bar"), &v.healthbar);
-			ImGui::Checkbox(XorStr("Shield bar"), &v.shieldbar);
+			ImGui::Checkbox(XorStr(u8"Name"), &v.name);
+			ImGui::Checkbox(XorStr(u8"uid"), &v.renderrank);
+			ImGui::Checkbox(XorStr(u8"line"), &v.line);
+			ImGui::Checkbox(XorStr(u8"dist + teamID"), &v.distance);
+			ImGui::Checkbox(XorStr(u8"seer esp"), &v.healthbar);
+			ImGui::Text(XorStr(u8"seer esp distence:"));
+			ImGui::SliderFloat(XorStr("##1"), &seer_dist, 100.0f * 40, 800.0f * 40, "%.2f");
+			ImGui::SameLine();
+			ImGui::Text(u8"(%d M)", (int)(seer_dist / 40));
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();
 	}
-	ImGui::Text(XorStr("Overlay FPS: %.3f ms/frame (%.1f FPS)"), 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	ImGui::End();
 }
 
 void Overlay::RenderInfo()
 {
+	//ImGui::Begin("#FOVC'", nullptr, ImGuiWindowFlags_NoMove | ImGuiInputTextFlags_ReadOnly | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar);
+	//auto draw = ImGui::GetBackgroundDrawList();
+	//draw ->AddCircle(ImVec2(1920 / 2, 1080 / 2), max_fov * scale ,IM_COL32(255, 0, 0, 255), 100, 0.0f);
+	//ImGui::End();
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
-	ImGui::SetNextWindowSize(ImVec2(50, 25));
+	ImGui::SetNextWindowSize(ImVec2(210, 25));
 	ImGui::Begin(XorStr("##info"), (bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar);
-	DrawLine(ImVec2(9, 5), ImVec2(45, 5), RED, 2);
-	ImGui::TextColored(RED, "%d", spectators);
+	ImGui::TextColored(RED, u8"Enemies �� %d", spectators);
 	ImGui::SameLine();
-	ImGui::Text("-");
+	ImGui::Text(" / ");
 	ImGui::SameLine();
-	ImGui::TextColored(GREEN, "%d", allied_spectators);
+	ImGui::TextColored(GREEN, u8"Team �� %d", allied_spectators);
 	ImGui::End();
 }
 
@@ -238,6 +258,9 @@ DWORD Overlay::CreateOverlay()
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
+	io.Fonts->AddFontDefault();
+	ImFont* font = io.Fonts->AddFontFromFileTTF("C://windows//fonts/simhei.ttf", 12.0f, NULL, io.Fonts->GetGlyphRangesChineseFull());
+	ImGui::GetIO().FontDefault = font;
 
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
@@ -256,21 +279,6 @@ DWORD Overlay::CreateOverlay()
 	while (running)
 	{
 		HWND wnd = GetWindow(GetForegroundWindow(), GW_HWNDPREV);
-		if (use_nvidia)
-		{
-			if (GetWindowLong(overlayHWND, GWL_STYLE) != nv_edit)
-				SetWindowLong(overlayHWND, GWL_STYLE, nv_edit);
-			if (show_menu)
-			{
-				ClickThrough(false);
-			}
-			else
-			{
-				if (GetWindowLong(overlayHWND, GWL_EXSTYLE) != nv_ex_edit)
-					SetWindowLong(overlayHWND, GWL_EXSTYLE, nv_ex_edit);
-				ClickThrough(true);
-			}
-		}
 		if (wnd != overlayHWND)
 		{
 			SetWindowPos(overlayHWND, wnd, 0, 0, 0, 0, SWP_ASYNCWINDOWPOS | SWP_NOMOVE | SWP_NOSIZE);
@@ -310,11 +318,12 @@ DWORD Overlay::CreateOverlay()
 		{
 			k_ins = false;
 		}
-
-		if (show_menu)
+		if (show_menu) {
 			RenderMenu();
-		else
+		}
+		else {
 			RenderInfo();
+		}
 
 		RenderEsp();
 
@@ -347,11 +356,6 @@ void Overlay::Clear()
 {
 	running = 0;
 	Sleep(50);
-	if (use_nvidia)
-	{
-		SetWindowLong(overlayHWND, GWL_STYLE, nv_default);
-		SetWindowLong(overlayHWND, GWL_EXSTYLE, nv_ex_default);
-	}
 }
 
 int Overlay::getWidth()
@@ -435,7 +439,7 @@ void Overlay::DrawBox(ImColor color, float x, float y, float w, float h)
 
 void Overlay::Text(ImVec2 pos, ImColor color, const char* text_begin, const char* text_end, float wrap_width, const ImVec4* cpu_fine_clip_rect)
 {
-	ImGui::GetWindowDrawList()->AddText(ImGui::GetFont(), ImGui::GetFontSize(), pos, color, text_begin, text_end, wrap_width, cpu_fine_clip_rect);
+	ImGui::GetWindowDrawList()->AddText(ImGui::GetFont(), 14, pos, color, text_begin, text_end, wrap_width, cpu_fine_clip_rect);
 }
 
 void Overlay::String(ImVec2 pos, ImColor color, const char* text)
@@ -448,14 +452,305 @@ void Overlay::RectFilled(float x0, float y0, float x1, float y1, ImColor color, 
 	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x0, y0), ImVec2(x1, y1), color, rounding, rounding_corners_flags);
 }
 
-void Overlay::ProgressBar(float x, float y, float w, float h, int value, int v_max)
-{
-	ImColor barColor = ImColor(
-		min(510 * (v_max - value) / 100, 255),
-		min(510 * value / 100, 255),
-		25,
-		255
-	);
-	
+void Overlay::ProgressBar(float x, float y, float w, float h, int value, int v_max,ImColor barColor)
+{	
 	RectFilled(x, y, x + w, y + ((h / float(v_max)) * (float)value), barColor, 0.0f, 0);
+}
+
+
+//seer esp
+void DrawQuadFilled(ImVec2 p1, ImVec2 p2, ImVec2 p3, ImVec2 p4, ImColor color) {
+	ImGui::GetWindowDrawList()->AddQuadFilled(p1, p2, p3, p4, color);
+}
+void DrawHexagon(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, const ImVec2& p5, const ImVec2& p6, ImU32 col, float thickness)
+{
+	ImGui::GetWindowDrawList()->AddHexagon(p1, p2, p3, p4, p5, p6, col, thickness);
+}
+void DrawHexagonFilled(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, const ImVec2& p5, const ImVec2& p6, ImU32 col)
+{
+	ImGui::GetWindowDrawList()->AddHexagonFilled(p1, p2, p3, p4, p5, p6, col);
+}
+
+void Overlay::DrawHealth(float x, float y, int shield, int max_shield, int armorType, int health) {
+
+	int bg_offset = 3;
+	int bar_width = 158;
+	// 4steps...2*3=6
+	// 38*4=152 152+6 = 158
+	// 5steps...2*4=8
+	// 30*5=150 150+8 = 158
+	float max_health = 100.0f;
+	float shield_step = 25.0f;
+
+	int shield_25 = 30;
+	int steps = 5;
+
+
+	ImVec2 bg1(x - bar_width / 2 - bg_offset, y);
+	ImVec2 bg2(bg1.x - 10, bg1.y - 16);
+	ImVec2 bg3(bg2.x + 5, bg2.y - 7);
+	ImVec2 bg4(bg3.x + bar_width + bg_offset, bg3.y);
+	ImVec2 bg5(bg4.x + 11, bg4.y + 18);
+	ImVec2 bg6(x + bar_width / 2 + bg_offset, y);
+	DrawHexagonFilled(bg1, bg2, bg3, bg4, bg5, bg6, ImColor(0, 0, 0, 120));
+
+
+	ImVec2 h1(bg1.x + 3, bg1.y - 4);
+	ImVec2 h2(h1.x - 5, h1.y - 8);
+	ImVec2 h3(h2.x + (float)health / max_health * bar_width, h2.y);
+	ImVec2 h4(h1.x + (float)health / max_health * bar_width, h1.y);
+	ImVec2 h3m(h2.x + bar_width, h2.y);
+	ImVec2 h4m(h1.x + bar_width, h1.y);
+	DrawQuadFilled(h1, h2, h3m, h4m, ImColor(10, 10, 30, 60));
+	DrawQuadFilled(h1, h2, h3, h4, WHITE);
+
+
+	ImColor shieldCracked(97, 97, 97);
+	ImColor shieldCrackedDark(67, 67, 67);
+
+	ImColor shieldCol;
+	ImColor shieldColDark; //not used, but the real seer q has shadow inside
+	if (max_shield == 50) { //white
+		shieldCol = ImColor(247, 247, 247);
+		shieldColDark = ImColor(164, 164, 164);
+	}
+	else if (max_shield == 75) { //blue
+		shieldCol = ImColor(39, 178, 255);
+		shieldColDark = ImColor(27, 120, 210);
+	}
+	else if (max_shield == 100) { //purple
+		shieldCol = ImColor(206, 59, 255);
+		shieldColDark = ImColor(136, 36, 220);
+	}
+	else if (max_shield == 100) { //gold
+		shieldCol = ImColor(255, 255, 79);
+		shieldColDark = ImColor(218, 175, 49);
+	}
+	else if (max_shield == 125) { //red
+		shieldCol = ImColor(219, 2, 2);
+		shieldColDark = ImColor(219, 2, 2);
+	}
+	else {
+		shieldCol = ImColor(247, 247, 247);
+		shieldColDark = ImColor(164, 164, 164);
+	}
+	int shield_tmp = shield;
+	int shield1 = 0;
+	int shield2 = 0;
+	int shield3 = 0;
+	int shield4 = 0;
+	int shield5 = 0;
+	if (shield_tmp > 25) {
+		shield1 = 25;
+		shield_tmp -= 25;
+		if (shield_tmp > 25) {
+			shield2 = 25;
+			shield_tmp -= 25;
+			if (shield_tmp > 25) {
+				shield3 = 25;
+				shield_tmp -= 25;
+				if (shield_tmp > 25) {
+					shield4 = 25;
+					shield_tmp -= 25;
+					shield5 = shield_tmp;
+				}
+				else {
+					shield4 = shield_tmp;
+				}
+			}
+			else {
+				shield3 = shield_tmp;
+			}
+		}
+		else {
+			shield2 = shield_tmp;
+		}
+	}
+	else {
+		shield1 = shield_tmp;
+	}
+	ImVec2 s1(h2.x - 1, h2.y - 2);
+	ImVec2 s2(s1.x - 3, s1.y - 5);
+	ImVec2 s3(s2.x + shield1 / shield_step * shield_25, s2.y);
+	ImVec2 s4(s1.x + shield1 / shield_step * shield_25, s1.y);
+	ImVec2 s3m(s2.x + shield_25, s2.y);
+	ImVec2 s4m(s1.x + shield_25, s1.y);
+
+	ImVec2 ss1(s4m.x + 2, s1.y);
+	ImVec2 ss2(s3m.x + 2, s2.y);
+	ImVec2 ss3(ss2.x + shield2 / shield_step * shield_25, s2.y);
+	ImVec2 ss4(ss1.x + shield2 / shield_step * shield_25, s1.y);
+	ImVec2 ss3m(ss2.x + shield_25, s2.y);
+	ImVec2 ss4m(ss1.x + shield_25, s1.y);
+
+	ImVec2 sss1(ss4m.x + 2, s1.y);
+	ImVec2 sss2(ss3m.x + 2, s2.y);
+	ImVec2 sss3(sss2.x + shield3 / shield_step * shield_25, s2.y);
+	ImVec2 sss4(sss1.x + shield3 / shield_step * shield_25, s1.y);
+	ImVec2 sss3m(sss2.x + shield_25, s2.y);
+	ImVec2 sss4m(sss1.x + shield_25, s1.y);
+
+	ImVec2 ssss1(sss4m.x + 2, s1.y);
+	ImVec2 ssss2(sss3m.x + 2, s2.y);
+	ImVec2 ssss3(ssss2.x + shield4 / shield_step * shield_25, s2.y);
+	ImVec2 ssss4(ssss1.x + shield4 / shield_step * shield_25, s1.y);
+	ImVec2 ssss3m(ssss2.x + shield_25, s2.y);
+	ImVec2 ssss4m(ssss1.x + shield_25, s1.y);
+
+	ImVec2 sssss1(ssss4m.x + 2, s1.y);
+	ImVec2 sssss2(ssss3m.x + 2, s2.y);
+	ImVec2 sssss3(sssss2.x + shield5 / shield_step * shield_25, s2.y);
+	ImVec2 sssss4(sssss1.x + shield5 / shield_step * shield_25, s1.y);
+	ImVec2 sssss3m(sssss2.x + shield_25, s2.y);
+	ImVec2 sssss4m(sssss1.x + shield_25, s1.y);
+	if (max_shield == 50) {
+		if (shield <= 25) {
+			if (shield < 25) {
+				DrawQuadFilled(s1, s2, s3m, s4m, shieldCracked);
+				DrawQuadFilled(ss1, ss2, ss3m, ss4m, shieldCracked);
+			}
+			if (shield != 0)
+				DrawQuadFilled(s1, s2, s3, s4, shieldCol);
+
+		}
+		else if (shield <= 50) {
+			DrawQuadFilled(s1, s2, s3, s4, shieldCol);
+			if (shield != 50) {
+				DrawQuadFilled(ss1, ss2, ss3m, ss4m, shieldCracked);
+			}
+			if (shield != 0)
+				DrawQuadFilled(ss1, ss2, ss3, ss4, shieldCol);
+		}
+	}
+	else if (max_shield == 75) {
+		if (shield <= 25) {
+			if (shield < 25) {
+				DrawQuadFilled(s1, s2, s3m, s4m, shieldCracked);
+				DrawQuadFilled(ss1, ss2, ss3m, ss4m, shieldCracked);
+				DrawQuadFilled(sss1, sss2, sss3m, sss4m, shieldCracked);
+			}
+			if (shield != 0)
+				DrawQuadFilled(s1, s2, s3, s4, shieldCol);
+
+		}
+		else if (shield <= 50) {
+			DrawQuadFilled(s1, s2, s3, s4, shieldCol);
+			if (shield < 50) {
+				DrawQuadFilled(ss1, ss2, ss3m, ss4m, shieldCracked);
+				DrawQuadFilled(sss1, sss2, sss3m, sss4m, shieldCracked);
+			}
+			if (shield != 0)
+				DrawQuadFilled(ss1, ss2, ss3, ss4, shieldCol);
+		}
+		else if (shield <= 75) {
+			DrawQuadFilled(s1, s2, s3, s4, shieldCol);
+			DrawQuadFilled(ss1, ss2, ss3, ss4, shieldCol);
+			if (shield < 75) {
+				DrawQuadFilled(sss1, sss2, sss3m, sss4m, shieldCracked);
+			}
+			if (shield != 0)
+				DrawQuadFilled(sss1, sss2, sss3, sss4, shieldCol);
+		}
+	}
+	else if (max_shield == 100) {
+		if (shield <= 25) {
+			if (shield < 25) {
+				DrawQuadFilled(s1, s2, s3m, s4m, shieldCracked);
+				DrawQuadFilled(ss1, ss2, ss3m, ss4m, shieldCracked);
+				DrawQuadFilled(sss1, sss2, sss3m, sss4m, shieldCracked);
+				DrawQuadFilled(ssss1, ssss2, ssss3m, ssss4m, shieldCracked);
+			}
+			if (shield != 0)
+				DrawQuadFilled(s1, s2, s3, s4, shieldCol);
+
+		}
+		else if (shield <= 50) {
+			DrawQuadFilled(s1, s2, s3, s4, shieldCol);
+			if (shield < 50) {
+				DrawQuadFilled(ss1, ss2, ss3m, ss4m, shieldCracked);
+				DrawQuadFilled(sss1, sss2, sss3m, sss4m, shieldCracked);
+				DrawQuadFilled(ssss1, ssss2, ssss3m, ssss4m, shieldCracked);
+			}
+			if (shield != 0)
+				DrawQuadFilled(ss1, ss2, ss3, ss4, shieldCol);
+		}
+		else if (shield <= 75) {
+			DrawQuadFilled(s1, s2, s3, s4, shieldCol);
+			DrawQuadFilled(ss1, ss2, ss3, ss4, shieldCol);
+			if (shield < 75) {
+				DrawQuadFilled(sss1, sss2, sss3m, sss4m, shieldCracked);
+				DrawQuadFilled(ssss1, ssss2, ssss3m, ssss4m, shieldCracked);
+			}
+			if (shield != 0)
+				DrawQuadFilled(sss1, sss2, sss3, sss4, shieldCol);
+		}
+		else if (shield <= 100) {
+			DrawQuadFilled(s1, s2, s3, s4, shieldCol);
+			DrawQuadFilled(ss1, ss2, ss3, ss4, shieldCol);
+			DrawQuadFilled(sss1, sss2, sss3, sss4, shieldCol);
+			if (shield < 100) {
+				DrawQuadFilled(ssss1, ssss2, ssss3m, ssss4m, shieldCracked);
+			}
+			if (shield != 0)
+				DrawQuadFilled(ssss1, ssss2, ssss3, ssss4, shieldCol);
+		}
+	}
+	else if (max_shield == 125) {
+		if (shield <= 25) {
+			if (shield < 25) {
+				DrawQuadFilled(s1, s2, s3m, s4m, shieldCracked);
+				DrawQuadFilled(ss1, ss2, ss3m, ss4m, shieldCracked);
+				DrawQuadFilled(sss1, sss2, sss3m, sss4m, shieldCracked);
+				DrawQuadFilled(ssss1, ssss2, ssss3m, ssss4m, shieldCracked);
+				DrawQuadFilled(sssss1, sssss2, sssss3m, sssss4m, shieldCracked);
+			}
+			if (shield != 0)
+				DrawQuadFilled(s1, s2, s3, s4, shieldCol);
+
+		}
+		else if (shield <= 50) {
+			DrawQuadFilled(s1, s2, s3, s4, shieldCol);
+			if (shield < 50) {
+				DrawQuadFilled(ss1, ss2, ss3m, ss4m, shieldCracked);
+				DrawQuadFilled(sss1, sss2, sss3m, sss4m, shieldCracked);
+				DrawQuadFilled(ssss1, ssss2, ssss3m, ssss4m, shieldCracked);
+				DrawQuadFilled(sssss1, sssss2, sssss3m, sssss4m, shieldCracked);
+			}
+			if (shield != 0)
+				DrawQuadFilled(ss1, ss2, ss3, ss4, shieldCol);
+		}
+		else if (shield <= 75) {
+			DrawQuadFilled(s1, s2, s3, s4, shieldCol);
+			DrawQuadFilled(ss1, ss2, ss3, ss4, shieldCol);
+			if (shield < 75) {
+				DrawQuadFilled(sss1, sss2, sss3m, sss4m, shieldCracked);
+				DrawQuadFilled(ssss1, ssss2, ssss3m, ssss4m, shieldCracked);
+				DrawQuadFilled(sssss1, sssss2, sssss3m, sssss4m, shieldCracked);
+			}
+			if (shield != 0)
+				DrawQuadFilled(sss1, sss2, sss3, sss4, shieldCol);
+		}
+		else if (shield <= 100) {
+			DrawQuadFilled(s1, s2, s3, s4, shieldCol);
+			DrawQuadFilled(ss1, ss2, ss3, ss4, shieldCol);
+			DrawQuadFilled(sss1, sss2, sss3, sss4, shieldCol);
+			if (shield < 100) {
+				DrawQuadFilled(ssss1, ssss2, ssss3m, ssss4m, shieldCracked);
+				DrawQuadFilled(sssss1, sssss2, sssss3m, sssss4m, shieldCracked);
+			}
+			if (shield != 0)
+				DrawQuadFilled(ssss1, ssss2, ssss3, ssss4, shieldCol);
+		}
+		else if (shield <= 125) {
+			DrawQuadFilled(s1, s2, s3, s4, shieldCol);
+			DrawQuadFilled(ss1, ss2, ss3, ss4, shieldCol);
+			DrawQuadFilled(sss1, sss2, sss3, sss4, shieldCol);
+			DrawQuadFilled(ssss1, ssss2, ssss3, ssss4, shieldCol);
+			if (shield < 125) {
+				DrawQuadFilled(sssss1, sssss2, sssss3m, sssss4m, shieldCracked);
+			}
+			if (shield != 0)
+				DrawQuadFilled(sssss1, sssss2, sssss3, sssss4, shieldCol);
+		}
+	}
 }

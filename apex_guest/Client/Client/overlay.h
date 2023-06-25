@@ -18,10 +18,11 @@
 #pragma comment(lib, "d3d11.lib")
 
 #define GREEN ImColor(0, 255, 0)
-#define RED ImColor(255, 0, 0)
-#define BLUE ImColor(0, 0, 255)
+#define RED ImColor(255, 75, 0)
+#define BLUE ImColor(51, 153, 255)
 #define ORANGE ImColor(255, 165, 0)
 #define WHITE ImColor(255, 255, 255)
+#define PURPLE ImColor(255, 0 , 255)
 
 typedef struct visuals
 {
@@ -31,7 +32,9 @@ typedef struct visuals
 	bool healthbar = true;
 	bool shieldbar = true;
 	bool name = true;
+	bool renderrank = true;
 }visuals;
+
 
 class Overlay
 {
@@ -49,8 +52,10 @@ public:
 	void DrawBox(ImColor color, float x, float y, float w, float h);
 	void Text(ImVec2 pos, ImColor color, const char* text_begin, const char* text_end, float wrap_width, const ImVec4* cpu_fine_clip_rect);
 	void RectFilled(float x0, float y0, float x1, float y1, ImColor color, float rounding, int rounding_corners_flags);
-	void ProgressBar(float x, float y, float w, float h, int value, int v_max);
+	void ProgressBar(float x, float y, float w, float h, int value, int v_max,ImColor barColor);
 	void String(ImVec2 pos, ImColor color, const char* text);
+	//Seer
+	void DrawHealth(float x, float y, int shield, int max_shield, int armorType, int health);
 private:
 	bool running;
 	HWND overlayHWND;

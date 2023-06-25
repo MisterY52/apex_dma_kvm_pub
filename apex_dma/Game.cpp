@@ -2,8 +2,10 @@
 
 extern Memory apex_mem;
 
+int miss = 0;
+
 extern bool firing_range;
-float smooth = 12.0f;
+float smooth = 85.0f;
 bool aim_no_recoil = true;
 int bone = 2;
 
@@ -39,33 +41,88 @@ void get_class_name(uint64_t entity_ptr, char* out_str)
 	apex_mem.ReadArray<char>(client_class.pNetworkName, out_str, 32);
 }
 
-void charge_rifle_hack(uint64_t entity_ptr)
-{
-	extern uint64_t g_Base;
-	extern bool shooting;
-	WeaponXEntity curweap = WeaponXEntity();
-	curweap.update(entity_ptr);
-	float BulletSpeed = curweap.get_projectile_speed();
-	int ammo = curweap.get_ammo();
-
-	if (ammo != 0 && BulletSpeed == 1 && shooting)
-	{
-		apex_mem.Write<float>(g_Base + OFFSET_TIMESCALE + 0x68, std::numeric_limits<float>::min());
-	}
-	else
-	{
-		apex_mem.Write<float>(g_Base + OFFSET_TIMESCALE + 0x68, 1.f);
-	}
-}
-
 int Entity::getTeamId()
 {
 	return *(int*)(buffer + OFFSET_TEAM);
 }
 
+int calc_level(int m_xp)
+{
+	if (m_xp<0) return 0;
+	if (m_xp<100) return 1;
+	if (m_xp<2750) return 2;
+	if (m_xp<6650) return 3;
+	if (m_xp<11400) return 4;
+	if (m_xp<17000) return 5;
+	if (m_xp<23350) return 6;
+	if (m_xp<30450) return 7;
+	if (m_xp<38300) return 8;
+	if (m_xp<46450) return 9;
+	if (m_xp<55050) return 10;
+	if (m_xp<64100) return 11;
+	if (m_xp<73600) return 12;
+	if (m_xp<83550) return 13;
+	if (m_xp<93950) return 14;
+	if (m_xp<104800) return 15;
+	if (m_xp<116100) return 16;
+	if (m_xp<127850) return 17;
+	if (m_xp<140050) return 18;
+	if (m_xp<152400) return 19;
+	if (m_xp<164900) return 20;
+	if (m_xp<177550) return 21;
+	if (m_xp<190350) return 22;
+	if (m_xp<203300) return 23;
+	if (m_xp<216400) return 24;
+	if (m_xp<229650) return 25;
+	if (m_xp<243050) return 26;
+	if (m_xp<256600) return 27;
+	if (m_xp<270300) return 28;
+	if (m_xp<284150) return 29;
+	if (m_xp<298150) return 30;
+	if (m_xp<312300) return 31;
+	if (m_xp<326600) return 32;
+	if (m_xp<341050) return 33;
+	if (m_xp<355650) return 34;
+	if (m_xp<370400) return 35;
+	if (m_xp<385300) return 36;
+	if (m_xp<400350) return 37;
+	if (m_xp<415550) return 38;
+	if (m_xp<430900) return 39;
+	if (m_xp<446400) return 40;
+	if (m_xp<462050) return 41;
+	if (m_xp<477850) return 42;
+	if (m_xp<493800) return 43;
+	if (m_xp<509900) return 44;
+	if (m_xp<526150) return 45;
+	if (m_xp<542550) return 46;
+	if (m_xp<559100) return 47;
+	if (m_xp<575800) return 48;
+	if (m_xp<592650) return 49;
+	if (m_xp<609650) return 50;
+	if (m_xp<626800) return 51;
+	if (m_xp<644100) return 52;
+	if (m_xp<661550) return 53;
+	if (m_xp<679150) return 54;
+	if (m_xp<696900) return 55;
+	if (m_xp<714800) return 56;
+	return floor((m_xp-714800+1)/18000) + 57;
+}
+
 int Entity::getHealth()
 {
 	return *(int*)(buffer + OFFSET_HEALTH);
+}
+
+int Entity::getArmortype()
+{
+	int armortype;
+	apex_mem.Read<int>(ptr + OFFSET_ARMOR_TYPE, armortype);
+	return armortype;
+}
+
+int Entity::getMaxshield()
+{
+	return *(int*)(buffer + OFFSET_MAXSHIELD);
 }
 
 int Entity::getShield()
@@ -283,7 +340,7 @@ float CalculateFov(Entity& from, Entity& target)
 	return Math::GetFov(ViewAngles, Angle);
 }
 
-QAngle CalculateBestBoneAim(Entity& from, uintptr_t t, float max_fov)
+QAngle CalculateBestBoneAim(Entity& from, uintptr_t t, float max_fov , int recoil_val)
 {
 	Entity target = getEntity(t);
 	if(firing_range)
@@ -310,10 +367,10 @@ QAngle CalculateBestBoneAim(Entity& from, uintptr_t t, float max_fov)
 	float BulletSpeed = curweap.get_projectile_speed();
 	float BulletGrav = curweap.get_projectile_gravity();
 	float zoom_fov = curweap.get_zoom_fov();
-
+	//printf("%f \n", zoom_fov);
 	if (zoom_fov != 0.0f && zoom_fov != 1.0f)
 	{
-		max_fov *= zoom_fov/90.0f;
+		//max_fov *= zoom_fov/90.0f;
 	}
 
 	/*
@@ -344,12 +401,33 @@ QAngle CalculateBestBoneAim(Entity& from, uintptr_t t, float max_fov)
     }
 
 	if (CalculatedAngles == QAngle(0, 0, 0))
-    	CalculatedAngles = Math::CalcAngle(LocalCamera, TargetBonePosition);
+    	
+	{
+		float random1 = (float)(rand() % 7 + 1)/100;
+                float random2 = (float)(rand() % 7 + 1)/100;
+    		Vector start = LocalCamera;
+		Vector end = TargetBonePosition;
+		Vector dir = (end - start).Normalize();
+		Vector mid1 = start + (dir * ((end - start).Length() * (0.33f + random1)));
+		Vector mid2 = start + (dir * ((end - start).Length() * (0.67f + random2)));
+		mid1.z += 25.f;
+		mid2.z += 25.f;
+
+		// Calculate aim angle using the final intermediate point
+		Vector aim = Math::Bezier(start, mid1, mid2, end, 0.5f + random2);
+		CalculatedAngles = Math::CalcAngle(LocalCamera, aim);
+	}
+
 	QAngle ViewAngles = from.GetViewAngles();
 	QAngle SwayAngles = from.GetSwayAngles();
 	//remove sway and recoil
-	if(aim_no_recoil)
-		CalculatedAngles-=SwayAngles-ViewAngles;
+	if(aim_no_recoil){
+                QAngle sway = SwayAngles - ViewAngles;
+                sway.x = sway.x * recoil_val;   //pitch
+                sway.y = sway.y * recoil_val;  //yaw
+                sway.z = sway.z * recoil_val;
+                CalculatedAngles-=sway;
+        }
 	Math::NormalizeAngles(CalculatedAngles);
 	QAngle Delta = CalculatedAngles - ViewAngles;
 	double fov = Math::GetFov(SwayAngles, CalculatedAngles);
@@ -360,7 +438,25 @@ QAngle CalculateBestBoneAim(Entity& from, uintptr_t t, float max_fov)
 
 	Math::NormalizeAngles(Delta);
 
-	QAngle SmoothedAngles = ViewAngles + Delta/smooth;
+        QAngle RandomAngles = QAngle(
+        (rand() % 5 - 4) * 0.001f,
+        (rand() % 5 - 4) * 0.001f,
+        (rand() % 5 - 4) * 0.001f
+        );
+        QAngle RandomAnglesMax = QAngle(
+        (rand() % 8 - 4) * 0.001f,
+        (rand() % 8 - 4) * 0.001f,
+        (rand() % 8 - 4) * 0.001f
+        );
+        miss = rand() % 100;
+        QAngle SmoothedAngles = ViewAngles + Delta/smooth + RandomAngles;
+        if(miss >= 60){
+        QAngle SmoothedAngles = ViewAngles + Delta/smooth + RandomAnglesMax;
+        }
+        else if(miss <= 50){
+        QAngle SmoothedAngles = ViewAngles + Delta/smooth + RandomAngles;
+        }
+
 	return SmoothedAngles;
 }
 
