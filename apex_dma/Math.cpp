@@ -17,15 +17,15 @@ void Math::NormalizeAngles(QAngle& angle)
 
 Vector Math::Bezier(const Vector& start, const Vector& mid1, const Vector& mid2, const Vector& end, float t)
 {
-    Vector q1 = start + (mid1 - start) * t;
-    Vector q2 = mid1 + (mid2 - mid1) * t;
-    Vector q3 = mid2 + (end - mid2) * t;
+	Vector q1 = start + (mid1 - start) * t;
+	Vector q2 = mid1 + (mid2 - mid1) * t;
+	Vector q3 = mid2 + (end - mid2) * t;
 
-    Vector r1 = q1 + (q2 - q1) * t;
-    Vector r2 = q2 + (q3 - q2) * t;
+	Vector r1 = q1 + (q2 - q1) * t;
+	Vector r2 = q2 + (q3 - q2) * t;
 
-    return r1 + (r2 - r1) * t;
-    return Vector();
+	return r1 + (r2 - r1) * t;
+	return Vector();
 }
 
 QAngle Math::CalcAngle(const Vector& src, const Vector& dst)
@@ -33,7 +33,7 @@ QAngle Math::CalcAngle(const Vector& src, const Vector& dst)
 	QAngle angle = QAngle();
 	SVector delta = SVector((src.x - dst.x), (src.y - dst.y), (src.z - dst.z));
 
-	double hyp = sqrt(delta.x*delta.x + delta.y * delta.y);
+	double hyp = sqrt(delta.x * delta.x + delta.y * delta.y);
 
 	angle.x = atan(delta.z / hyp) * (180.0f / M_PI);
 	angle.y = atan(delta.y / delta.x) * (180.0f / M_PI);

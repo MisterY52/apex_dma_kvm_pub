@@ -5,12 +5,12 @@
 
 #define WDA_EXCLUDEFROMCAPTURE 0x00000011
 const MARGINS margins = { -1 ,-1, -1, -1 };
-const wchar_t g_szClassName[] = L"B4A893Xoverlay";
+const wchar_t g_szClassName[] = L"serial-stringoverlay";
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	WNDCLASSEX wc;
-	HWND B4A893Xhwnd;
+	HWND serial - stringhwnd;
 	MSG Msg;
 
 	wc.cbSize = sizeof(WNDCLASSEX);
@@ -21,14 +21,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	wc.hInstance = hInstance;
 	wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wc.hbrBackground = (HBRUSH)(RGB(0,0,0));
+	wc.hbrBackground = (HBRUSH)(RGB(0, 0, 0));
 	wc.lpszMenuName = NULL;
 	wc.lpszClassName = g_szClassName;
 	wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 
 	RegisterClassEx(&wc);
 
-	B4A893Xhwnd = CreateWindowEx(
+	serial - stringhwnd = CreateWindowEx(
 		WS_EX_LAYERED | WS_EX_TRANSPARENT,
 		g_szClassName,
 		g_szClassName,
@@ -36,9 +36,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		0, 0, 1920, 1080,
 		NULL, NULL, hInstance, NULL);
 
-	SetLayeredWindowAttributes(B4A893Xhwnd, RGB(0,0,0), 175, LWA_ALPHA);
-	SetWindowDisplayAffinity(B4A893Xhwnd, WDA_EXCLUDEFROMCAPTURE);
-	DwmExtendFrameIntoClientArea(B4A893Xhwnd, &margins);
+	SetLayeredWindowAttributes(serial - stringhwnd, RGB(0, 0, 0), 175, LWA_ALPHA);
+	SetWindowDisplayAffinity(serial - stringhwnd, WDA_EXCLUDEFROMCAPTURE);
+	DwmExtendFrameIntoClientArea(serial - stringhwnd, &margins);
 
 	while (GetMessage(&Msg, NULL, 0, 0) > 0)
 	{

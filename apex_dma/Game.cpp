@@ -48,64 +48,64 @@ int Entity::getTeamId()
 
 int calc_level(int m_xp)
 {
-	if (m_xp<0) return 0;
-	if (m_xp<100) return 1;
-	if (m_xp<2750) return 2;
-	if (m_xp<6650) return 3;
-	if (m_xp<11400) return 4;
-	if (m_xp<17000) return 5;
-	if (m_xp<23350) return 6;
-	if (m_xp<30450) return 7;
-	if (m_xp<38300) return 8;
-	if (m_xp<46450) return 9;
-	if (m_xp<55050) return 10;
-	if (m_xp<64100) return 11;
-	if (m_xp<73600) return 12;
-	if (m_xp<83550) return 13;
-	if (m_xp<93950) return 14;
-	if (m_xp<104800) return 15;
-	if (m_xp<116100) return 16;
-	if (m_xp<127850) return 17;
-	if (m_xp<140050) return 18;
-	if (m_xp<152400) return 19;
-	if (m_xp<164900) return 20;
-	if (m_xp<177550) return 21;
-	if (m_xp<190350) return 22;
-	if (m_xp<203300) return 23;
-	if (m_xp<216400) return 24;
-	if (m_xp<229650) return 25;
-	if (m_xp<243050) return 26;
-	if (m_xp<256600) return 27;
-	if (m_xp<270300) return 28;
-	if (m_xp<284150) return 29;
-	if (m_xp<298150) return 30;
-	if (m_xp<312300) return 31;
-	if (m_xp<326600) return 32;
-	if (m_xp<341050) return 33;
-	if (m_xp<355650) return 34;
-	if (m_xp<370400) return 35;
-	if (m_xp<385300) return 36;
-	if (m_xp<400350) return 37;
-	if (m_xp<415550) return 38;
-	if (m_xp<430900) return 39;
-	if (m_xp<446400) return 40;
-	if (m_xp<462050) return 41;
-	if (m_xp<477850) return 42;
-	if (m_xp<493800) return 43;
-	if (m_xp<509900) return 44;
-	if (m_xp<526150) return 45;
-	if (m_xp<542550) return 46;
-	if (m_xp<559100) return 47;
-	if (m_xp<575800) return 48;
-	if (m_xp<592650) return 49;
-	if (m_xp<609650) return 50;
-	if (m_xp<626800) return 51;
-	if (m_xp<644100) return 52;
-	if (m_xp<661550) return 53;
-	if (m_xp<679150) return 54;
-	if (m_xp<696900) return 55;
-	if (m_xp<714800) return 56;
-	return floor((m_xp-714800+1)/18000) + 57;
+	if (m_xp < 0) return 0;
+	if (m_xp < 100) return 1;
+	if (m_xp < 2750) return 2;
+	if (m_xp < 6650) return 3;
+	if (m_xp < 11400) return 4;
+	if (m_xp < 17000) return 5;
+	if (m_xp < 23350) return 6;
+	if (m_xp < 30450) return 7;
+	if (m_xp < 38300) return 8;
+	if (m_xp < 46450) return 9;
+	if (m_xp < 55050) return 10;
+	if (m_xp < 64100) return 11;
+	if (m_xp < 73600) return 12;
+	if (m_xp < 83550) return 13;
+	if (m_xp < 93950) return 14;
+	if (m_xp < 104800) return 15;
+	if (m_xp < 116100) return 16;
+	if (m_xp < 127850) return 17;
+	if (m_xp < 140050) return 18;
+	if (m_xp < 152400) return 19;
+	if (m_xp < 164900) return 20;
+	if (m_xp < 177550) return 21;
+	if (m_xp < 190350) return 22;
+	if (m_xp < 203300) return 23;
+	if (m_xp < 216400) return 24;
+	if (m_xp < 229650) return 25;
+	if (m_xp < 243050) return 26;
+	if (m_xp < 256600) return 27;
+	if (m_xp < 270300) return 28;
+	if (m_xp < 284150) return 29;
+	if (m_xp < 298150) return 30;
+	if (m_xp < 312300) return 31;
+	if (m_xp < 326600) return 32;
+	if (m_xp < 341050) return 33;
+	if (m_xp < 355650) return 34;
+	if (m_xp < 370400) return 35;
+	if (m_xp < 385300) return 36;
+	if (m_xp < 400350) return 37;
+	if (m_xp < 415550) return 38;
+	if (m_xp < 430900) return 39;
+	if (m_xp < 446400) return 40;
+	if (m_xp < 462050) return 41;
+	if (m_xp < 477850) return 42;
+	if (m_xp < 493800) return 43;
+	if (m_xp < 509900) return 44;
+	if (m_xp < 526150) return 45;
+	if (m_xp < 542550) return 46;
+	if (m_xp < 559100) return 47;
+	if (m_xp < 575800) return 48;
+	if (m_xp < 592650) return 49;
+	if (m_xp < 609650) return 50;
+	if (m_xp < 626800) return 51;
+	if (m_xp < 644100) return 52;
+	if (m_xp < 661550) return 53;
+	if (m_xp < 679150) return 54;
+	if (m_xp < 696900) return 55;
+	if (m_xp < 714800) return 56;
+	return floor((m_xp - 714800 + 1) / 18000) + 57;
 }
 
 int Entity::getHealth()
@@ -165,7 +165,7 @@ bool Entity::isAlive()
 
 float Entity::lastVisTime()
 {
-  return *(float*)(buffer + OFFSET_VISIBLE_TIME);
+	return *(float*)(buffer + OFFSET_VISIBLE_TIME);
 }
 
 Vector Entity::getBonePosition(int id)
@@ -188,35 +188,35 @@ Vector Entity::getBonePosition(int id)
 Vector Entity::getBonePositionByHitbox(int id)
 {
 	Vector origin = getPosition();
- 
-    //BoneByHitBox
+
+	//BoneByHitBox
 	uint64_t Model = *(uint64_t*)(buffer + OFFSET_STUDIOHDR);
-    
+
 	//get studio hdr
 	uint64_t StudioHdr;
 	apex_mem.Read<uint64_t>(Model + 0x8, StudioHdr);
- 
-    //get hitbox array
+
+	//get hitbox array
 	uint16_t HitboxCache;
 	apex_mem.Read<uint16_t>(StudioHdr + 0x34, HitboxCache);
 	uint64_t HitBoxsArray = StudioHdr + ((uint16_t)(HitboxCache & 0xFFFE) << (4 * (HitboxCache & 1)));
- 
+
 	uint16_t IndexCache;
- 	apex_mem.Read<uint16_t>(HitBoxsArray + 0x4, IndexCache);
+	apex_mem.Read<uint16_t>(HitBoxsArray + 0x4, IndexCache);
 	int HitboxIndex = ((uint16_t)(IndexCache & 0xFFFE) << (4 * (IndexCache & 1)));
- 
+
 	uint16_t Bone;
 	apex_mem.Read<uint16_t>(HitBoxsArray + HitboxIndex + (id * 0x20), Bone);
 
-	if(Bone < 0 || Bone > 255)
+	if (Bone < 0 || Bone > 255)
 		return Vector();
- 
-    //hitpos
+
+	//hitpos
 	uint64_t BoneArray = *(uint64_t*)(buffer + OFFSET_BONES);
- 
+
 	matrix3x4_t Matrix = {};
 	apex_mem.Read<matrix3x4_t>(BoneArray + Bone * sizeof(matrix3x4_t), Matrix);
- 
+
 	return Vector(Matrix.m_flMatVal[0][3] + origin.x, Matrix.m_flMatVal[1][3] + origin.y, Matrix.m_flMatVal[2][3] + origin.z);
 }
 
@@ -241,11 +241,11 @@ float Entity::GetYaw()
 	apex_mem.Read<float>(ptr + OFFSET_YAW, yaw);
 
 	if (yaw < 0)
-    	yaw += 360;
+		yaw += 360;
 	yaw += 90;
 	if (yaw > 360)
-    	yaw -= 360;
-		
+		yaw -= 360;
+
 	return yaw;
 }
 
@@ -298,8 +298,8 @@ QAngle Entity::GetRecoil()
 void Entity::get_name(uint64_t g_Base, uint64_t index, char* name)
 {
 	index *= 0x10;
-    uint64_t name_ptr = 0;
-    apex_mem.Read<uint64_t>(g_Base + OFFSET_NAME_LIST + index, name_ptr);
+	uint64_t name_ptr = 0;
+	apex_mem.Read<uint64_t>(g_Base + OFFSET_NAME_LIST + index, name_ptr);
 	apex_mem.ReadArray<char>(name_ptr, name, 32);
 }
 
@@ -340,10 +340,10 @@ float CalculateFov(Entity& from, Entity& target)
 	return Math::GetFov(ViewAngles, Angle);
 }
 
-QAngle CalculateBestBoneAim(Entity& from, uintptr_t t, float max_fov , int recoil_val)
+QAngle CalculateBestBoneAim(Entity& from, uintptr_t t, float max_fov)
 {
 	Entity target = getEntity(t);
-	if(firing_range)
+	if (firing_range)
 	{
 		if (!target.isAlive())
 		{
@@ -357,11 +357,11 @@ QAngle CalculateBestBoneAim(Entity& from, uintptr_t t, float max_fov , int recoi
 			return QAngle(0, 0, 0);
 		}
 	}
-	
+
 	Vector LocalCamera = from.GetCamPos();
 	Vector TargetBonePosition = target.getBonePositionByHitbox(bone);
 	QAngle CalculatedAngles = QAngle(0, 0, 0);
-	
+
 	WeaponXEntity curweap = WeaponXEntity();
 	curweap.update(from.ptr);
 	float BulletSpeed = curweap.get_projectile_speed();
@@ -385,27 +385,27 @@ QAngle CalculateBestBoneAim(Entity& from, uintptr_t t, float max_fov , int recoi
 		TargetBonePosition += (target.getAbsVelocity() * HorizontalTime);
 	}
 	*/
-	
+
 	//more accurate prediction
 	if (BulletSpeed > 1.f)
 	{
 		PredictCtx Ctx;
 		Ctx.StartPos = LocalCamera;
-		Ctx.TargetPos = TargetBonePosition; 
-		Ctx.BulletSpeed = BulletSpeed - (BulletSpeed*0.08);
-		Ctx.BulletGravity = BulletGrav + (BulletGrav*0.05);
+		Ctx.TargetPos = TargetBonePosition;
+		Ctx.BulletSpeed = BulletSpeed - (BulletSpeed * 0.08);
+		Ctx.BulletGravity = BulletGrav + (BulletGrav * 0.05);
 		Ctx.TargetVel = target.getAbsVelocity();
 
 		if (BulletPredict(Ctx))
-			CalculatedAngles = QAngle{Ctx.AimAngles.x, Ctx.AimAngles.y, 0.f};
-    }
+			CalculatedAngles = QAngle{ Ctx.AimAngles.x, Ctx.AimAngles.y, 0.f };
+	}
 
 	if (CalculatedAngles == QAngle(0, 0, 0))
-    	
+
 	{
-		float random1 = (float)(rand() % 7 + 1)/100;
-                float random2 = (float)(rand() % 7 + 1)/100;
-    		Vector start = LocalCamera;
+		float random1 = (float)(rand() % 7 + 1) / 100;
+		float random2 = (float)(rand() % 7 + 1) / 100;
+		Vector start = LocalCamera;
 		Vector end = TargetBonePosition;
 		Vector dir = (end - start).Normalize();
 		Vector mid1 = start + (dir * ((end - start).Length() * (0.33f + random1)));
@@ -421,13 +421,13 @@ QAngle CalculateBestBoneAim(Entity& from, uintptr_t t, float max_fov , int recoi
 	QAngle ViewAngles = from.GetViewAngles();
 	QAngle SwayAngles = from.GetSwayAngles();
 	//remove sway and recoil
-	if(aim_no_recoil){
-                QAngle sway = SwayAngles - ViewAngles;
-                sway.x = sway.x * recoil_val;   //pitch
-                sway.y = sway.y * recoil_val;  //yaw
-                sway.z = sway.z * recoil_val;
-                CalculatedAngles-=sway;
-        }
+	if (aim_no_recoil) {
+		QAngle sway = SwayAngles - ViewAngles;
+		sway.x = sway.x * 0.8;   //pitch
+		sway.y = sway.y * 0.75;  //yaw
+		sway.z = sway.z * 0.9;
+		CalculatedAngles -= sway;
+	}
 	Math::NormalizeAngles(CalculatedAngles);
 	QAngle Delta = CalculatedAngles - ViewAngles;
 	double fov = Math::GetFov(SwayAngles, CalculatedAngles);
@@ -438,24 +438,24 @@ QAngle CalculateBestBoneAim(Entity& from, uintptr_t t, float max_fov , int recoi
 
 	Math::NormalizeAngles(Delta);
 
-        QAngle RandomAngles = QAngle(
-        (rand() % 5 - 4) * 0.001f,
-        (rand() % 5 - 4) * 0.001f,
-        (rand() % 5 - 4) * 0.001f
-        );
-        QAngle RandomAnglesMax = QAngle(
-        (rand() % 8 - 4) * 0.001f,
-        (rand() % 8 - 4) * 0.001f,
-        (rand() % 8 - 4) * 0.001f
-        );
-        miss = rand() % 100;
-        QAngle SmoothedAngles = ViewAngles + Delta/smooth + RandomAngles;
-        if(miss >= 60){
-        QAngle SmoothedAngles = ViewAngles + Delta/smooth + RandomAnglesMax;
-        }
-        else if(miss <= 50){
-        QAngle SmoothedAngles = ViewAngles + Delta/smooth + RandomAngles;
-        }
+	QAngle RandomAngles = QAngle(
+		(rand() % 4 - 2) * 0.001f,
+		(rand() % 4 - 2) * 0.001f,
+		(rand() % 4 - 2) * 0.001f
+	);
+	QAngle RandomAnglesMax = QAngle(
+		(rand() % 6 - 2) * 0.001f,
+		(rand() % 6 - 2) * 0.001f,
+		(rand() % 6 - 2) * 0.001f
+	);
+	miss = rand() % 100;
+	QAngle SmoothedAngles = ViewAngles + Delta / smooth + RandomAngles;
+	if (miss >= 70) {
+		QAngle SmoothedAngles = ViewAngles + Delta / smooth + RandomAnglesMax;
+	}
+	else {
+		QAngle SmoothedAngles = ViewAngles + Delta / smooth + RandomAngles;
+	}
 
 	return SmoothedAngles;
 }
@@ -503,24 +503,24 @@ bool WorldToScreen(Vector from, float* m_vMatrix, int targetWidth, int targetHei
 
 void WeaponXEntity::update(uint64_t LocalPlayer)
 {
-    extern uint64_t g_Base;
+	extern uint64_t g_Base;
 	uint64_t entitylist = g_Base + OFFSET_ENTITYLIST;
 	uint64_t wephandle = 0;
-    apex_mem.Read<uint64_t>(LocalPlayer + OFFSET_WEAPON, wephandle);
-	
+	apex_mem.Read<uint64_t>(LocalPlayer + OFFSET_WEAPON, wephandle);
+
 	wephandle &= 0xffff;
 
 	uint64_t wep_entity = 0;
-    apex_mem.Read<uint64_t>(entitylist + (wephandle << 5), wep_entity);
+	apex_mem.Read<uint64_t>(entitylist + (wephandle << 5), wep_entity);
 
 	projectile_speed = 0;
-    apex_mem.Read<float>(wep_entity + OFFSET_BULLET_SPEED, projectile_speed);
+	apex_mem.Read<float>(wep_entity + OFFSET_BULLET_SPEED, projectile_speed);
 	projectile_scale = 0;
-    apex_mem.Read<float>(wep_entity + OFFSET_BULLET_SCALE, projectile_scale);
+	apex_mem.Read<float>(wep_entity + OFFSET_BULLET_SCALE, projectile_scale);
 	zoom_fov = 0;
-    apex_mem.Read<float>(wep_entity + OFFSET_ZOOM_FOV, zoom_fov);
+	apex_mem.Read<float>(wep_entity + OFFSET_ZOOM_FOV, zoom_fov);
 	ammo = 0;
-    apex_mem.Read<int>(wep_entity + OFFSET_AMMO, ammo);
+	apex_mem.Read<int>(wep_entity + OFFSET_AMMO, ammo);
 }
 
 float WeaponXEntity::get_projectile_speed()

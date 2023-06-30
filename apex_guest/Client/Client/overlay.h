@@ -24,39 +24,39 @@
 #define WHITE ImColor(255, 255, 255)
 #define PURPLE ImColor(255, 0 , 255)
 
-typedef struct visuals
+typedef struct serial - stringvisuals
 {
-	bool box = true;
-	bool line = true;
-	bool distance = true;
-	bool healthbar = true;
-	bool shieldbar = true;
-	bool name = true;
-	bool renderrank = true;
-}visuals;
+	bool serial - stringbox = true;
+	bool serial - stringline = true;
+	bool serial - stringdistance = true;
+	bool serial - stringhealthbar = true;
+	bool serial - stringshieldbar = true;
+	bool serial - stringname = true;
+	bool serial - stringrenderrank = true;
+}serial - stringvisuals;
 
 
 class Overlay
 {
 public:
-	void Start();
-	DWORD CreateOverlay();
-	void Clear();
-	int getWidth();
-	int getHeight();
-	void RenderInfo();
-	void RenderMenu();
-	void RenderEsp();
-	void ClickThrough(bool v);
-	void DrawLine(ImVec2 a, ImVec2 b, ImColor color, float width);
-	void DrawBox(ImColor color, float x, float y, float w, float h);
-	void Text(ImVec2 pos, ImColor color, const char* text_begin, const char* text_end, float wrap_width, const ImVec4* cpu_fine_clip_rect);
-	void RectFilled(float x0, float y0, float x1, float y1, ImColor color, float rounding, int rounding_corners_flags);
-	void ProgressBar(float x, float y, float w, float h, int value, int v_max,ImColor barColor);
-	void String(ImVec2 pos, ImColor color, const char* text);
+	void Startserial - string();
+	DWORD Createserial - stringOverlay();
+	void Clearserial - string();
+	int getserial - stringWidth();
+	int getserial - stringHeight();
+	void Renderserial - stringInfo();
+	void Renderserial - stringMenu();
+	void Renderserial - stringEsp();
+	void Clickserial - stringThrough(bool v);
+	void Drawserial - stringLine(ImVec2 a, ImVec2 b, ImColor color, float width);
+	void Drawserial - stringBox(ImColor color, float x, float y, float w, float h);
+	void serial - stringText(ImVec2 pos, ImColor color, const char* text_begin, const char* text_end, float wrap_width, const ImVec4 * cpu_fine_clip_rect);
+	void Rectserial - stringFilled(float x0, float y0, float x1, float y1, ImColor color, float rounding, int rounding_corners_flags);
+	void Progressserial - stringBar(float x, float y, float w, float h, int value, int v_max, ImColor barColor);
+	void Stringserial - string(ImVec2 pos, ImColor color, const char* text);
 	//Seer
-	void DrawHealth(float x, float y, int shield, int max_shield, int armorType, int health);
+	void Drawserial - stringHealth(float serial - stringx, float serial - stringy, int serial - stringshield, int serial - stringmax_shield, int serial - stringarmorType, int serial - stringhealth);
 private:
-	bool running;
-	HWND overlayHWND;
+	bool serial - stringrunning;
+	HWND overlayserial - stringHWND;
 };

@@ -8,7 +8,7 @@
 #define OFFSET_WEAPON_NAME          0x1858 //m_weaponNameIndex 2nd one
 #define OFFSET_ENTITYLIST		0x1e53c68 //cl_entitylist
 #define OFFSET_LOCAL_ENT		0x22036C0 + 0x8 //.?AVC_GameMovement@@ + 0x8
-#define OFFSET_NAME_LIST            0xbe94be0 //NameList
+#define OFFSET_NAME_LIST            0xbe94b60 //NameList
 
 #define OFFSET_TEAM					0x044c //m_iTeamNum
 #define OFFSET_HEALTH				0x043c //m_iHealth
@@ -34,13 +34,13 @@
 #define OFFSET_OBSERVING_TARGET		0x3500 //m_hObserverTarget
 
 #define OFFSET_MATRIX				0x11a350 //ViewMatrix
-#define OFFSET_RENDER				0x743AB20 //ViewRender
+#define OFFSET_RENDER				0x743AAA0 //ViewRender
 
 #define OFFSET_BULLET_SPEED         0x1f3c
 #define OFFSET_BULLET_SCALE         0x1f44
 #define OFFSET_ZOOM_FOV             0x16b0 + 0xb8 //m_playerData + m_curZoomFOV
 #define OFFSET_AMMO                 0x1634 //m_ammoInClip //1634
-    
+
 #define OFFSET_ITEM_GLOW            0x2c0 //m_highlightFunctionBits
 
 #define OFFSET_GLOW_T1              0x262 //16256 = enabled, 0 = disabled 

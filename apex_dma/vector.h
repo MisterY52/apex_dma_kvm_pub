@@ -147,8 +147,8 @@ public:
 	}
 	bool IsZero(float tolerance = 0.01f) const
 	{
-		return (x > -tolerance && x < tolerance &&
-			y > -tolerance && y < tolerance &&
+		return (x > -tolerance && x < tolerance&&
+			y > -tolerance && y < tolerance&&
 			z > -tolerance && z < tolerance);
 	}
 	Vector	Normalize();
@@ -246,7 +246,7 @@ inline  Vector& Vector::operator*=(float fl)
 	x *= fl;
 	y *= fl;
 	z *= fl;
-	
+
 	return *this;
 }
 //===============================================
@@ -255,7 +255,7 @@ inline  Vector& Vector::operator*=(const Vector& v)
 	x *= v.x;
 	y *= v.y;
 	z *= v.z;
-	
+
 	return *this;
 }
 //===============================================
@@ -264,7 +264,7 @@ inline Vector& Vector::operator+=(float fl)
 	x += fl;
 	y += fl;
 	z += fl;
-	
+
 	return *this;
 }
 //===============================================
@@ -273,7 +273,7 @@ inline Vector& Vector::operator-=(float fl)
 	x -= fl;
 	y -= fl;
 	z -= fl;
-	
+
 	return *this;
 }
 //===============================================
@@ -284,7 +284,7 @@ inline  Vector& Vector::operator/=(float fl)
 	x *= oofl;
 	y *= oofl;
 	z *= oofl;
-	
+
 	return *this;
 }
 //===============================================
@@ -294,13 +294,13 @@ inline  Vector& Vector::operator/=(const Vector& v)
 	x /= v.x;
 	y /= v.y;
 	z /= v.z;
-	
+
 	return *this;
 }
 //===============================================
 inline float Vector::Length(void) const
 {
-	
+
 
 	float root = 0.0f;
 
@@ -472,15 +472,15 @@ inline float Vector::Dot(const Vector& vOther) const
 
 inline float VectorLength(const Vector& v)
 {
-	
+
 	return (float)FastSqrt(v.x * v.x + v.y * v.y + v.z * v.z);
 }
 
 //VECTOR SUBTRAC
 inline void VectorSubtract(const Vector& a, const Vector& b, Vector& c)
 {
-	
-	
+
+
 	c.x = a.x - b.x;
 	c.y = a.y - b.y;
 	c.z = a.z - b.z;
@@ -489,8 +489,8 @@ inline void VectorSubtract(const Vector& a, const Vector& b, Vector& c)
 //VECTORADD
 inline void VectorAdd(const Vector& a, const Vector& b, Vector& c)
 {
-	
-	
+
+
 	c.x = a.x + b.x;
 	c.y = a.y + b.y;
 	c.z = a.z + b.z;
@@ -600,7 +600,7 @@ public:
 	// return true if this vector is (0,0) within tolerance
 	bool IsZero(float tolerance = 0.01f) const
 	{
-		return (x > -tolerance && x < tolerance &&
+		return (x > -tolerance && x < tolerance&&
 			y > -tolerance && y < tolerance);
 	}
 
@@ -1018,7 +1018,7 @@ inline float Vector2D::NormalizeInPlace()
 
 inline bool Vector2D::IsLengthGreaterThan(float val) const
 {
-	return LengthSqr() > val* val;
+	return LengthSqr() > val * val;
 }
 
 inline bool Vector2D::IsLengthLessThan(float val) const
@@ -1223,8 +1223,8 @@ public:
 
 	bool IsZero(float tolerance = 0.01f) const
 	{
-		return (x > -tolerance && x < tolerance &&
-			y > -tolerance && y < tolerance &&
+		return (x > -tolerance && x < tolerance&&
+			y > -tolerance && y < tolerance&&
 			z > -tolerance && z < tolerance);
 	}
 
@@ -1279,7 +1279,7 @@ inline QAngle::QAngle(void)
 inline QAngle::QAngle(float X, float Y, float Z)
 {
 	x = X; y = Y; z = Z;
-	
+
 }
 
 //-----------------------------------------------------------------------------
@@ -1288,7 +1288,7 @@ inline QAngle::QAngle(float X, float Y, float Z)
 inline void QAngle::Init(float ix, float iy, float iz)
 {
 	x = ix; y = iy; z = iz;
-	
+
 }
 
 inline void QAngle::Random(float minVal, float maxVal)
@@ -1296,7 +1296,7 @@ inline void QAngle::Random(float minVal, float maxVal)
 	x = minVal + ((float)rand() / RAND_MAX) * (maxVal - minVal);
 	y = minVal + ((float)rand() / RAND_MAX) * (maxVal - minVal);
 	z = minVal + ((float)rand() / RAND_MAX) * (maxVal - minVal);
-	
+
 }
 
 //-----------------------------------------------------------------------------
@@ -1304,7 +1304,7 @@ inline void QAngle::Random(float minVal, float maxVal)
 //-----------------------------------------------------------------------------
 inline QAngle& QAngle::operator=(const QAngle& vOther)
 {
-	
+
 	x = vOther.x; y = vOther.y; z = vOther.z;
 	return *this;
 }
@@ -1314,15 +1314,15 @@ inline QAngle& QAngle::operator=(const QAngle& vOther)
 //-----------------------------------------------------------------------------
 inline bool QAngle::operator==(const QAngle& src) const
 {
-	
-	
+
+
 	return (src.x == x) && (src.y == y) && (src.z == z);
 }
 
 inline bool QAngle::operator!=(const QAngle& src) const
 {
-	
-	
+
+
 	return (src.x != x) || (src.y != y) || (src.z != z);
 }
 
@@ -1331,16 +1331,16 @@ inline bool QAngle::operator!=(const QAngle& src) const
 //-----------------------------------------------------------------------------
 inline QAngle& QAngle::operator+=(const QAngle& v)
 {
-	
-	
+
+
 	x += v.x; y += v.y; z += v.z;
 	return *this;
 }
 
 inline QAngle& QAngle::operator-=(const QAngle& v)
 {
-	
-	
+
+
 	x -= v.x; y -= v.y; z -= v.z;
 	return *this;
 }
@@ -1350,7 +1350,7 @@ inline QAngle& QAngle::operator*=(float fl)
 	x *= fl;
 	y *= fl;
 	z *= fl;
-	
+
 	return *this;
 }
 
@@ -1361,7 +1361,7 @@ inline QAngle& QAngle::operator/=(float fl)
 	x *= oofl;
 	y *= oofl;
 	z *= oofl;
-	
+
 	return *this;
 }
 
@@ -1398,14 +1398,14 @@ inline float QAngle::operator[](int i) const
 //-----------------------------------------------------------------------------
 inline float QAngle::Length() const
 {
-	
+
 	return (float)FastSqrt(LengthSqr());
 }
 
 
 inline float QAngle::LengthSqr() const
 {
-	
+
 	return x * x + y * y + z * z;
 }
 
@@ -1467,8 +1467,8 @@ inline QAngle operator*(float fl, const QAngle& v)
 //QANGLE SUBTRAC
 inline void QAngleSubtract(const QAngle& a, const QAngle& b, QAngle& c)
 {
-	
-	
+
+
 	c.x = a.x - b.x;
 	c.y = a.y - b.y;
 	c.z = a.z - b.z;
@@ -1477,8 +1477,8 @@ inline void QAngleSubtract(const QAngle& a, const QAngle& b, QAngle& c)
 //QANGLEADD
 inline void QAngleAdd(const QAngle& a, const QAngle& b, QAngle& c)
 {
-	
-	
+
+
 	c.x = a.x + b.x;
 	c.y = a.y + b.y;
 	c.z = a.z + b.z;
