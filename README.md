@@ -15,7 +15,7 @@
 - press mouse4 to disable visible check
 # how to use
 ## guest
--  to bypass EAC detection,use ctrl+h to replace "serial-string" to anything you want.
+-  to bypass EAC detection,use ctrl+h to replace "serial-string" to anything you want. better with VMprotect
 -  release x64, use custom overlay.
 ## linux
  - change no-recoil strength in Game.cpp
