@@ -9,7 +9,7 @@
    if someone can finish it, + pull request please
 -  support UTF-8 ESP for japanese and chinese
 -  free camera
--  overlay's steam proof by setwindowdisplaffinity
+-  overlay's stream proof by setwindowdisplaffinity
 -  client's stream proof,(hide commandline),check it  in client : main.cpp (void ShowWindow)
 - you can enable aimbot/esp for your teammates
 - press mouse4 to disable visible check
