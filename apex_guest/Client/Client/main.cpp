@@ -1,213 +1,229 @@
-#include "main.h"
+﻿#include "main.h"
 
-typedef struct serial - stringplayer
+typedef struct changeableplaceplayer
 {
-	float serial - stringdist = 0;
-	int serial - stringentity_team = 0;
-	float serial - stringboxMiddle = 0;
-	float serial - stringh_y = 0;
-	float serial - stringwidth = 0;
-	float serial - stringheight = 0;
-	float serial - stringb_x = 0;
-	float serial - stringb_y = 0;
-	bool serial - stringknocked = false;
-	bool serial - stringvisible = false;
-	int serial - stringhealth = 0;
-	int serial - stringshield = 0;
-	int serial - stringxp_level = 0;
-	int serial - stringmaxshield = 0;
-	int serial - stringarmortype = 0;
-	uint64_t serial - stringuid = 0;
-	char serial - stringname[33] = { 0 };
-}serial - stringplayer;
+	float changeableplacedist = 0;
+	int changeableplaceentity_team = 0;
+	float changeableplaceboxMiddle = 0;
+	float changeableplaceh_y = 0;
+	float changeableplacewidth = 0;
+	float changeableplaceheight = 0;
+	float changeableplaceb_x = 0;
+	float changeableplaceb_y = 0;
+	bool changeableplaceknocked = false;
+	bool changeableplacevisible = false;
+	int changeableplacehealth = 0;
+	int changeableplaceshield = 0;
+	int changeableplacexp_level = 0;
+	int changeableplacemaxshield = 0;
+	int changeableplacearmortype = 0;
+	char changeableplacename[33] = { 0 };
+	char changeableplacemodel_name[33] = { 0 };
+}changeableplaceplayer;
 
-typedef struct serial - stringrankinfomation
-{
-	char rankserial - stringinfo[17];
-}serial - stringrankinfomation;
+uint32_t changeableplacecheck = 0xABCD;
+int changeableplaceaim_key = VK_XBUTTON2;
+int changeableplaceaim_key2 = VK_XBUTTON1;
 
-uint32_t serial - stringcheck = 0xABCD;
-//VK_XBUTTON2=�ϲ�� //VK_XBUTTON1 = �²��
-int serial - stringaim_key = VK_XBUTTON2;
-int serial - stringaim_key2 = VK_XBUTTON1;
+int changeableplaceshoot_key = VK_LBUTTON;
 
-int serial - stringshoot_key = VK_LBUTTON;
+float changeableplacescale = 1.4f;
+bool changeableplacefiring_range;
+int changeableplaceoffset = 0;
+bool changeableplaceuse_nvidia = false;
+bool changeableplaceactive = true;
+bool changeableplaceready = false;
+extern changeableplacevisuals changeableplacev;
+int changeableplaceaim = 2; //read
 
-float serial - stringscale = 1.4f;
-bool serial - stringfiring_range;
-int serial - stringoffset = 0;
-bool serial - stringuse_nvidia = false;
-bool serial - stringactive = true;
-bool serial - stringready = false;
-extern serial - stringvisuals serial - stringv;
-int serial - stringaim = 2; //read
+float changeableplacexp_dist = 200.0f * 40.0f;
+float changeableplacename_dist = 100.0f * 40.0f;
+bool changeableplacefreecam = false;//read
+bool changeableplacelockall_mode = false; //read
 
-float serial - stringuid_dist = 150.0f * 40.0f;
-float serial - stringname_dist = 150.0f * 40.0f;
-bool serial - stringfreecam = false;//read
-bool serial - stringlockall_mode = false; //read
-
-bool serial - stringesp = true; //read
-bool serial - stringitem_glow = false;
-bool serial - stringplayer_glow = false;
-bool serial - stringaim_no_recoil = true;
-bool serial - stringaiming = false; //read
-uint64_t serial - stringg_Base = 0; //write
-float serial - stringmax_dist = 650.0f * 40.0f; //read
-float serial - stringseer_dist = 400.0 * 40.0f;
-float serial - stringsmooth = 77.0f;
-float serial - stringmax_fov = 20.0f;
-int serial - stringbone = 3;
-bool serial - stringthirdperson = false;
-int serial - stringspectators = 0; //write
-int serial - stringallied_spectators = 0; //write
-bool serial - stringchargerifle = false;
-bool serial - stringshooting = false; //read
+bool changeableplaceesp = true; //read
+bool changeableplaceitem_glow = false;
+bool changeableplaceplayer_glow = false;
+bool changeableplaceaim_no_recoil = true;
+bool changeableplaceaiming = false; //read
+uint64_t changeableplaceg_Base = 0; //write
+float changeableplacemax_dist = 650.0f * 40.0f; //read
+float changeableplaceseer_dist = 400.0 * 40.0f;
+float changeableplacesmooth = 82.0f;
+float changeableplacemax_fov = 12.0f;
+int changeableplacebone = 3;
+bool changeableplacethirdperson = false;
+int changeableplacespectators = 0; //write
+int changeableplaceallied_spectators = 0; //write
+bool changeableplacechargerifle = false;
+bool changeableplaceshooting = false; //read
 
 
-int serial - stringindex = 0;
-bool serial - stringvalid = false; //write
-bool serial - stringnext = false; //read write
+int changeableplaceindex = 0;
+bool changeableplacevalid = false; //write
+bool changeableplacenext = false; //read write
 
-uint64_t serial - stringadd[23];
+uint64_t changeableplaceadd[23];
 
-bool serial - stringk_f5 = 0;
-bool serial - stringk_f6 = 0;
-bool serial - stringk_f8 = 0;
+bool changeableplacek_f5 = 0;
+bool changeableplacek_f6 = 0;
+bool changeableplacek_f8 = 0;
 
-/*
-static size_t Writeserial-stringCallback(void* conserial-stringtents, size_t serial-stringsize, size_t nserial-stringmemb, void* userial-stringserp)
-{
-	((std::string*)userial-stringserp)->append((char*)conserial-stringtents, serial-stringsize * nserial-stringmemb);
-	return serial-stringsize * nserial-stringmemb;
-}
-std::string getJson(std::string url)
-{
-	CURL* cserial-stringurl;
-	CURLcode serial-stringres;
-	std::string readserial-stringBuffer;
-
-	cserial-stringurl = curl_easy_init();
-	if (cserial-stringurl)
-	{
-		curl_easy_setopt(cserial-stringurl, CURLOPT_URL, url.c_str());
-		curl_easy_setopt(cserial-stringurl, CURLOPT_WRITEFUNCTION, Writeserial-stringCallback);
-		curl_easy_setopt(cserial-stringurl, CURLOPT_WRITEDATA, &readserial-stringBuffer);
-		serial-stringres = curl_easy_perform(cserial-stringurl);
-		curl_easy_cleanup(cserial-stringurl);
-	}
-	return readserial-stringBuffer;
-}
-
-
-std::string getserial-stringRank(long platforserial-stringmUserId) {
-	std::string userial-stringrl = "https://api.mozambiquehe.re/bridge?auth=";
-	userial-stringrl.append("99e187016931e489d971d808b87ab050");
-	userial-stringrl.append("&uid=");
-	userial-stringrl.append(std::to_string(platforserial-stringmUserId));
-	userial-stringrl.append("&platform=PC");
-	std::string serial-stringjson = getJson(userial-stringrl);
-	Json::Value serial-stringroot;
-	Json::Reader reserial-stringader;
-	bool parsingserial-stringSuccessful = reserial-stringader.parse(serial-stringjson, serial-stringroot);
-	if (!parsingserial-stringSuccessful)
-	{
-		printf("Failed to parse configuration\n");
-		return "err";
-	}
-	std::string raserial-stringnkname = serial-stringroot["global"]["rank"]["rankName"].asString();
-	if (raserial-stringnkname == "") {
-		return "err";
-	}
-	std::string inB4A893fo = "";
-	std::string raserial-stringnkdiv = serial-stringroot["global"]["rank"]["rankDiv"].asString();
-	std::string raserial-stringnkglobal = serial-stringroot["global"]["rank"]["ALStopIntGlobal"].asString();
-	if (raserial-stringnkname == "Apex Predator") {
-		inB4A893fo.append(raserial-stringnkname);
-		inB4A893fo.append(raserial-stringnkglobal);
-	}
-	else {
-		inB4A893fo.append(raserial-stringnkname);
-		inB4A893fo.append(raserial-stringnkdiv);
-	}
-	return inB4A893fo;
-}
-*/
 bool IsKeyDown(int vk)
 {
 	return (GetAsyncKeyState(vk) & 0x8000) != 0;
 }
-serial - stringplayer serial - stringplayers[100];
-serial - stringrankinfomation serial - stringrank_infomation[100];
-void Overlay::Renderserial - stringEsp()
+changeableplaceplayer changeableplaceplayers[100];
+
+std::string changeableplaceprocess_model_name(char changeableplacemodel_name[]) {
+	if (strstr(changeableplacemodel_name, "dummie")) {
+		return u8"人机";
+	}
+	else if (strstr(changeableplacemodel_name, "bangalore")) {
+		return u8"班加罗尔";
+	}
+	else if (strstr(changeableplacemodel_name, "fuse")) {
+		return u8"暴雷";
+	}
+	else if (strstr(changeableplacemodel_name, "ash")) {
+		return u8"艾许";
+	}
+	else if (strstr(changeableplacemodel_name, "madmaggie")) {
+		return u8"疯马吉";
+	}
+	else if (strstr(changeableplacemodel_name, "ballistic")) {
+		return u8"弹道";
+	}
+	else if (strstr(changeableplacemodel_name, "pathfinder")) {
+		return u8"探路者";
+	}
+	else if (strstr(changeableplacemodel_name, "stim")) {
+		return u8"动力小子";
+	}
+	else if (strstr(changeableplacemodel_name, "revenant")) {
+		return u8"亡灵";
+	}
+	else if (strstr(changeableplacemodel_name, "nova")) {
+		return u8"地平线";
+	}
+	else if (strstr(changeableplacemodel_name, "valkyrie")) {
+		return u8"瓦尔基里";
+	}
+	else if (strstr(changeableplacemodel_name, "bloodhound")) {
+		return u8"寻血猎犬";
+	}
+	else if (strstr(changeableplacemodel_name, "crypto")) {
+		return u8"密客";
+	}
+	else if (strstr(changeableplacemodel_name, "seer")) {
+		return u8"希尔";
+	}
+	else if (strstr(changeableplacemodel_name, "wraith")) {
+		return u8"恶灵";
+	}
+	else if (strstr(changeableplacemodel_name, "vantage")) {
+		return u8"万蒂奇";
+	}
+	else if (strstr(changeableplacemodel_name, "gibraltar")) {
+		return u8"直布罗陀";
+	}
+	else if (strstr(changeableplacemodel_name, "lifeline")) {
+		return u8"命脉";
+	}
+	else if (strstr(changeableplacemodel_name, "loba")) {
+		return u8"罗芭";
+	}
+	else if (strstr(changeableplacemodel_name, "holo")) {
+		return u8"幻象";
+	}
+	else if (strstr(changeableplacemodel_name, "newcastle")) {
+		return u8"纽卡斯尔";
+	}
+	else if (strstr(changeableplacemodel_name, "conduit")) {
+		return u8"导线管";
+	}
+	else if (strstr(changeableplacemodel_name, "caustic")) {
+		return u8"侵蚀";
+	}
+	else if (strstr(changeableplacemodel_name, "wattson")) {
+		return u8"沃特森";
+	}
+	else if (strstr(changeableplacemodel_name, "rampart")) {
+		return u8"兰伯特";
+	}
+	else if (strstr(changeableplacemodel_name, "catalyst")) {
+		return u8"催化剂";
+	}
+	else return u8"读取出错";
+}
+
+void Overlay::RenderchangeableplaceEsp()
 {
-	serial - stringnext = false;
-	if (serial - stringg_Base != 0 && serial - stringesp)
+	changeableplacenext = false;
+	if (changeableplaceg_Base != 0 && changeableplaceesp)
 	{
-		memset(serial - stringplayers, 0, sizeof(serial - stringplayers));
-		memset(serial - stringrank_infomation, 0, sizeof(serial - stringrank_infomation));
-		while (!serial - stringnext && serial - stringesp)
+		memset(changeableplaceplayers, 0, sizeof(changeableplaceplayers));
+		while (!changeableplacenext && changeableplaceesp)
 		{
 			std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		}
 
-		if (serial - stringnext && serial - stringvalid)
+		if (changeableplacenext && changeableplacevalid)
 		{
 			ImGui::SetNextWindowPos(ImVec2(0, 0));
-			ImGui::SetNextWindowSize(ImVec2((float)getserial - stringWidth(), (float)getserial - stringHeight()));
+			ImGui::SetNextWindowSize(ImVec2((float)getchangeableplaceWidth(), (float)getchangeableplaceHeight()));
 			ImGui::Begin(XorStr("##esp"), (bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoBringToFrontOnFocus);
 
 			for (int i = 0; i < 100; i++)
 			{
-				if (serial - stringplayers[i].serial - stringhealth > 0)
+				if (changeableplaceplayers[i].changeableplacehealth > 0)
 				{
-					//xp and userid
-					std::string serial - stringrankstr = std::to_string(serial - stringplayers[i].serial - stringxp_level);
-					serial - stringrankstr = serial - stringrankstr.substr(0, serial - stringrankstr.find('.')) + u8"��( uid:" + std::to_string(serial - stringplayers[i].serial - stringuid) + u8")";
+					//xp+legend
+					std::string changeableplacexpstr = std::to_string(changeableplaceplayers[i].changeableplacexp_level);
+					changeableplacexpstr = u8"Level:" + changeableplacexpstr.substr(0, changeableplacexpstr.find('.')) + "   Legend:" + changeableplaceprocess_model_name(changeableplaceplayers[i].changeableplacemodel_name);
 
 					//DISTENCE + teamnum
-					std::string serial - stringdistance = std::to_string(serial - stringplayers[i].serial - stringdist / 39.62);
-					serial - stringdistance = serial - stringdistance.substr(0, serial - stringdistance.find('.')) + u8"��(" + std::to_string(serial - stringplayers[i].serial - stringentity_team) + u8"С��)";
-					;
-					if (serial - stringv.serial - stringbox)
+					std::string changeableplacedistance = std::to_string(changeableplaceplayers[i].changeableplacedist / 39.62);
+					changeableplacedistance = changeableplacedistance.substr(0, changeableplacedistance.find('.')) + u8"M( No." + std::to_string(changeableplaceplayers[i].changeableplaceentity_team) + u8")";
+
+					if (changeableplacev.changeableplacebox)
 					{
-						if (serial - stringplayers[i].serial - stringvisible)
+						if (changeableplaceplayers[i].changeableplacevisible)
 						{
-							if (serial - stringplayers[i].serial - stringdist < 1600.0f)
-								Drawserial - stringBox(RED, serial - stringplayers[i].serial - stringboxMiddle, serial - stringplayers[i].serial - stringh_y, serial - stringplayers[i].serial - stringwidth, serial - stringplayers[i].serial - stringheight); //BOX
+							if (changeableplaceplayers[i].changeableplacedist < 1600.0f)
+								DrawchangeableplaceBox(RED, changeableplaceplayers[i].changeableplaceboxMiddle, changeableplaceplayers[i].changeableplaceh_y, changeableplaceplayers[i].changeableplacewidth, changeableplaceplayers[i].changeableplaceheight); //BOX
 							else
-								Drawserial - stringBox(ORANGE, serial - stringplayers[i].serial - stringboxMiddle, serial - stringplayers[i].serial - stringh_y, serial - stringplayers[i].serial - stringwidth, serial - stringplayers[i].serial - stringheight); //BOX
+								DrawchangeableplaceBox(ORANGE, changeableplaceplayers[i].changeableplaceboxMiddle, changeableplaceplayers[i].changeableplaceh_y, changeableplaceplayers[i].changeableplacewidth, changeableplaceplayers[i].changeableplaceheight); //BOX
 						}
 						else
 						{
-							Drawserial - stringBox(WHITE, serial - stringplayers[i].serial - stringboxMiddle, serial - stringplayers[i].serial - stringh_y, serial - stringplayers[i].serial - stringwidth, serial - stringplayers[i].serial - stringheight); //white if player not visible
+							DrawchangeableplaceBox(WHITE, changeableplaceplayers[i].changeableplaceboxMiddle, changeableplaceplayers[i].changeableplaceh_y, changeableplaceplayers[i].changeableplacewidth, changeableplaceplayers[i].changeableplaceheight); //white if player not visible
 						}
 					}
 
-					if (serial - stringv.serial - stringline)
-						Drawserial - stringLine(ImVec2((float)(getserial - stringWidth() / 2), (float)getserial - stringHeight()), ImVec2(serial - stringplayers[i].serial - stringb_x, serial - stringplayers[i].serial - stringb_y), BLUE, 1); //LINE FROM MIDDLE SCREEN
+					if (changeableplacev.changeableplaceline)
+						DrawchangeableplaceLine(ImVec2((float)(getchangeableplaceWidth() / 2), (float)getchangeableplaceHeight()), ImVec2(changeableplaceplayers[i].changeableplaceb_x, changeableplaceplayers[i].changeableplaceb_y), BLUE, 1); //LINE FROM MIDDLE SCREEN
 
-					if (serial - stringv.serial - stringdistance)
+					if (changeableplacev.changeableplacedistance)
 					{
-						if (serial - stringplayers[i].serial - stringknocked)
-							Stringserial - string(ImVec2(serial - stringplayers[i].serial - stringboxMiddle, (serial - stringplayers[i].serial - stringb_y + 1)), RED, serial - stringdistance.c_str());  //DISTANCE
+						if (changeableplaceplayers[i].changeableplaceknocked)
+							Stringchangeableplace(ImVec2(changeableplaceplayers[i].changeableplaceboxMiddle, (changeableplaceplayers[i].changeableplaceb_y + 1)), RED, changeableplacedistance.c_str());  //DISTANCE
 						else
-							Stringserial - string(ImVec2(serial - stringplayers[i].serial - stringboxMiddle, (serial - stringplayers[i].serial - stringb_y + 1)), WHITE, serial - stringdistance.c_str());  //DISTANCE
+							Stringchangeableplace(ImVec2(changeableplaceplayers[i].changeableplaceboxMiddle, (changeableplaceplayers[i].changeableplaceb_y + 1)), WHITE, changeableplacedistance.c_str());  //DISTANCE
 					}
 
 					//esp stuff of shield bar/ bar color
-					if (serial - stringv.serial - stringhealthbar && serial - stringplayers[i].serial - stringdist <= serial - stringseer_dist)
-						Drawserial - stringHealth((serial - stringplayers[i].serial - stringb_x - (serial - stringplayers[i].serial - stringwidth / 2.0f) + 5), (serial - stringplayers[i].serial - stringb_y - serial - stringplayers[i].serial - stringheight - 10), serial - stringplayers[i].serial - stringshield, serial - stringplayers[i].serial - stringmaxshield, serial - stringplayers[i].serial - stringarmortype, serial - stringplayers[i].serial - stringhealth);
+					if (changeableplacev.changeableplacehealthbar && changeableplaceplayers[i].changeableplacedist <= changeableplaceseer_dist)
+						DrawchangeableplaceHealth((changeableplaceplayers[i].changeableplaceb_x - (changeableplaceplayers[i].changeableplacewidth / 2.0f) + 5), (changeableplaceplayers[i].changeableplaceb_y - changeableplaceplayers[i].changeableplaceheight - 10), changeableplaceplayers[i].changeableplaceshield, changeableplaceplayers[i].changeableplacemaxshield, changeableplaceplayers[i].changeableplacearmortype, changeableplaceplayers[i].changeableplacehealth);
 					//name
-					if (serial - stringv.serial - stringname && serial - stringplayers[i].serial - stringdist <= serial - stringname_dist)
-						Stringserial - string(ImVec2(serial - stringplayers[i].serial - stringboxMiddle, (serial - stringplayers[i].serial - stringb_y - serial - stringplayers[i].serial - stringheight - 15)), WHITE, serial - stringplayers[i].serial - stringname);
-					//uid
-					if (serial - stringv.serial - stringrenderrank && serial - stringplayers[i].serial - stringdist <= serial - stringuid_dist) {
-						Stringserial - string(ImVec2((serial - stringplayers[i].serial - stringb_x - (serial - stringplayers[i].serial - stringwidth / 2.0f) + 5), (serial - stringplayers[i].serial - stringb_y - serial - stringplayers[i].serial - stringheight - 45)), WHITE, serial - stringrankstr.c_str());
+					if (changeableplacev.changeableplacename && changeableplaceplayers[i].changeableplacedist <= changeableplacename_dist)
+						Stringchangeableplace(ImVec2(changeableplaceplayers[i].changeableplaceboxMiddle, (changeableplaceplayers[i].changeableplaceb_y - changeableplaceplayers[i].changeableplaceheight - 15)), WHITE, changeableplaceplayers[i].changeableplacename);
+					//xp and legend
+					if (changeableplacev.changeableplacerenderxp && changeableplaceplayers[i].changeableplacedist <= changeableplacexp_dist) {
+						Stringchangeableplace(ImVec2(changeableplaceplayers[i].changeableplaceboxMiddle - changeableplaceplayers[i].changeableplacewidth , (changeableplaceplayers[i].changeableplaceb_y - changeableplaceplayers[i].changeableplaceheight - 15)), GREEN , changeableplacexpstr.c_str());
 					}
 				}
 			}
-
 			ImGui::End();
 		}
 	}
@@ -216,74 +232,74 @@ void Overlay::Renderserial - stringEsp()
 
 int main(int argc, char** argv)
 {
-	ShowWindow(GetForegroundWindow(), 0);
-	serial - stringadd[0] = (uintptr_t)&serial - stringcheck;
-	serial - stringadd[1] = (uintptr_t)&serial - stringaim;
-	serial - stringadd[2] = (uintptr_t)&serial - stringesp;
-	serial - stringadd[3] = (uintptr_t)&serial - stringaiming;
-	serial - stringadd[4] = (uintptr_t)&serial - stringg_Base;
-	serial - stringadd[5] = (uintptr_t)&serial - stringnext;
-	serial - stringadd[6] = (uintptr_t)&serial - stringplayers[0];
-	serial - stringadd[7] = (uintptr_t)&serial - stringvalid;
-	serial - stringadd[8] = (uintptr_t)&serial - stringmax_dist;
-	serial - stringadd[9] = (uintptr_t)&serial - stringitem_glow;
-	serial - stringadd[10] = (uintptr_t)&serial - stringplayer_glow;
-	serial - stringadd[11] = (uintptr_t)&serial - stringaim_no_recoil;
-	serial - stringadd[12] = (uintptr_t)&serial - stringsmooth;
-	serial - stringadd[13] = (uintptr_t)&serial - stringmax_fov;
-	serial - stringadd[14] = (uintptr_t)&serial - stringbone;
-	serial - stringadd[15] = (uintptr_t)&serial - stringthirdperson;
-	serial - stringadd[16] = (uintptr_t)&serial - stringspectators;
-	serial - stringadd[17] = (uintptr_t)&serial - stringallied_spectators;
-	serial - stringadd[18] = (uintptr_t)&serial - stringchargerifle;
-	serial - stringadd[19] = (uintptr_t)&serial - stringshooting;
-	serial - stringadd[20] = (uintptr_t)&serial - stringfreecam;
-	serial - stringadd[21] = (uintptr_t)&serial - stringlockall_mode;
-	serial - stringadd[22] = (uintptr_t)&serial - stringfiring_range;
+	//ShowWindow(GetForegroundWindow(), 0);  // Hide the window
+	changeableplaceadd[0] = (uintptr_t)&changeableplacecheck;
+	changeableplaceadd[1] = (uintptr_t)&changeableplaceaim;
+	changeableplaceadd[2] = (uintptr_t)&changeableplaceesp;
+	changeableplaceadd[3] = (uintptr_t)&changeableplaceaiming;
+	changeableplaceadd[4] = (uintptr_t)&changeableplaceg_Base;
+	changeableplaceadd[5] = (uintptr_t)&changeableplacenext;
+	changeableplaceadd[6] = (uintptr_t)&changeableplaceplayers[0];
+	changeableplaceadd[7] = (uintptr_t)&changeableplacevalid;
+	changeableplaceadd[8] = (uintptr_t)&changeableplacemax_dist;
+	changeableplaceadd[9] = (uintptr_t)&changeableplaceitem_glow;
+	changeableplaceadd[10] = (uintptr_t)&changeableplaceplayer_glow;
+	changeableplaceadd[11] = (uintptr_t)&changeableplaceaim_no_recoil;
+	changeableplaceadd[12] = (uintptr_t)&changeableplacesmooth;
+	changeableplaceadd[13] = (uintptr_t)&changeableplacemax_fov;
+	changeableplaceadd[14] = (uintptr_t)&changeableplacebone;
+	changeableplaceadd[15] = (uintptr_t)&changeableplacethirdperson;
+	changeableplaceadd[16] = (uintptr_t)&changeableplacespectators;
+	changeableplaceadd[17] = (uintptr_t)&changeableplaceallied_spectators;
+	changeableplaceadd[18] = (uintptr_t)&changeableplacechargerifle;
+	changeableplaceadd[19] = (uintptr_t)&changeableplaceshooting;
+	changeableplaceadd[20] = (uintptr_t)&changeableplacefreecam;
+	changeableplaceadd[21] = (uintptr_t)&changeableplacelockall_mode;
+	changeableplaceadd[22] = (uintptr_t)&changeableplacefiring_range;
 
-	printf(XorStr("offset: 0x%I64x\n"), (uint64_t)&serial - stringadd[0] - (uint64_t)GetModuleHandle(NULL));
-	Overlay ov1serial - string = Overlay();
-	ov1serial - string.Startserial - string();
+	printf(XorStr("offset: 0x%I64x\n"), (uint64_t)&changeableplaceadd[0] - (uint64_t)GetModuleHandle(NULL));
+	Overlay ov1changeableplace = Overlay();
+	ov1changeableplace.Startchangeableplace();
 	printf(XorStr("Waiting for host/apex...\n"));
-	while (serial - stringcheck == 0xABCD)
+	while (changeableplacecheck == 0xABCD)
 	{
 		if (IsKeyDown(VK_F4))
 		{
-			serial - stringactive = false;
+			changeableplaceactive = false;
 			break;
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
-	if (serial - stringactive)
+	if (changeableplaceactive)
 	{
-		serial - stringready = true;
+		changeableplaceready = true;
 		printf(XorStr("Successful\n"));
 	}
 
-	while (serial - stringactive)
+	while (changeableplaceactive)
 	{
 		if (IsKeyDown(VK_F4))
 		{
-			serial - stringactive = false;
+			changeableplaceactive = false;
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
-		if (IsKeyDown(serial - stringaim_key))
-			serial - stringaiming = true;
+		if (IsKeyDown(changeableplaceaim_key))
+			changeableplaceaiming = true;
 		else
-			serial - stringaiming = false;
-		if (serial - stringaim > 0) {
-			if (IsKeyDown(serial - stringaim_key2)) {
-				serial - stringaim = 1;
+			changeableplaceaiming = false;
+		if (changeableplaceaim > 0) {
+			if (IsKeyDown(changeableplaceaim_key2)) {
+				changeableplaceaim = 1;
 			}
 			else {
-				serial - stringaim = 2;
+				changeableplaceaim = 2;
 			}
 		}
 	}
-	serial - stringready = false;
-	ov1serial - string.Clearserial - string();
-	if (!serial - stringuse_nvidia)
+	changeableplaceready = false;
+	ov1changeableplace.Clearchangeableplace();
+	if (!changeableplaceuse_nvidia)
 		system(XorStr("taskkill /F /T /IM ov.exe")); //custom overlay processname
 	return 0;
 }

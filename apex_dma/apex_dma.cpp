@@ -12,7 +12,7 @@
 Memory apex_mem;
 Memory client_mem;
 
-uint64_t add_off = 0xa1040;
+uint64_t add_off = 0x114514;
 
 bool freecam = false;
 bool lockall_enable = false;
@@ -65,8 +65,8 @@ typedef struct player
 	int xp_level = 0;
 	int maxshield = 0;
 	int armortype = 0;
-	uint64_t uid = 0;
 	char name[33] = { 0 };
+	char model_name[33] = { 0 };
 }player;
 
 struct Matrix
@@ -205,15 +205,6 @@ void DoActions()
 						continue;
 					}
 
-					if (player_glow && !Target.isGlowing())
-					{
-						Target.enableGlow();
-					}
-					else if (!player_glow && Target.isGlowing())
-					{
-						Target.disableGlow();
-					}
-
 					ProcessPlayer(LPlayer, Target, entitylist, c);
 					c++;
 				}
@@ -239,15 +230,6 @@ void DoActions()
 					if (entity_team == team_player && !lockall_enable)
 					{
 						continue;
-					}
-
-					if (player_glow && !Target.isGlowing())
-					{
-						Target.enableGlow();
-					}
-					else if (!player_glow && Target.isGlowing())
-					{
-						Target.disableGlow();
 					}
 				}
 			}
@@ -383,8 +365,6 @@ static void EspLoop()
 							int xp;
 							apex_mem.Read<int>(centity + OFFSET_XP, xp);
 							int xp_level = calc_level(xp);
-							uint64_t uid = 0;
-							apex_mem.Read<uint64_t>(centity + OFFSET_UID, uid);
 							players[c] =
 							{
 								dist,
@@ -401,10 +381,13 @@ static void EspLoop()
 								shield,
 								xp_level,
 								maxshield,
-								armortype,
-								uid
+								armortype
 							};
 							Target.get_name(g_Base, i - 1, &players[c].name[0]);
+							uint64_t model_ptr;
+							apex_mem.Read(centity + OFFSET_MODELNAME, model_ptr);
+							apex_mem.ReadArray(model_ptr,&players[c].model_name[0], 32);
+
 							lastvis_esp[c] = Target.lastVisTime();
 							valid = true;
 							c++;
@@ -478,8 +461,6 @@ static void EspLoop()
 
 							int xp_level = calc_level(xp);
 
-							uint64_t uid;
-							apex_mem.Read<uint64_t>(centity + OFFSET_UID, uid);
 							players[i] =
 							{
 								dist,
@@ -497,9 +478,12 @@ static void EspLoop()
 								xp_level,
 								maxshield,
 								armortype,
-								uid
 							};
 							Target.get_name(g_Base, i - 1, &players[i].name[0]);
+							uint64_t model_ptr;
+                                                        apex_mem.Read(centity + OFFSET_MODELNAME, model_ptr);
+                                                        apex_mem.ReadArray(model_ptr,&players[i].model_name[0], 32);
+
 							lastvis_esp[i] = Target.lastVisTime();
 							valid = true;
 						}
@@ -678,10 +662,7 @@ int main(int argc, char* argv[])
 	}
 
 	const char* cl_proc = "client.exe";
-	const char* ap_proc = "R5Apex.exe";
-	//const char* ap_proc = "EasyAntiCheat_launcher.exe";
-	//Client "add" offset
-	//uint64_t add_off = 0x40d20;
+	const char* ap_proc = "r5apex.exe";
 
 	std::thread aimbot_thr;
 	std::thread esp_thr;

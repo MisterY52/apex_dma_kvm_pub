@@ -24,39 +24,39 @@
 #define WHITE ImColor(255, 255, 255)
 #define PURPLE ImColor(255, 0 , 255)
 
-typedef struct serial - stringvisuals
+typedef struct changeableplacevisuals
 {
-	bool serial - stringbox = true;
-	bool serial - stringline = true;
-	bool serial - stringdistance = true;
-	bool serial - stringhealthbar = true;
-	bool serial - stringshieldbar = true;
-	bool serial - stringname = true;
-	bool serial - stringrenderrank = true;
-}serial - stringvisuals;
+	bool changeableplacebox = true;
+	bool changeableplaceline = true;
+	bool changeableplacedistance = true;
+	bool changeableplacehealthbar = true;
+	bool changeableplaceshieldbar = true;
+	bool changeableplacename = true;
+	bool changeableplacerenderxp = true;
+}changeableplacevisuals;
 
 
 class Overlay
 {
 public:
-	void Startserial - string();
-	DWORD Createserial - stringOverlay();
-	void Clearserial - string();
-	int getserial - stringWidth();
-	int getserial - stringHeight();
-	void Renderserial - stringInfo();
-	void Renderserial - stringMenu();
-	void Renderserial - stringEsp();
-	void Clickserial - stringThrough(bool v);
-	void Drawserial - stringLine(ImVec2 a, ImVec2 b, ImColor color, float width);
-	void Drawserial - stringBox(ImColor color, float x, float y, float w, float h);
-	void serial - stringText(ImVec2 pos, ImColor color, const char* text_begin, const char* text_end, float wrap_width, const ImVec4 * cpu_fine_clip_rect);
-	void Rectserial - stringFilled(float x0, float y0, float x1, float y1, ImColor color, float rounding, int rounding_corners_flags);
-	void Progressserial - stringBar(float x, float y, float w, float h, int value, int v_max, ImColor barColor);
-	void Stringserial - string(ImVec2 pos, ImColor color, const char* text);
+	void Startchangeableplace();
+	DWORD CreatechangeableplaceOverlay();
+	void Clearchangeableplace();
+	int getchangeableplaceWidth();
+	int getchangeableplaceHeight();
+	void RenderchangeableplaceInfo();
+	void RenderchangeableplaceMenu();
+	void RenderchangeableplaceEsp();
+	void ClickchangeableplaceThrough(bool v);
+	void DrawchangeableplaceLine(ImVec2 a, ImVec2 b, ImColor color, float width);
+	void DrawchangeableplaceBox(ImColor color, float x, float y, float w, float h);
+	void changeableplaceText(ImVec2 pos, ImColor color, const char* text_begin, const char* text_end, float wrap_width, const ImVec4 * cpu_fine_clip_rect);
+	void RectchangeableplaceFilled(float x0, float y0, float x1, float y1, ImColor color, float rounding, int rounding_corners_flags);
+	void ProgresschangeableplaceBar(float x, float y, float w, float h, int value, int v_max, ImColor barColor);
+	void Stringchangeableplace(ImVec2 pos, ImColor color, const char* text);
 	//Seer
-	void Drawserial - stringHealth(float serial - stringx, float serial - stringy, int serial - stringshield, int serial - stringmax_shield, int serial - stringarmorType, int serial - stringhealth);
+	void DrawchangeableplaceHealth(float changeableplacex, float changeableplacey, int changeableplaceshield, int changeableplacemax_shield, int changeableplacearmorType, int changeableplacehealth);
 private:
-	bool serial - stringrunning;
-	HWND overlayserial - stringHWND;
+	bool changeableplacerunning;
+	HWND overlaychangeableplaceHWND;
 };

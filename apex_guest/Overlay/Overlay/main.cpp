@@ -5,12 +5,12 @@
 
 #define WDA_EXCLUDEFROMCAPTURE 0x00000011
 const MARGINS margins = { -1 ,-1, -1, -1 };
-const wchar_t g_szClassName[] = L"serial-stringoverlay";
+const wchar_t g_szClassName[] = L"changeableplaceoverlay";
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	WNDCLASSEX wc;
-	HWND serial - stringhwnd;
+	HWND changeableplacehwnd;
 	MSG Msg;
 
 	wc.cbSize = sizeof(WNDCLASSEX);
@@ -28,7 +28,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	RegisterClassEx(&wc);
 
-	serial - stringhwnd = CreateWindowEx(
+	changeableplacehwnd = CreateWindowEx(
 		WS_EX_LAYERED | WS_EX_TRANSPARENT,
 		g_szClassName,
 		g_szClassName,
@@ -36,9 +36,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		0, 0, 1920, 1080,
 		NULL, NULL, hInstance, NULL);
 
-	SetLayeredWindowAttributes(serial - stringhwnd, RGB(0, 0, 0), 175, LWA_ALPHA);
-	SetWindowDisplayAffinity(serial - stringhwnd, WDA_EXCLUDEFROMCAPTURE);
-	DwmExtendFrameIntoClientArea(serial - stringhwnd, &margins);
+	SetLayeredWindowAttributes(changeableplacehwnd, RGB(0, 0, 0), 175, LWA_ALPHA);
+	SetWindowDisplayAffinity(changeableplacehwnd, WDA_EXCLUDEFROMCAPTURE);
+	DwmExtendFrameIntoClientArea(changeableplacehwnd, &margins);
 
 	while (GetMessage(&Msg, NULL, 0, 0) > 0)
 	{

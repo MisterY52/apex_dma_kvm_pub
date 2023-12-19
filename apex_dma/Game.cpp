@@ -249,32 +249,6 @@ float Entity::GetYaw()
 	return yaw;
 }
 
-bool Entity::isGlowing()
-{
-	return *(int*)(buffer + OFFSET_GLOW_ENABLE) == 7;
-}
-
-bool Entity::isZooming()
-{
-	return *(int*)(buffer + OFFSET_ZOOMING) == 1;
-}
-
-void Entity::enableGlow()
-{
-	apex_mem.Write<int>(ptr + OFFSET_GLOW_T1, 16256);
-	apex_mem.Write<int>(ptr + OFFSET_GLOW_T2, 1193322764);
-	apex_mem.Write<int>(ptr + OFFSET_GLOW_ENABLE, 7);
-	apex_mem.Write<int>(ptr + OFFSET_GLOW_THROUGH_WALLS, 2);
-}
-
-void Entity::disableGlow()
-{
-	apex_mem.Write<int>(ptr + OFFSET_GLOW_T1, 0);
-	apex_mem.Write<int>(ptr + OFFSET_GLOW_T2, 0);
-	apex_mem.Write<int>(ptr + OFFSET_GLOW_ENABLE, 2);
-	apex_mem.Write<int>(ptr + OFFSET_GLOW_THROUGH_WALLS, 5);
-}
-
 void Entity::SetViewAngles(SVector angles)
 {
 	apex_mem.Write<SVector>(ptr + OFFSET_VIEWANGLES, angles);
@@ -309,21 +283,6 @@ bool Item::isItem()
 	get_class_name(ptr, class_name);
 
 	return strncmp(class_name, "CPropSurvival", 13) == 0;
-}
-
-bool Item::isGlowing()
-{
-	return *(int*)(buffer + OFFSET_ITEM_GLOW) == 1363184265;
-}
-
-void Item::enableGlow()
-{
-	apex_mem.Write<int>(ptr + OFFSET_ITEM_GLOW, 1363184265);
-}
-
-void Item::disableGlow()
-{
-	apex_mem.Write<int>(ptr + OFFSET_ITEM_GLOW, 1411417991);
 }
 
 Vector Item::getPosition()

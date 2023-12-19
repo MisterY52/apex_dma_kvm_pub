@@ -2,26 +2,26 @@
 #####  UnknownCheats thread: https://www.unknowncheats.me/forum/apex-legends/406426-kvm-vmread-apex-esp-aimbot.html
 #new features
 
--  Xp Level ESP
--  seerhealthESP/some aimbot code,paste from https://github.com/KrackerCo/apex_dma_kvm_pub.
--  platform userid ESP,use it to search player's rank'.
-> idont know why after add rank ESP,the client will crash,but i keep void"GetJson", these code are paste from https://www.unknowncheats.me/forum/apex-legends/520061-rank-statistics-players.html,
-   if someone can finish it, + pull request please
--  support UTF-8 ESP for japanese and chinese
+-  Esp for player's Level
+-  seerhealthESP / some parts of aimbot codes,paste from https://github.com/KrackerCo/apex_dma_kvm_pub.
+-  support UTF-8 text
 -  free camera
--  overlay's stream proof by setwindowdisplaffinity
--  client's stream proof,(hide commandline),check it  in client : main.cpp (void ShowWindow)
-- you can enable aimbot/esp for your teammates
-- press mouse4 to disable visible check
+-  overlay's streamproof by setwindowdisplaffinity
+-  client's streamproof,(hide the CMD window), disable/enable it by : main.cpp (void ShowWindow)
+-  you can enable aimbot/esp for your teammates
+-  press mouse4 to disable visible check(Aim at enemies behind smoke)
+-  display legend's name (https://www.unknowncheats.me/forum/3915178-post14046.html)
 # how to use
 ## guest
--  to bypass EAC detection,use ctrl+h to replace "serial-string" to anything you want.
--  in  Guest: main.cpp,overlay.cpp,overlay.h
+-  ctrl+h to replace "changeableplace" to other contents to bypass memory detection.
 -  in CustomOverlay: main.cpp
--  better with VMprotect
--  release x64, use custom overlay.
+-  better use VMprotect
+-  build in release x64, use custom overlay for streamproof.
 ## linux
- - change no-recoil strength in Game.cpp
- - for rank esp, you need your own apikey,reg one from apexlegendsapi, use index.html ,input userid to search player's rank
- -  what's "add_off"?  ,it's in apex_dma.cpp , will display in client's commandline
-* i have no time to  teach about GPU passthrough or how to install this repo, because i only have a few time .....sorry of that*
+ -  you could change Recoil setting strength in Game.cpp
+ -  Add_off is the offset of client.exe. it would show on the window of client.exe
+## Documents about Bypassing
+ - https://github.com/WCharacter/RDTSC-KVM-Handler
+ - https://github.com/A1exxander/KVM-Spoofing
+
+*If you are concerned with Passthrough/bypass , ask Unknowncheats community for help*
