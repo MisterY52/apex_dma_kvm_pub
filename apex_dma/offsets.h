@@ -1,4 +1,3 @@
-//game version: 3.0.51.45 / date:2023/11/21
 #define OFFSET_ARMOR_TYPE           0x4634 //m_armorType
 #define OFFSET_MAXSHIELD            0x01a4 //m_shieldhealthmax
 #define OFFSET_MODELNAME            0x0030 //m_modelname

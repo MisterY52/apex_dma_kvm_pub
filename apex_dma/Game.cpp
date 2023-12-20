@@ -299,7 +299,7 @@ float CalculateFov(Entity& from, Entity& target)
 	return Math::GetFov(ViewAngles, Angle);
 }
 
-QAngle CalculateBestBoneAim(Entity& from, uintptr_t t, float max_fov)
+QAngle CalculateBestBoneAim(Entity& from, uintptr_t t, float max_fov , float rcs_pitch , float rcs_yaw)
 {
 	Entity target = getEntity(t);
 	if (firing_range)
@@ -382,9 +382,8 @@ QAngle CalculateBestBoneAim(Entity& from, uintptr_t t, float max_fov)
 	//remove sway and recoil
 	if (aim_no_recoil) {
 		QAngle sway = SwayAngles - ViewAngles;
-		sway.x = sway.x * 0.8;   //pitch
-		sway.y = sway.y * 0.75;  //yaw
-		sway.z = sway.z * 0.9;
+		sway.x = sway.x * rcs_pitch;   //pitch 0.3
+		sway.y = sway.y * rcs_yaw;  //yaw 0.5
 		CalculatedAngles -= sway;
 	}
 	Math::NormalizeAngles(CalculatedAngles);

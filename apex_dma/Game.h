@@ -94,7 +94,7 @@ Entity getEntity(uintptr_t ptr);
 Item getItem(uintptr_t ptr);
 bool WorldToScreen(Vector from, float* m_vMatrix, int targetWidth, int targetHeight, Vector& to);
 float CalculateFov(Entity& from, Entity& target);
-QAngle CalculateBestBoneAim(Entity& from, uintptr_t target, float max_fov);
+QAngle CalculateBestBoneAim(Entity& from, uintptr_t target, float max_fov , float rcs_pitch, float rcs_yaw);
 void get_class_name(uint64_t entity_ptr, char* out_str);
 void charge_rifle_hack(uint64_t entity_ptr);
 

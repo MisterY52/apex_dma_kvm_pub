@@ -12,7 +12,7 @@
 Memory apex_mem;
 Memory client_mem;
 
-uint64_t add_off = 0x114514;
+uint64_t add_off = 0x40980;
 
 bool freecam = false;
 bool lockall_enable = false;
@@ -24,6 +24,11 @@ uintptr_t tmp_aimentity = 0;
 uintptr_t lastaimentity = 0;
 float kmax = 999.0f;
 float max_dist = 200.0f * 40.0f;
+
+//rcs setting
+float rcs_pitch = 0.3f;
+float rcs_yaw = 0.4f;
+
 int team_player = 0;
 float max_fov = 15;
 const int toRead = 100;
@@ -66,13 +71,21 @@ typedef struct player
 	int maxshield = 0;
 	int armortype = 0;
 	char name[33] = { 0 };
-	char model_name[33] = { 0 };
+	char model_name[100] = { 0 };
 }player;
+
+typedef struct spectator{
+	bool is_spec = false;
+	int xp_level = 0;
+	char name[33] = { 0 };
+}spectator;
 
 struct Matrix
 {
 	float matrix[16];
 };
+
+spectator spectator_list[toRead];
 
 float lastvis_esp[toRead]; float lastvis_aim[toRead];
 
@@ -144,7 +157,7 @@ void DoActions()
 	actions_t = true;
 	while (actions_t)
 	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 		uint32_t counter = 0;
 
 		while (g_Base != 0 && c_Base != 0)
@@ -179,16 +192,21 @@ void DoActions()
 			tmp_spec = 0;
 			tmp_all_spec = 0;
 
+			memset(spectator_list,0, sizeof(spectator_list));
+
 			int current_obid;
-			if (freecam) {
-				apex_mem.Write<int>(LocalPlayer + OFFSET_OBSERVER_MODE, 7);
-			}
-			else {
-				apex_mem.Read<int>(LocalPlayer + OFFSET_OBSERVER_MODE, current_obid);
-				if (current_obid == 7) {
-					apex_mem.Write<int>(LocalPlayer + OFFSET_OBSERVER_MODE, 0);
+			if(LPlayer.isAlive()){
+				if (freecam) {
+					apex_mem.Write<int>(LocalPlayer + OFFSET_OBSERVER_MODE, 7);
+				}
+				else {
+					apex_mem.Read<int>(LocalPlayer + OFFSET_OBSERVER_MODE, current_obid);
+					if (current_obid == 7) {
+						apex_mem.Write<int>(LocalPlayer + OFFSET_OBSERVER_MODE, 0);
+					}
 				}
 			}
+
 			if (firing_range)
 			{
 				int c = 0;
@@ -224,6 +242,20 @@ void DoActions()
 						continue;
 					}
 
+					float localyaw = LPlayer.GetYaw();
+					float targetyaw = Target.GetYaw();
+					if(!Target.isAlive() && localyaw == targetyaw){//if this player a spectator
+						Target.get_name(g_Base,i-1,&spectator_list[i].name[0]);
+						int xp;
+						apex_mem.Read<int>(centity + OFFSET_XP, xp);
+						int xp_level = calc_level(xp);
+						spectator_list[i].xp_level = xp_level;
+						if(spectator_list[i].name[0]){ //detect if this player quit
+							spectator_list[i].is_spec = true;
+						}else{spectator_list[i].is_spec = false;}
+					}else{
+						spectator_list[i].is_spec = false;
+					}
 					ProcessPlayer(LPlayer, Target, entitylist, i);
 
 					int entity_team = Target.getTeamId();
@@ -251,10 +283,11 @@ void DoActions()
 				}
 			}
 
-			if (!klock)
+			if (!klock){
 				aimentity = tmp_aimentity;
-			else
+			}else{
 				aimentity = lastaimentity;
+			}
 		}
 	}
 	actions_t = false;
@@ -362,6 +395,7 @@ static void EspLoop()
 							int shield = Target.getShield();
 							int maxshield = Target.getMaxshield();
 							int armortype = Target.getArmortype();
+							//xp
 							int xp;
 							apex_mem.Read<int>(centity + OFFSET_XP, xp);
 							int xp_level = calc_level(xp);
@@ -386,7 +420,7 @@ static void EspLoop()
 							Target.get_name(g_Base, i - 1, &players[c].name[0]);
 							uint64_t model_ptr;
 							apex_mem.Read(centity + OFFSET_MODELNAME, model_ptr);
-							apex_mem.ReadArray(model_ptr,&players[c].model_name[0], 32);
+							apex_mem.ReadArray(model_ptr,&players[c].model_name[0], 99);
 
 							lastvis_esp[c] = Target.lastVisTime();
 							valid = true;
@@ -411,6 +445,7 @@ static void EspLoop()
 						}
 
 						Entity Target = getEntity(centity);
+						Entity Lplayer = getEntity(LocalPlayer);
 
 						if (!Target.isPlayer())
 						{
@@ -456,6 +491,7 @@ static void EspLoop()
 							int shield = Target.getShield();
 							int maxshield = Target.getMaxshield();
 							int armortype = Target.getArmortype();
+							//xp
 							int xp;
 							apex_mem.Read<int>(centity + OFFSET_XP, xp);
 
@@ -482,7 +518,7 @@ static void EspLoop()
 							Target.get_name(g_Base, i - 1, &players[i].name[0]);
 							uint64_t model_ptr;
                                                         apex_mem.Read(centity + OFFSET_MODELNAME, model_ptr);
-                                                        apex_mem.ReadArray(model_ptr,&players[i].model_name[0], 32);
+                                                        apex_mem.ReadArray(model_ptr,&players[i].model_name[0], 99);
 
 							lastvis_esp[i] = Target.lastVisTime();
 							valid = true;
@@ -524,7 +560,7 @@ static void AimbotLoop()
 				apex_mem.Read<uint64_t>(g_Base + OFFSET_LOCAL_ENT, LocalPlayer);
 				if (LocalPlayer == 0) continue;
 				Entity LPlayer = getEntity(LocalPlayer);
-				QAngle Angles = CalculateBestBoneAim(LPlayer, aimentity, max_fov);
+				QAngle Angles = CalculateBestBoneAim(LPlayer, aimentity, max_fov , rcs_pitch , rcs_yaw);
 				if (Angles.x == 0 && Angles.y == 0)
 				{
 					klock = false;
@@ -557,39 +593,44 @@ static void set_vars(uint64_t add_addr)
 	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 5, next_addr);
 	uint64_t player_addr = 0;
 	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 6, player_addr);
+	uint64_t spec_list_addr = 0;
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 7, spec_list_addr);
 	uint64_t valid_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 7, valid_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 8, valid_addr);
 	uint64_t max_dist_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 8, max_dist_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 9, max_dist_addr);
 	uint64_t item_glow_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 9, item_glow_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 10, item_glow_addr);
 	uint64_t player_glow_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 10, player_glow_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 11, player_glow_addr);
 	uint64_t aim_no_recoil_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 11, aim_no_recoil_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 12, aim_no_recoil_addr);
 	uint64_t smooth_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 12, smooth_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 13, smooth_addr);
 	uint64_t max_fov_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 13, max_fov_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 14, max_fov_addr);
 	uint64_t bone_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 14, bone_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 15, bone_addr);
 	uint64_t thirdperson_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 15, thirdperson_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 16, thirdperson_addr);
 	uint64_t spectators_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 16, spectators_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 17, spectators_addr);
 	uint64_t allied_spectators_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 17, allied_spectators_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 18, allied_spectators_addr);
 	uint64_t chargerifle_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 18, chargerifle_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 19, chargerifle_addr);
 	uint64_t shooting_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 19, shooting_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 20, shooting_addr);
 	uint64_t freecam_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 20, freecam_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 21, freecam_addr);
 	uint64_t lockall_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 21, lockall_addr);
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 22, lockall_addr);
 	uint64_t firing_range_addr = 0;
-	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 22, firing_range_addr);
-
+	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 23, firing_range_addr);
+    	uint64_t rcs_p_addr = 0;
+    	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 24, rcs_p_addr);
+    	uint64_t rcs_y_addr = 0;
+    	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 25, rcs_y_addr);
 	uint32_t check = 0;
 	client_mem.Read<uint32_t>(check_addr, check);
 
@@ -615,6 +656,7 @@ static void set_vars(uint64_t add_addr)
 			client_mem.Write<uint64_t>(g_Base_addr, g_Base);
 			client_mem.Write<int>(spectators_addr, spectators);
 			client_mem.Write<int>(allied_spectators_addr, allied_spectators);
+			client_mem.WriteArray<spectator>(spec_list_addr, spectator_list , toRead);
 
 			client_mem.Read<int>(aim_addr, aim);
 			client_mem.Read<bool>(esp_addr, esp);
@@ -630,11 +672,14 @@ static void set_vars(uint64_t add_addr)
 			client_mem.Read<bool>(freecam_addr, freecam);
 			client_mem.Read<bool>(lockall_addr, lockall_enable);
 			client_mem.Read<bool>(firing_range_addr, firing_range);
+			client_mem.Read<float>(rcs_p_addr, rcs_pitch);
+			client_mem.Read<float>(rcs_y_addr, rcs_yaw);
 
 			if (esp && knext)
 			{
 				if (valid)
-					client_mem.WriteArray<player>(player_addr, players, toRead);
+				client_mem.WriteArray<player>(player_addr, players, toRead);
+
 				client_mem.Write<bool>(valid_addr, valid);
 				client_mem.Write<bool>(next_addr, true); //next
 

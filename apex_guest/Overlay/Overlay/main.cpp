@@ -5,12 +5,12 @@
 
 #define WDA_EXCLUDEFROMCAPTURE 0x00000011
 const MARGINS margins = { -1 ,-1, -1, -1 };
-const wchar_t g_szClassName[] = L"changeableplaceoverlay";
+const wchar_t g_szClassName[] = L"placeholderoverlay";
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	WNDCLASSEX wc;
-	HWND changeableplacehwnd;
+	HWND placeholderhwnd;
 	MSG Msg;
 
 	wc.cbSize = sizeof(WNDCLASSEX);
@@ -28,7 +28,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	RegisterClassEx(&wc);
 
-	changeableplacehwnd = CreateWindowEx(
+	placeholderhwnd = CreateWindowEx(
 		WS_EX_LAYERED | WS_EX_TRANSPARENT,
 		g_szClassName,
 		g_szClassName,
@@ -36,9 +36,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		0, 0, 1920, 1080,
 		NULL, NULL, hInstance, NULL);
 
-	SetLayeredWindowAttributes(changeableplacehwnd, RGB(0, 0, 0), 175, LWA_ALPHA);
-	SetWindowDisplayAffinity(changeableplacehwnd, WDA_EXCLUDEFROMCAPTURE);
-	DwmExtendFrameIntoClientArea(changeableplacehwnd, &margins);
+	SetLayeredWindowAttributes(placeholderhwnd, RGB(0, 0, 0), 175, LWA_ALPHA);
+	SetWindowDisplayAffinity(placeholderhwnd, WDA_EXCLUDEFROMCAPTURE);
+	DwmExtendFrameIntoClientArea(placeholderhwnd, &margins);
 
 	while (GetMessage(&Msg, NULL, 0, 0) > 0)
 	{

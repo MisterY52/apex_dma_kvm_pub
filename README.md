@@ -11,9 +11,10 @@
 -  you can enable aimbot/esp for your teammates
 -  press mouse4 to disable visible check(Aim at enemies behind smoke)
 -  display legend's name (https://www.unknowncheats.me/forum/3915178-post14046.html)
+-  Spectator List (Display Sepctator's Name and XP level)
 # how to use
 ## guest
--  ctrl+h to replace "changeableplace" to other contents to bypass memory detection.
+-  ctrl+h to replace "placeholder" to other contents to bypass memory detection.
 -  in CustomOverlay: main.cpp
 -  better use VMprotect
 -  build in release x64, use custom overlay for streamproof.
@@ -25,3 +26,11 @@
  - https://github.com/A1exxander/KVM-Spoofing
 
 *If you are concerned with Passthrough/bypass , ask Unknowncheats community for help*
+
+
+### Changelog
+#### 2023/12/20(UTC+8) 
+-  Freecamera will be disable when player is not alive.
+-  Spectator List
+-  Fix some bugs of Legend's name ESP.
+-  Added rcs setting to client

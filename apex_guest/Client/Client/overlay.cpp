@@ -1,72 +1,73 @@
 #include "overlay.h"
 
-extern int changeableplaceaim;
-extern bool changeableplaceesp;
-extern bool changeableplaceaim_no_recoil;
-extern bool changeableplaceready;
-extern bool changeableplaceuse_nvidia;
-extern float changeableplacemax_dist;
-extern float changeableplaceseer_dist;
-extern float changeableplacesmooth;
-extern float changeableplacemax_fov;
-extern float changeableplacexp_dist;
-extern float changeableplacescale;
-extern int changeableplacebone;
-extern bool changeableplacethirdperson;
-extern float changeableplacename_dist;
-extern int changeableplacespectators;
-extern int changeableplaceallied_spectators;
-extern bool changeableplacechargerifle;
-extern bool changeableplacefreecam;
-extern bool changeableplacelockall_mode;
-extern bool changeableplacedisplay_spec;
-extern bool changeableplacefiring_range;
-extern int changeableplaceindex;
-int changeableplacewidth;
-int changeableplaceheight;
-bool changeableplacek_leftclick = false;
-bool changeableplacek_ins = false;
-bool changeableplaceshow_menu = false;
-changeableplacevisuals changeableplacev;
+extern int placeholderaim;
+extern bool placeholderesp;
+extern bool placeholderaim_no_recoil;
+extern bool placeholderready;
+extern bool placeholderuse_nvidia;
+extern float placeholdermax_dist;
+extern float placeholderseer_dist;
+extern float placeholdersmooth;
+extern float placeholdermax_fov;
+extern float placeholderxp_dist;
+extern float placeholderscale;
+extern int placeholderbone;
+extern bool placeholderthirdperson;
+extern float placeholdername_dist;
+extern int placeholderspectators;
+extern int placeholderallied_spectators;
+extern bool placeholderchargerifle;
+extern bool placeholderfreecam;
+extern bool placeholderlockall_mode;
+extern bool placeholderfiring_range;
+extern int placeholderindex;
+extern float placeholderrcs_pitch;
+extern float placeholderrcs_yaw;
+int placeholderwidth;
+int placeholderheight;
+bool placeholderk_leftclick = false;
+bool placeholderk_ins = false;
+bool placeholdershow_menu = false;
+placeholdervisuals placeholderv;
 
 extern bool IsKeyDown(int vk);
 
-LONG changeableplacenv_default = WS_POPUP | WS_CLIPSIBLINGS;
-LONG changeableplacenv_default_in_game = changeableplacenv_default | WS_DISABLED;
-LONG changeableplacenv_edit = changeableplacenv_default_in_game | WS_VISIBLE;
+LONG placeholdernv_default = WS_POPUP | WS_CLIPSIBLINGS;
+LONG placeholdernv_default_in_game = placeholdernv_default | WS_DISABLED;
+LONG placeholdernv_edit = placeholdernv_default_in_game | WS_VISIBLE;
 
-LONG changeableplacenv_ex_default = WS_EX_TOOLWINDOW;
-LONG changeableplacenv_ex_edit = changeableplacenv_ex_default | WS_EX_LAYERED | WS_EX_TRANSPARENT;
-LONG changeableplacenv_ex_edit_menu = changeableplacenv_ex_default | WS_EX_TRANSPARENT;
+LONG placeholdernv_ex_default = WS_EX_TOOLWINDOW;
+LONG placeholdernv_ex_edit = placeholdernv_ex_default | WS_EX_LAYERED | WS_EX_TRANSPARENT;
+LONG placeholdernv_ex_edit_menu = placeholdernv_ex_default | WS_EX_TRANSPARENT;
 
-static DWORD WINAPI StaticMessageStart(void* changeableplaceParam)
+static DWORD WINAPI StaticMessageStart(void* placeholderParam)
 {
-	Overlay* changeableplaceov = (Overlay*)changeableplaceParam;
-	changeableplaceov->CreatechangeableplaceOverlay();
+	Overlay* placeholderov = (Overlay*)placeholderParam;
+	placeholderov->CreateplaceholderOverlay();
 	return 0;
 }
 
-BOOL CALLBACK EnumWindowsCallback(HWND changeableplacehwnd, LPARAM lParam)
+BOOL CALLBACK EnumWindowsCallback(HWND placeholderhwnd, LPARAM lParam)
 {
-	wchar_t classchangeableplaceName[255] = L"";
-	GetClassName(changeableplacehwnd, classchangeableplaceName, 255);
-	if (changeableplaceuse_nvidia)
+	wchar_t classplaceholderName[255] = L"";
+	GetClassName(placeholderhwnd, classplaceholderName, 255);
+	if (placeholderuse_nvidia)
 	{
-		if (wcscmp(XorStrW(L"CEF-OSC-WIDGET"), classchangeableplaceName) == 0) //Nvidia overlay
+		if (wcscmp(XorStrW(L"CEF-OSC-WIDGET"), classplaceholderName) == 0) //Nvidia overlay
 		{
 			HWND* w = (HWND*)lParam;
-			if (GetWindowLong(changeableplacehwnd, GWL_STYLE) != changeableplacenv_default && GetWindowLong(changeableplacehwnd, GWL_STYLE) != changeableplacenv_default_in_game)
+			if (GetWindowLong(placeholderhwnd, GWL_STYLE) != placeholdernv_default && GetWindowLong(placeholderhwnd, GWL_STYLE) != placeholdernv_default_in_game)
 				return TRUE;
-			*w = changeableplacehwnd;
+			*w = placeholderhwnd;
 			return TRUE;
 		}
 	}
 	else
 	{
-		if (wcscmp(XorStrW(L"changeableplaceoverlay"), classchangeableplaceName) == 0) //Custom overlay
+		if (wcscmp(XorStrW(L"placeholderoverlay"), classplaceholderName) == 0) //Custom overlay
 		{
 			HWND* w = (HWND*)lParam;
-			*w = changeableplacehwnd;
+			*w = placeholderhwnd;
 			return TRUE;
 		}
 	}
@@ -85,29 +86,29 @@ void CleanupDeviceD3D();
 void CreateRenderTarget();
 void CleanupRenderTarget();
 
-void Overlay::RenderchangeableplaceMenu()
+void Overlay::RenderplaceholderMenu()
 {
-	static bool changeableplaceaim_enable = false;
-	static bool changeableplacevis_check = false;
-	static bool changeableplacespec_disable = false;
-	static bool changeableplaceall_spec_disable = false;
+	static bool placeholderaim_enable = false;
+	static bool placeholdervis_check = false;
+	static bool placeholderspec_disable = false;
+	static bool placeholderall_spec_disable = false;
 
-	if (changeableplaceaim > 0)
+	if (placeholderaim > 0)
 	{
-		changeableplaceaim_enable = true;
-		if (changeableplaceaim > 1)
+		placeholderaim_enable = true;
+		if (placeholderaim > 1)
 		{
-			changeableplacevis_check = true;
+			placeholdervis_check = true;
 		}
 		else
 		{
-			changeableplacevis_check = false;
+			placeholdervis_check = false;
 		}
 	}
 	else
 	{
-		changeableplaceaim_enable = false;
-		changeableplacevis_check = false;
+		placeholderaim_enable = false;
+		placeholdervis_check = false;
 	}
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
 	ImGui::SetNextWindowSize(ImVec2(490, 275));
@@ -117,82 +118,88 @@ void Overlay::RenderchangeableplaceMenu()
 	{
 		if (ImGui::BeginTabItem(XorStr(u8"MainMenu")))
 		{
-			ImGui::Checkbox(XorStr(u8"ESP"), &changeableplaceesp);
-			ImGui::Checkbox(XorStr(u8"Aimbot"), &changeableplaceaim_enable);
+			ImGui::Checkbox(XorStr(u8"ESP"), &placeholderesp);
+			ImGui::Checkbox(XorStr(u8"Aimbot"), &placeholderaim_enable);
 
-			if (changeableplaceaim_enable)
+			if (placeholderaim_enable)
 			{
 				ImGui::SameLine();
-				ImGui::Checkbox(XorStr(u8"Visible check"), &changeableplacevis_check);
+				ImGui::Checkbox(XorStr(u8"Visible check"), &placeholdervis_check);
 				ImGui::SameLine();
-				ImGui::Checkbox(XorStr(u8"No recoil"), &changeableplaceaim_no_recoil);
-				if (changeableplacevis_check)
+				ImGui::Checkbox(XorStr(u8"No recoil"), &placeholderaim_no_recoil);
+				if (placeholdervis_check)
 				{
-					changeableplaceaim = 2;
+					placeholderaim = 2;
 				}
 				else
 				{
-					changeableplaceaim = 1;
+					placeholderaim = 1;
 				}
 			}
 			else
 			{
-				changeableplaceaim = 0;
+				placeholderaim = 0;
 			}
 
-			ImGui::Checkbox(XorStr(u8"freecamera"), &changeableplacefreecam);
-			ImGui::Checkbox(XorStr(u8"Lock on teammates"), &changeableplacelockall_mode);
-			ImGui::Checkbox(XorStr(u8"firing_range mode"), &changeableplacefiring_range);//changeableplacefiring_range
-			//ImGui::InputInt(XorStr("index"), &changeableplaceindex);//changeableplaceindex
+			ImGui::Checkbox(XorStr(u8"freecamera"), &placeholderfreecam);
+			ImGui::Checkbox(XorStr(u8"Lock on teammates"), &placeholderlockall_mode);
+			ImGui::Checkbox(XorStr(u8"firing_range mode"), &placeholderfiring_range);//placeholderfiring_range
+			//ImGui::InputInt(XorStr("index"), &placeholderindex);//placeholderindex
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem(XorStr(u8"Aimbot")))
 		{
 			ImGui::Text(XorStr(u8"Max distence:"));
-			ImGui::SliderFloat(XorStr("##1"), &changeableplacemax_dist, 100.0f * 40, 800.0f * 40, "%.2f");
+			ImGui::SliderFloat(XorStr("##1"), &placeholdermax_dist, 100.0f * 40, 800.0f * 40, "%.2f");
 			ImGui::SameLine();
-			ImGui::Text(u8"(%d M)", (int)(changeableplacemax_dist / 40));
-			ImGui::Text(u8"real dist :%d M", (int)(changeableplacemax_dist / 40));
+			ImGui::Text(u8"(%d M)", (int)(placeholdermax_dist / 40));
+			ImGui::Text(u8"real dist :%d M", (int)(placeholdermax_dist / 40));
 
 			ImGui::Text(XorStr(u8"Smooth"));
-			ImGui::SliderFloat(XorStr("##2"), &changeableplacesmooth, 76.0f, 100.0f, "%.2f");
+			ImGui::SliderFloat(XorStr("##2"), &placeholdersmooth, 76.0f, 100.0f, "%.2f");
 
 			ImGui::Text(XorStr(u8"FOV:"));
-			ImGui::SliderFloat(XorStr("##3"), &changeableplacemax_fov, 5.0f, 250.0f, "%.2f");
+			ImGui::SliderFloat(XorStr("##3"), &placeholdermax_fov, 5.0f, 250.0f, "%.2f");
 
 			ImGui::Text(XorStr(u8"Bone:"));
-			ImGui::SliderInt(XorStr("##4"), &changeableplacebone, 0, 3);
+			ImGui::SliderInt(XorStr("##4"), &placeholderbone, 0, 3);
+
+			ImGui::Text(XorStr(u8"RCS PITCH:"));
+			ImGui::SliderFloat(XorStr("##5"), &placeholderrcs_pitch, 0, 1);
+
+			ImGui::Text(XorStr(u8"RCS YAW:"));
+			ImGui::SliderFloat(XorStr("##6"), &placeholderrcs_yaw, 0, 1);
 
 			//ImGui::Text(XorStr(u8"FOV Draw scale:"));
-			//ImGui::SliderFloat(XorStr("##5"), &changeableplacescale, 0.0f, 140.0f, "%.2f");
+			//ImGui::SliderFloat(XorStr("##5"), &placeholderscale, 0.0f, 140.0f, "%.2f");
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem(XorStr(u8"ESPHACK")))
 		{
 			ImGui::Text(XorStr(u8"ESP"));
 			//ImGui::Checkbox
-			ImGui::Checkbox(XorStr(u8"BOX"), &changeableplacev.changeableplacebox);
+			ImGui::Checkbox(XorStr(u8"BOX"), &placeholderv.placeholderbox);
 			ImGui::SameLine(0, 70.0f);
-			ImGui::Checkbox(XorStr(u8"Name"), &changeableplacev.changeableplacename);
-			ImGui::Checkbox(XorStr(u8"xp level"), &changeableplacev.changeableplacerenderxp);
-			ImGui::Checkbox(XorStr(u8"line"), &changeableplacev.changeableplaceline);
-			ImGui::Checkbox(XorStr(u8"dist + teamID"), &changeableplacev.changeableplacedistance);
-			ImGui::Checkbox(XorStr(u8"seer esp"), &changeableplacev.changeableplacehealthbar);
+			ImGui::Checkbox(XorStr(u8"Name"), &placeholderv.placeholdername);
+			ImGui::Checkbox(XorStr(u8"xp level"), &placeholderv.placeholderrenderxp);
+			ImGui::Checkbox(XorStr(u8"line"), &placeholderv.placeholderline);
+			ImGui::Checkbox(XorStr(u8"dist + teamID"), &placeholderv.placeholderdistance);
+			ImGui::Checkbox(XorStr(u8"seer esp"), &placeholderv.placeholderhealthbar);
 
 			ImGui::Text(XorStr(u8"seer esp distence:"));
-			ImGui::SliderFloat(XorStr("##1"), &changeableplaceseer_dist, 100.0f * 40, 800.0f * 40, "%.2f");
+			ImGui::SliderFloat(XorStr("##1"), &placeholderseer_dist, 100.0f * 40, 800.0f * 40, "%.2f");
 			ImGui::SameLine();
-			ImGui::Text(u8"(%d M)", (int)(changeableplaceseer_dist / 40));
+			ImGui::Text(u8"(%d M)", (int)(placeholderseer_dist / 40));
 
 			ImGui::Text(XorStr(u8"XP level display distence:"));
-			ImGui::SliderFloat(XorStr("##2"), &changeableplacexp_dist, 100.0f * 40, 800.0f * 40, "%.2f");
+			ImGui::SliderFloat(XorStr("##2"), &placeholderxp_dist, 100.0f * 40, 800.0f * 40, "%.2f");
 			ImGui::SameLine();
-			ImGui::Text(u8"(%d M)", (int)(changeableplacexp_dist / 40));
+			ImGui::Text(u8"(%d M)", (int)(placeholderxp_dist / 40));
 
 			ImGui::Text(XorStr(u8"name esp distence:"));
-			ImGui::SliderFloat(XorStr("##3"), &changeableplacename_dist, 100.0f * 40, 800.0f * 40, "%.2f");
+			ImGui::SliderFloat(XorStr("##3"), &placeholdername_dist, 100.0f * 40, 800.0f * 40, "%.2f");
 			ImGui::SameLine();
-			ImGui::Text(u8"(%d M)", (int)(changeableplacename_dist / 40));
+			ImGui::Text(u8"(%d M)", (int)(placeholdername_dist / 40));
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();
@@ -200,44 +207,40 @@ void Overlay::RenderchangeableplaceMenu()
 	ImGui::End();
 }
 
-void Overlay::RenderchangeableplaceInfo()
+void Overlay::RenderplaceholderInfo()
 {
-	//ImGui::Begin("#FOVC'", nullptr, ImGuiWindowFlags_NoMove | ImGuiInputTextFlags_ReadOnly | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar);
-	//auto draw = ImGui::GetBackgroundDrawList();
-	//draw ->AddCircle(ImVec2(1920 / 2, 1080 / 2), changeableplacemax_fov * changeableplacescale ,IM_COL32(255, 0, 0, 255), 100, 0.0f);
-	//ImGui::End();
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
 	ImGui::SetNextWindowSize(ImVec2(210, 25));
 	ImGui::Begin(XorStr("##info"), (bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar);
-	ImGui::TextColored(RED, u8"Enemies %d", changeableplacespectators);
+	ImGui::TextColored(RED, u8"Enemies %d", placeholderspectators);
 	ImGui::SameLine();
 	ImGui::Text(" / ");
 	ImGui::SameLine();
-	ImGui::TextColored(GREEN, u8"Team %d", changeableplaceallied_spectators);
+	ImGui::TextColored(GREEN, u8"Team %d", placeholderallied_spectators);
 	ImGui::End();
 }
 
-void Overlay::ClickchangeableplaceThrough(bool changeableplacev)
+void Overlay::ClickplaceholderThrough(bool placeholderv)
 {
-	if (changeableplacev)
+	if (placeholderv)
 	{
-		changeableplacenv_edit = changeableplacenv_default_in_game | WS_VISIBLE;
-		if (GetWindowLong(overlaychangeableplaceHWND, GWL_EXSTYLE) != changeableplacenv_ex_edit)
-			SetWindowLong(overlaychangeableplaceHWND, GWL_EXSTYLE, changeableplacenv_ex_edit);
+		placeholdernv_edit = placeholdernv_default_in_game | WS_VISIBLE;
+		if (GetWindowLong(overlayplaceholderHWND, GWL_EXSTYLE) != placeholdernv_ex_edit)
+			SetWindowLong(overlayplaceholderHWND, GWL_EXSTYLE, placeholdernv_ex_edit);
 	}
 	else
 	{
-		changeableplacenv_edit = changeableplacenv_default | WS_VISIBLE;
-		if (GetWindowLong(overlaychangeableplaceHWND, GWL_EXSTYLE) != changeableplacenv_ex_edit_menu)
-			SetWindowLong(overlaychangeableplaceHWND, GWL_EXSTYLE, changeableplacenv_ex_edit_menu);
+		placeholdernv_edit = placeholdernv_default | WS_VISIBLE;
+		if (GetWindowLong(overlayplaceholderHWND, GWL_EXSTYLE) != placeholdernv_ex_edit_menu)
+			SetWindowLong(overlayplaceholderHWND, GWL_EXSTYLE, placeholdernv_ex_edit_menu);
 	}
 }
 
-DWORD Overlay::CreatechangeableplaceOverlay()
+DWORD Overlay::CreateplaceholderOverlay()
 {
-	EnumWindows(EnumWindowsCallback, (LPARAM)&overlaychangeableplaceHWND);
+	EnumWindows(EnumWindowsCallback, (LPARAM)&overlayplaceholderHWND);
 	Sleep(300);
-	if (overlaychangeableplaceHWND == 0)
+	if (overlayplaceholderHWND == 0)
 	{
 		printf(XorStr("Can't find the overlay\n"));
 		Sleep(1000);
@@ -245,21 +248,21 @@ DWORD Overlay::CreatechangeableplaceOverlay()
 	}
 
 	HDC hDC = ::GetWindowDC(NULL);
-	changeableplacewidth = ::GetDeviceCaps(hDC, HORZRES);
-	changeableplaceheight = ::GetDeviceCaps(hDC, VERTRES);
+	placeholderwidth = ::GetDeviceCaps(hDC, HORZRES);
+	placeholderheight = ::GetDeviceCaps(hDC, VERTRES);
 
-	changeableplacerunning = true;
+	placeholderrunning = true;
 
 	// Initialize Direct3D
-	if (!CreateDeviceD3D(overlaychangeableplaceHWND))
+	if (!CreateDeviceD3D(overlayplaceholderHWND))
 	{
 		CleanupDeviceD3D();
 		return 1;
 	}
 
 	// Show the window
-	::ShowWindow(overlaychangeableplaceHWND, SW_SHOWDEFAULT);
-	::UpdateWindow(overlaychangeableplaceHWND);
+	::ShowWindow(overlayplaceholderHWND, SW_SHOWDEFAULT);
+	::UpdateWindow(overlayplaceholderHWND);
 
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
@@ -274,7 +277,7 @@ DWORD Overlay::CreatechangeableplaceOverlay()
 	ImGui::GetStyle().WindowMinSize = ImVec2(1, 1);
 
 	// Setup Platform/Renderer bindings
-	ImGui_ImplWin32_Init(overlaychangeableplaceHWND);
+	ImGui_ImplWin32_Init(overlayplaceholderHWND);
 	ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
 
 	ImVec4 clear_color = ImVec4(0.0f, 0.0f, 0.0f, 0.00f);
@@ -282,14 +285,14 @@ DWORD Overlay::CreatechangeableplaceOverlay()
 	// Main loop
 	MSG msg;
 	ZeroMemory(&msg, sizeof(msg));
-	ClickchangeableplaceThrough(true);
-	while (changeableplacerunning)
+	ClickplaceholderThrough(true);
+	while (placeholderrunning)
 	{
 		HWND wnd = GetWindow(GetForegroundWindow(), GW_HWNDPREV);
-		if (wnd != overlaychangeableplaceHWND)
+		if (wnd != overlayplaceholderHWND)
 		{
-			SetWindowPos(overlaychangeableplaceHWND, wnd, 0, 0, 0, 0, SWP_ASYNCWINDOWPOS | SWP_NOMOVE | SWP_NOSIZE);
-			::UpdateWindow(overlaychangeableplaceHWND);
+			SetWindowPos(overlayplaceholderHWND, wnd, 0, 0, 0, 0, SWP_ASYNCWINDOWPOS | SWP_NOMOVE | SWP_NOSIZE);
+			::UpdateWindow(overlayplaceholderHWND);
 		}
 
 		if (::PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
@@ -304,35 +307,36 @@ DWORD Overlay::CreatechangeableplaceOverlay()
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
 
-		if (IsKeyDown(VK_LBUTTON) && !changeableplacek_leftclick)
+		if (IsKeyDown(VK_LBUTTON) && !placeholderk_leftclick)
 		{
 			io.MouseDown[0] = true;
-			changeableplacek_leftclick = true;
+			placeholderk_leftclick = true;
 		}
-		else if (!IsKeyDown(VK_LBUTTON) && changeableplacek_leftclick)
+		else if (!IsKeyDown(VK_LBUTTON) && placeholderk_leftclick)
 		{
 			io.MouseDown[0] = false;
-			changeableplacek_leftclick = false;
+			placeholderk_leftclick = false;
 		}
 
-		if (IsKeyDown(VK_INSERT) && !changeableplacek_ins && changeableplaceready)
+		if (IsKeyDown(VK_INSERT) && !placeholderk_ins && placeholderready)
 		{
-			changeableplaceshow_menu = !changeableplaceshow_menu;
-			ClickchangeableplaceThrough(!changeableplaceshow_menu);
-			changeableplacek_ins = true;
+			placeholdershow_menu = !placeholdershow_menu;
+			ClickplaceholderThrough(!placeholdershow_menu);
+			placeholderk_ins = true;
 		}
-		else if (!IsKeyDown(VK_INSERT) && changeableplacek_ins)
+		else if (!IsKeyDown(VK_INSERT) && placeholderk_ins)
 		{
-			changeableplacek_ins = false;
+			placeholderk_ins = false;
 		}
-		if (changeableplaceshow_menu) {
-			RenderchangeableplaceMenu();
+		if (placeholdershow_menu) {
+			RenderplaceholderMenu();
 		}
 		else {
-			RenderchangeableplaceInfo();
+			RenderplaceholderInfo();
+			RenderplaceholderSpectator();
 		}
 
-		RenderchangeableplaceEsp();
+		RenderplaceholderEsp();
 
 		// Rendering
 		ImGui::EndFrame();
@@ -346,33 +350,33 @@ DWORD Overlay::CreatechangeableplaceOverlay()
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
-	ClickchangeableplaceThrough(true);
+	ClickplaceholderThrough(true);
 
 	CleanupDeviceD3D();
-	::DestroyWindow(overlaychangeableplaceHWND);
+	::DestroyWindow(overlayplaceholderHWND);
 	return 0;
 }
 
-void Overlay::Startchangeableplace()
+void Overlay::Startplaceholder()
 {
 	DWORD ThreadID;
 	CreateThread(NULL, 0, StaticMessageStart, (void*)this, 0, &ThreadID);
 }
 
-void Overlay::Clearchangeableplace()
+void Overlay::Clearplaceholder()
 {
-	changeableplacerunning = 0;
+	placeholderrunning = 0;
 	Sleep(50);
 }
 
-int Overlay::getchangeableplaceWidth()
+int Overlay::getplaceholderWidth()
 {
-	return changeableplacewidth;
+	return placeholderwidth;
 }
 
-int Overlay::getchangeableplaceHeight()
+int Overlay::getplaceholderHeight()
 {
-	return changeableplaceheight;
+	return placeholderheight;
 }
 
 // Helper functions
@@ -431,37 +435,47 @@ void CleanupDeviceD3D()
 	if (g_pd3dDevice) { g_pd3dDevice->Release(); g_pd3dDevice = NULL; }
 }
 
-void Overlay::DrawchangeableplaceLine(ImVec2 a, ImVec2 b, ImColor color, float width)
+void Overlay::DrawplaceholderLine(ImVec2 a, ImVec2 b, ImColor color, float width)
 {
 	ImGui::GetWindowDrawList()->AddLine(a, b, color, width);
 }
 
-void Overlay::DrawchangeableplaceBox(ImColor color, float x, float y, float w, float h)
+void Overlay::DrawplaceholderBox(ImColor color, float x, float y, float w, float h)
 {
-	DrawchangeableplaceLine(ImVec2(x, y), ImVec2(x + w, y), color, 1.0f);
-	DrawchangeableplaceLine(ImVec2(x, y), ImVec2(x, y + h), color, 1.0f);
-	DrawchangeableplaceLine(ImVec2(x + w, y), ImVec2(x + w, y + h), color, 1.0f);
-	DrawchangeableplaceLine(ImVec2(x, y + h), ImVec2(x + w, y + h), color, 1.0f);
+	DrawplaceholderLine(ImVec2(x, y), ImVec2(x + w, y), color, 1.0f);
+	DrawplaceholderLine(ImVec2(x, y), ImVec2(x, y + h), color, 1.0f);
+	DrawplaceholderLine(ImVec2(x + w, y), ImVec2(x + w, y + h), color, 1.0f);
+	DrawplaceholderLine(ImVec2(x, y + h), ImVec2(x + w, y + h), color, 1.0f);
 }
 
-void Overlay::changeableplaceText(ImVec2 pos, ImColor color, const char* text_begin, const char* text_end, float wrap_width, const ImVec4 * cpu_fine_clip_rect)
+void Overlay::placeholderText(ImVec2 pos, ImColor color, const char* text_begin, const char* text_end, float wrap_width, const ImVec4 * cpu_fine_clip_rect)
 {
 	ImGui::GetWindowDrawList()->AddText(ImGui::GetFont(), 14, pos, color, text_begin, text_end, wrap_width, cpu_fine_clip_rect);
 }
 
-void Overlay::Stringchangeableplace(ImVec2 pos, ImColor color, const char* text)
+void Overlay::placeholderText(ImVec2 pos, ImColor color, const char* text_begin, const char* text_end, float wrap_width, const ImVec4* cpu_fine_clip_rect , int font)
 {
-	changeableplaceText(pos, color, text, text + strlen(text), 200, 0);
+	ImGui::GetWindowDrawList()->AddText(ImGui::GetFont(), font, pos, color, text_begin, text_end, wrap_width, cpu_fine_clip_rect);
 }
 
-void Overlay::RectchangeableplaceFilled(float x0, float y0, float x1, float y1, ImColor color, float rounding, int rounding_corners_flags)
+void Overlay::Stringplaceholder(ImVec2 pos, ImColor color, const char* text)
+{
+	placeholderText(pos, color, text, text + strlen(text), 200, 0);
+}
+
+void Overlay::Stringplaceholder(ImVec2 pos, ImColor color, const char* text,int font)
+{
+	placeholderText(pos, color, text, text + strlen(text), 200, 0 , font);
+}
+
+void Overlay::RectplaceholderFilled(float x0, float y0, float x1, float y1, ImColor color, float rounding, int rounding_corners_flags)
 {
 	ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x0, y0), ImVec2(x1, y1), color, rounding, rounding_corners_flags);
 }
 
-void Overlay::ProgresschangeableplaceBar(float x, float y, float w, float h, int value, int v_max, ImColor barColor)
+void Overlay::ProgressplaceholderBar(float x, float y, float w, float h, int value, int v_max, ImColor barColor)
 {
-	RectchangeableplaceFilled(x, y, x + w, y + ((h / float(v_max)) * (float)value), barColor, 0.0f, 0);
+	RectplaceholderFilled(x, y, x + w, y + ((h / float(v_max)) * (float)value), barColor, 0.0f, 0);
 }
 
 
@@ -478,36 +492,36 @@ void DrawHexagonFilled(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, con
 	ImGui::GetWindowDrawList()->AddHexagonFilled(p1, p2, p3, p4, p5, p6, col);
 }
 
-void Overlay::DrawchangeableplaceHealth(float changeableplacex, float changeableplacey, int changeableplaceshield, int changeableplacemax_shield, int changeableplacearmorType, int changeableplacehealth) {
+void Overlay::DrawplaceholderHealth(float placeholderx, float placeholdery, int placeholdershield, int placeholdermax_shield, int placeholderarmorType, int placeholderhealth) {
 
-	int changeableplacebg_offset = 3;
-	int changeableplacebar_width = 105; //158
+	int placeholderbg_offset = 3;
+	int placeholderbar_width = 105; //158
 	// 4steps...2*3=6
 	// 38*4=152 152+6 = 158
 	// 5steps...2*4=8
 	// 30*5=150 150+8 = 158
-	float changeableplacemax_health = 100.0f;//100
-	float changeableplaceshield_step = 25.0f; //25
+	float placeholdermax_health = 100.0f;//100
+	float placeholdershield_step = 25.0f; //25
 
-	int changeableplaceshield_25 = 14; //30
-	int changeableplacesteps = 5;
+	int placeholdershield_25 = 14; //30
+	int placeholdersteps = 5;
 
 
-	ImVec2 bg1(changeableplacex - changeableplacebar_width / 2 - changeableplacebg_offset, changeableplacey);
+	ImVec2 bg1(placeholderx - placeholderbar_width / 2 - placeholderbg_offset, placeholdery);
 	ImVec2 bg2(bg1.x - 10, bg1.y - 16);
 	ImVec2 bg3(bg2.x + 5, bg2.y - 7);
-	ImVec2 bg4(bg3.x + changeableplacebar_width + changeableplacebg_offset, bg3.y);
+	ImVec2 bg4(bg3.x + placeholderbar_width + placeholderbg_offset, bg3.y);
 	ImVec2 bg5(bg4.x + 11, bg4.y + 18);
-	ImVec2 bg6(changeableplacex + changeableplacebar_width / 2 + changeableplacebg_offset, changeableplacey);
+	ImVec2 bg6(placeholderx + placeholderbar_width / 2 + placeholderbg_offset, placeholdery);
 	DrawHexagonFilled(bg1, bg2, bg3, bg4, bg5, bg6, ImColor(0, 0, 0, 120));
 
 
 	ImVec2 h1(bg1.x + 3, bg1.y - 4);
 	ImVec2 h2(h1.x - 5, h1.y - 8);
-	ImVec2 h3(h2.x + (float)changeableplacehealth / changeableplacemax_health * changeableplacebar_width, h2.y);
-	ImVec2 h4(h1.x + (float)changeableplacehealth / changeableplacemax_health * changeableplacebar_width, h1.y);
-	ImVec2 h3m(h2.x + changeableplacebar_width, h2.y);
-	ImVec2 h4m(h1.x + changeableplacebar_width, h1.y);
+	ImVec2 h3(h2.x + (float)placeholderhealth / placeholdermax_health * placeholderbar_width, h2.y);
+	ImVec2 h4(h1.x + (float)placeholderhealth / placeholdermax_health * placeholderbar_width, h1.y);
+	ImVec2 h3m(h2.x + placeholderbar_width, h2.y);
+	ImVec2 h4m(h1.x + placeholderbar_width, h1.y);
 	DrawQuadFilled(h1, h2, h3m, h4m, ImColor(10, 10, 30, 60));
 	DrawQuadFilled(h1, h2, h3, h4, WHITE);
 
@@ -517,23 +531,23 @@ void Overlay::DrawchangeableplaceHealth(float changeableplacex, float changeable
 
 	ImColor shieldCol;
 	ImColor shieldColDark; //not used, but the real seer q has shadow inside
-	if (changeableplacemax_shield == 50) { //white
+	if (placeholdermax_shield == 50) { //white
 		shieldCol = ImColor(247, 247, 247);
 		shieldColDark = ImColor(164, 164, 164);
 	}
-	else if (changeableplacemax_shield == 75) { //blue
+	else if (placeholdermax_shield == 75) { //blue
 		shieldCol = ImColor(39, 178, 255);
 		shieldColDark = ImColor(27, 120, 210);
 	}
-	else if (changeableplacemax_shield == 100) { //purple
+	else if (placeholdermax_shield == 100) { //purple
 		shieldCol = ImColor(206, 59, 255);
 		shieldColDark = ImColor(136, 36, 220);
 	}
-	else if (changeableplacemax_shield == 100) { //gold
+	else if (placeholdermax_shield == 100) { //gold
 		shieldCol = ImColor(255, 255, 79);
 		shieldColDark = ImColor(218, 175, 49);
 	}
-	else if (changeableplacemax_shield == 125) { //red
+	else if (placeholdermax_shield == 125) { //red
 		shieldCol = ImColor(219, 2, 2);
 		shieldColDark = ImColor(219, 2, 2);
 	}
@@ -541,7 +555,7 @@ void Overlay::DrawchangeableplaceHealth(float changeableplacex, float changeable
 		shieldCol = ImColor(247, 247, 247);
 		shieldColDark = ImColor(164, 164, 164);
 	}
-	int shield_tmp = changeableplaceshield;
+	int shield_tmp = placeholdershield;
 	int shield1 = 0;
 	int shield2 = 0;
 	int shield3 = 0;
@@ -578,185 +592,185 @@ void Overlay::DrawchangeableplaceHealth(float changeableplacex, float changeable
 	}
 	ImVec2 s1(h2.x - 1, h2.y - 2);
 	ImVec2 s2(s1.x - 3, s1.y - 5);
-	ImVec2 s3(s2.x + shield1 / changeableplaceshield_step * changeableplaceshield_25, s2.y);
-	ImVec2 s4(s1.x + shield1 / changeableplaceshield_step * changeableplaceshield_25, s1.y);
-	ImVec2 s3m(s2.x + changeableplaceshield_25, s2.y);
-	ImVec2 s4m(s1.x + changeableplaceshield_25, s1.y);
+	ImVec2 s3(s2.x + shield1 / placeholdershield_step * placeholdershield_25, s2.y);
+	ImVec2 s4(s1.x + shield1 / placeholdershield_step * placeholdershield_25, s1.y);
+	ImVec2 s3m(s2.x + placeholdershield_25, s2.y);
+	ImVec2 s4m(s1.x + placeholdershield_25, s1.y);
 
 	ImVec2 ss1(s4m.x + 2, s1.y);
 	ImVec2 ss2(s3m.x + 2, s2.y);
-	ImVec2 ss3(ss2.x + shield2 / changeableplaceshield_step * changeableplaceshield_25, s2.y);
-	ImVec2 ss4(ss1.x + shield2 / changeableplaceshield_step * changeableplaceshield_25, s1.y);
-	ImVec2 ss3m(ss2.x + changeableplaceshield_25, s2.y);
-	ImVec2 ss4m(ss1.x + changeableplaceshield_25, s1.y);
+	ImVec2 ss3(ss2.x + shield2 / placeholdershield_step * placeholdershield_25, s2.y);
+	ImVec2 ss4(ss1.x + shield2 / placeholdershield_step * placeholdershield_25, s1.y);
+	ImVec2 ss3m(ss2.x + placeholdershield_25, s2.y);
+	ImVec2 ss4m(ss1.x + placeholdershield_25, s1.y);
 
 	ImVec2 sss1(ss4m.x + 2, s1.y);
 	ImVec2 sss2(ss3m.x + 2, s2.y);
-	ImVec2 sss3(sss2.x + shield3 / changeableplaceshield_step * changeableplaceshield_25, s2.y);
-	ImVec2 sss4(sss1.x + shield3 / changeableplaceshield_step * changeableplaceshield_25, s1.y);
-	ImVec2 sss3m(sss2.x + changeableplaceshield_25, s2.y);
-	ImVec2 sss4m(sss1.x + changeableplaceshield_25, s1.y);
+	ImVec2 sss3(sss2.x + shield3 / placeholdershield_step * placeholdershield_25, s2.y);
+	ImVec2 sss4(sss1.x + shield3 / placeholdershield_step * placeholdershield_25, s1.y);
+	ImVec2 sss3m(sss2.x + placeholdershield_25, s2.y);
+	ImVec2 sss4m(sss1.x + placeholdershield_25, s1.y);
 
 	ImVec2 ssss1(sss4m.x + 2, s1.y);
 	ImVec2 ssss2(sss3m.x + 2, s2.y);
-	ImVec2 ssss3(ssss2.x + shield4 / changeableplaceshield_step * changeableplaceshield_25, s2.y);
-	ImVec2 ssss4(ssss1.x + shield4 / changeableplaceshield_step * changeableplaceshield_25, s1.y);
-	ImVec2 ssss3m(ssss2.x + changeableplaceshield_25, s2.y);
-	ImVec2 ssss4m(ssss1.x + changeableplaceshield_25, s1.y);
+	ImVec2 ssss3(ssss2.x + shield4 / placeholdershield_step * placeholdershield_25, s2.y);
+	ImVec2 ssss4(ssss1.x + shield4 / placeholdershield_step * placeholdershield_25, s1.y);
+	ImVec2 ssss3m(ssss2.x + placeholdershield_25, s2.y);
+	ImVec2 ssss4m(ssss1.x + placeholdershield_25, s1.y);
 
 	ImVec2 sssss1(ssss4m.x + 2, s1.y);
 	ImVec2 sssss2(ssss3m.x + 2, s2.y);
-	ImVec2 sssss3(sssss2.x + shield5 / changeableplaceshield_step * changeableplaceshield_25, s2.y);
-	ImVec2 sssss4(sssss1.x + shield5 / changeableplaceshield_step * changeableplaceshield_25, s1.y);
-	ImVec2 sssss3m(sssss2.x + changeableplaceshield_25, s2.y);
-	ImVec2 sssss4m(sssss1.x + changeableplaceshield_25, s1.y);
-	if (changeableplacemax_shield == 50) {
-		if (changeableplaceshield <= 25) {
-			if (changeableplaceshield < 25) {
+	ImVec2 sssss3(sssss2.x + shield5 / placeholdershield_step * placeholdershield_25, s2.y);
+	ImVec2 sssss4(sssss1.x + shield5 / placeholdershield_step * placeholdershield_25, s1.y);
+	ImVec2 sssss3m(sssss2.x + placeholdershield_25, s2.y);
+	ImVec2 sssss4m(sssss1.x + placeholdershield_25, s1.y);
+	if (placeholdermax_shield == 50) {
+		if (placeholdershield <= 25) {
+			if (placeholdershield < 25) {
 				DrawQuadFilled(s1, s2, s3m, s4m, shieldCracked);
 				DrawQuadFilled(ss1, ss2, ss3m, ss4m, shieldCracked);
 			}
-			if (changeableplaceshield != 0)
+			if (placeholdershield != 0)
 				DrawQuadFilled(s1, s2, s3, s4, shieldCol);
 
 		}
-		else if (changeableplaceshield <= 50) {
+		else if (placeholdershield <= 50) {
 			DrawQuadFilled(s1, s2, s3, s4, shieldCol);
-			if (changeableplaceshield != 50) {
+			if (placeholdershield != 50) {
 				DrawQuadFilled(ss1, ss2, ss3m, ss4m, shieldCracked);
 			}
-			if (changeableplaceshield != 0)
+			if (placeholdershield != 0)
 				DrawQuadFilled(ss1, ss2, ss3, ss4, shieldCol);
 		}
 	}
-	else if (changeableplacemax_shield == 75) {
-		if (changeableplaceshield <= 25) {
-			if (changeableplaceshield < 25) {
+	else if (placeholdermax_shield == 75) {
+		if (placeholdershield <= 25) {
+			if (placeholdershield < 25) {
 				DrawQuadFilled(s1, s2, s3m, s4m, shieldCracked);
 				DrawQuadFilled(ss1, ss2, ss3m, ss4m, shieldCracked);
 				DrawQuadFilled(sss1, sss2, sss3m, sss4m, shieldCracked);
 			}
-			if (changeableplaceshield != 0)
+			if (placeholdershield != 0)
 				DrawQuadFilled(s1, s2, s3, s4, shieldCol);
 
 		}
-		else if (changeableplaceshield <= 50) {
+		else if (placeholdershield <= 50) {
 			DrawQuadFilled(s1, s2, s3, s4, shieldCol);
-			if (changeableplaceshield < 50) {
+			if (placeholdershield < 50) {
 				DrawQuadFilled(ss1, ss2, ss3m, ss4m, shieldCracked);
 				DrawQuadFilled(sss1, sss2, sss3m, sss4m, shieldCracked);
 			}
-			if (changeableplaceshield != 0)
+			if (placeholdershield != 0)
 				DrawQuadFilled(ss1, ss2, ss3, ss4, shieldCol);
 		}
-		else if (changeableplaceshield <= 75) {
+		else if (placeholdershield <= 75) {
 			DrawQuadFilled(s1, s2, s3, s4, shieldCol);
 			DrawQuadFilled(ss1, ss2, ss3, ss4, shieldCol);
-			if (changeableplaceshield < 75) {
+			if (placeholdershield < 75) {
 				DrawQuadFilled(sss1, sss2, sss3m, sss4m, shieldCracked);
 			}
-			if (changeableplaceshield != 0)
+			if (placeholdershield != 0)
 				DrawQuadFilled(sss1, sss2, sss3, sss4, shieldCol);
 		}
 	}
-	else if (changeableplacemax_shield == 100) {
-		if (changeableplaceshield <= 25) {
-			if (changeableplaceshield < 25) {
+	else if (placeholdermax_shield == 100) {
+		if (placeholdershield <= 25) {
+			if (placeholdershield < 25) {
 				DrawQuadFilled(s1, s2, s3m, s4m, shieldCracked);
 				DrawQuadFilled(ss1, ss2, ss3m, ss4m, shieldCracked);
 				DrawQuadFilled(sss1, sss2, sss3m, sss4m, shieldCracked);
 				DrawQuadFilled(ssss1, ssss2, ssss3m, ssss4m, shieldCracked);
 			}
-			if (changeableplaceshield != 0)
+			if (placeholdershield != 0)
 				DrawQuadFilled(s1, s2, s3, s4, shieldCol);
 
 		}
-		else if (changeableplaceshield <= 50) {
+		else if (placeholdershield <= 50) {
 			DrawQuadFilled(s1, s2, s3, s4, shieldCol);
-			if (changeableplaceshield < 50) {
+			if (placeholdershield < 50) {
 				DrawQuadFilled(ss1, ss2, ss3m, ss4m, shieldCracked);
 				DrawQuadFilled(sss1, sss2, sss3m, sss4m, shieldCracked);
 				DrawQuadFilled(ssss1, ssss2, ssss3m, ssss4m, shieldCracked);
 			}
-			if (changeableplaceshield != 0)
+			if (placeholdershield != 0)
 				DrawQuadFilled(ss1, ss2, ss3, ss4, shieldCol);
 		}
-		else if (changeableplaceshield <= 75) {
+		else if (placeholdershield <= 75) {
 			DrawQuadFilled(s1, s2, s3, s4, shieldCol);
 			DrawQuadFilled(ss1, ss2, ss3, ss4, shieldCol);
-			if (changeableplaceshield < 75) {
+			if (placeholdershield < 75) {
 				DrawQuadFilled(sss1, sss2, sss3m, sss4m, shieldCracked);
 				DrawQuadFilled(ssss1, ssss2, ssss3m, ssss4m, shieldCracked);
 			}
-			if (changeableplaceshield != 0)
+			if (placeholdershield != 0)
 				DrawQuadFilled(sss1, sss2, sss3, sss4, shieldCol);
 		}
-		else if (changeableplaceshield <= 100) {
+		else if (placeholdershield <= 100) {
 			DrawQuadFilled(s1, s2, s3, s4, shieldCol);
 			DrawQuadFilled(ss1, ss2, ss3, ss4, shieldCol);
 			DrawQuadFilled(sss1, sss2, sss3, sss4, shieldCol);
-			if (changeableplaceshield < 100) {
+			if (placeholdershield < 100) {
 				DrawQuadFilled(ssss1, ssss2, ssss3m, ssss4m, shieldCracked);
 			}
-			if (changeableplaceshield != 0)
+			if (placeholdershield != 0)
 				DrawQuadFilled(ssss1, ssss2, ssss3, ssss4, shieldCol);
 		}
 	}
-	else if (changeableplacemax_shield == 125) {
-		if (changeableplaceshield <= 25) {
-			if (changeableplaceshield < 25) {
+	else if (placeholdermax_shield == 125) {
+		if (placeholdershield <= 25) {
+			if (placeholdershield < 25) {
 				DrawQuadFilled(s1, s2, s3m, s4m, shieldCracked);
 				DrawQuadFilled(ss1, ss2, ss3m, ss4m, shieldCracked);
 				DrawQuadFilled(sss1, sss2, sss3m, sss4m, shieldCracked);
 				DrawQuadFilled(ssss1, ssss2, ssss3m, ssss4m, shieldCracked);
 				DrawQuadFilled(sssss1, sssss2, sssss3m, sssss4m, shieldCracked);
 			}
-			if (changeableplaceshield != 0)
+			if (placeholdershield != 0)
 				DrawQuadFilled(s1, s2, s3, s4, shieldCol);
 
 		}
-		else if (changeableplaceshield <= 50) {
+		else if (placeholdershield <= 50) {
 			DrawQuadFilled(s1, s2, s3, s4, shieldCol);
-			if (changeableplaceshield < 50) {
+			if (placeholdershield < 50) {
 				DrawQuadFilled(ss1, ss2, ss3m, ss4m, shieldCracked);
 				DrawQuadFilled(sss1, sss2, sss3m, sss4m, shieldCracked);
 				DrawQuadFilled(ssss1, ssss2, ssss3m, ssss4m, shieldCracked);
 				DrawQuadFilled(sssss1, sssss2, sssss3m, sssss4m, shieldCracked);
 			}
-			if (changeableplaceshield != 0)
+			if (placeholdershield != 0)
 				DrawQuadFilled(ss1, ss2, ss3, ss4, shieldCol);
 		}
-		else if (changeableplaceshield <= 75) {
+		else if (placeholdershield <= 75) {
 			DrawQuadFilled(s1, s2, s3, s4, shieldCol);
 			DrawQuadFilled(ss1, ss2, ss3, ss4, shieldCol);
-			if (changeableplaceshield < 75) {
+			if (placeholdershield < 75) {
 				DrawQuadFilled(sss1, sss2, sss3m, sss4m, shieldCracked);
 				DrawQuadFilled(ssss1, ssss2, ssss3m, ssss4m, shieldCracked);
 				DrawQuadFilled(sssss1, sssss2, sssss3m, sssss4m, shieldCracked);
 			}
-			if (changeableplaceshield != 0)
+			if (placeholdershield != 0)
 				DrawQuadFilled(sss1, sss2, sss3, sss4, shieldCol);
 		}
-		else if (changeableplaceshield <= 100) {
+		else if (placeholdershield <= 100) {
 			DrawQuadFilled(s1, s2, s3, s4, shieldCol);
 			DrawQuadFilled(ss1, ss2, ss3, ss4, shieldCol);
 			DrawQuadFilled(sss1, sss2, sss3, sss4, shieldCol);
-			if (changeableplaceshield < 100) {
+			if (placeholdershield < 100) {
 				DrawQuadFilled(ssss1, ssss2, ssss3m, ssss4m, shieldCracked);
 				DrawQuadFilled(sssss1, sssss2, sssss3m, sssss4m, shieldCracked);
 			}
-			if (changeableplaceshield != 0)
+			if (placeholdershield != 0)
 				DrawQuadFilled(ssss1, ssss2, ssss3, ssss4, shieldCol);
 		}
-		else if (changeableplaceshield <= 125) {
+		else if (placeholdershield <= 125) {
 			DrawQuadFilled(s1, s2, s3, s4, shieldCol);
 			DrawQuadFilled(ss1, ss2, ss3, ss4, shieldCol);
 			DrawQuadFilled(sss1, sss2, sss3, sss4, shieldCol);
 			DrawQuadFilled(ssss1, ssss2, ssss3, ssss4, shieldCol);
-			if (changeableplaceshield < 125) {
+			if (placeholdershield < 125) {
 				DrawQuadFilled(sssss1, sssss2, sssss3m, sssss4m, shieldCracked);
 			}
-			if (changeableplaceshield != 0)
+			if (placeholdershield != 0)
 				DrawQuadFilled(sssss1, sssss2, sssss3, sssss4, shieldCol);
 		}
 	}

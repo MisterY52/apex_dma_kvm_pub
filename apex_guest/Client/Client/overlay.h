@@ -24,39 +24,42 @@
 #define WHITE ImColor(255, 255, 255)
 #define PURPLE ImColor(255, 0 , 255)
 
-typedef struct changeableplacevisuals
+typedef struct placeholdervisuals
 {
-	bool changeableplacebox = true;
-	bool changeableplaceline = true;
-	bool changeableplacedistance = true;
-	bool changeableplacehealthbar = true;
-	bool changeableplaceshieldbar = true;
-	bool changeableplacename = true;
-	bool changeableplacerenderxp = true;
-}changeableplacevisuals;
+	bool placeholderbox = true;
+	bool placeholderline = true;
+	bool placeholderdistance = true;
+	bool placeholderhealthbar = true;
+	bool placeholdershieldbar = true;
+	bool placeholdername = true;
+	bool placeholderrenderxp = true;
+}placeholdervisuals;
 
 
 class Overlay
 {
 public:
-	void Startchangeableplace();
-	DWORD CreatechangeableplaceOverlay();
-	void Clearchangeableplace();
-	int getchangeableplaceWidth();
-	int getchangeableplaceHeight();
-	void RenderchangeableplaceInfo();
-	void RenderchangeableplaceMenu();
-	void RenderchangeableplaceEsp();
-	void ClickchangeableplaceThrough(bool v);
-	void DrawchangeableplaceLine(ImVec2 a, ImVec2 b, ImColor color, float width);
-	void DrawchangeableplaceBox(ImColor color, float x, float y, float w, float h);
-	void changeableplaceText(ImVec2 pos, ImColor color, const char* text_begin, const char* text_end, float wrap_width, const ImVec4 * cpu_fine_clip_rect);
-	void RectchangeableplaceFilled(float x0, float y0, float x1, float y1, ImColor color, float rounding, int rounding_corners_flags);
-	void ProgresschangeableplaceBar(float x, float y, float w, float h, int value, int v_max, ImColor barColor);
-	void Stringchangeableplace(ImVec2 pos, ImColor color, const char* text);
+	void Startplaceholder();
+	DWORD CreateplaceholderOverlay();
+	void Clearplaceholder();
+	int getplaceholderWidth();
+	int getplaceholderHeight();
+	void RenderplaceholderInfo();
+	void RenderplaceholderMenu();
+	void RenderplaceholderEsp();
+	void RenderplaceholderSpectator();
+	void ClickplaceholderThrough(bool v);
+	void DrawplaceholderLine(ImVec2 a, ImVec2 b, ImColor color, float width);
+	void DrawplaceholderBox(ImColor color, float x, float y, float w, float h);
+	void placeholderText(ImVec2 pos, ImColor color, const char* text_begin, const char* text_end, float wrap_width, const ImVec4 * cpu_fine_clip_rect);
+	void placeholderText(ImVec2 pos, ImColor color, const char* text_begin, const char* text_end, float wrap_width, const ImVec4* cpu_fine_clip_rect,int font);
+	void RectplaceholderFilled(float x0, float y0, float x1, float y1, ImColor color, float rounding, int rounding_corners_flags);
+	void ProgressplaceholderBar(float x, float y, float w, float h, int value, int v_max, ImColor barColor);
+	void Stringplaceholder(ImVec2 pos, ImColor color, const char* text);
+	void Stringplaceholder(ImVec2 pos, ImColor color, const char* text, int font);
 	//Seer
-	void DrawchangeableplaceHealth(float changeableplacex, float changeableplacey, int changeableplaceshield, int changeableplacemax_shield, int changeableplacearmorType, int changeableplacehealth);
+	void DrawplaceholderHealth(float placeholderx, float placeholdery, int placeholdershield, int placeholdermax_shield, int placeholderarmorType, int placeholderhealth);
 private:
-	bool changeableplacerunning;
-	HWND overlaychangeableplaceHWND;
+	bool placeholderrunning;
+	HWND overlayplaceholderHWND;
 };
