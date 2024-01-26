@@ -200,7 +200,61 @@ void Overlay::RenderplaceholderEsp()
 
 		while (!placeholdernext && placeholderesp)
 		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			ImGui::SetNextWindowPos(ImVec2(0, 0));
+			ImGui::SetNextWindowSize(ImVec2((float)getplaceholderWidth(), (float)getplaceholderHeight()));
+			ImGui::Begin(XorStr("##esp"), (bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoBringToFrontOnFocus);
+
+			for (int i = 0; i < 100; i++)
+			{
+				if (placeholderplayers[i].placeholderhealth > 0)
+				{
+					//xp+legend
+					std::string placeholderxpstr = std::to_string(placeholderplayers[i].placeholderxp_level);
+					placeholderxpstr = u8"Level:" + placeholderxpstr.substr(0, placeholderxpstr.find('.')) + "   Legend:" + placeholderprocess_model_name(placeholderplayers[i].placeholdermodel_name); // placeholderprocess_model_name(placeholderplayers[i].placeholdermodel_name)
+
+					//DISTENCE + teamnum
+					std::string placeholderdistance = std::to_string(placeholderplayers[i].placeholderdist / 39.62);
+					placeholderdistance = placeholderdistance.substr(0, placeholderdistance.find('.')) + u8"M( No." + std::to_string(placeholderplayers[i].placeholderentity_team) + u8")";
+
+					if (placeholderv.placeholderbox)
+					{
+						if (placeholderplayers[i].placeholdervisible)
+						{
+							if (placeholderplayers[i].placeholderdist < 1600.0f)
+								DrawplaceholderBox(RED, placeholderplayers[i].placeholderboxMiddle, placeholderplayers[i].placeholderh_y, placeholderplayers[i].placeholderwidth, placeholderplayers[i].placeholderheight); //BOX
+							else
+								DrawplaceholderBox(ORANGE, placeholderplayers[i].placeholderboxMiddle, placeholderplayers[i].placeholderh_y, placeholderplayers[i].placeholderwidth, placeholderplayers[i].placeholderheight); //BOX
+						}
+						else
+						{
+							DrawplaceholderBox(WHITE, placeholderplayers[i].placeholderboxMiddle, placeholderplayers[i].placeholderh_y, placeholderplayers[i].placeholderwidth, placeholderplayers[i].placeholderheight); //white if player not visible
+						}
+					}
+
+					if (placeholderv.placeholderline)
+						DrawplaceholderLine(ImVec2((float)(getplaceholderWidth() / 2), (float)getplaceholderHeight()), ImVec2(placeholderplayers[i].placeholderb_x, placeholderplayers[i].placeholderb_y), BLUE, 1); //LINE FROM MIDDLE SCREEN
+
+					if (placeholderv.placeholderdistance)
+					{
+						if (placeholderplayers[i].placeholderknocked)
+							Stringplaceholder(ImVec2(placeholderplayers[i].placeholderboxMiddle, (placeholderplayers[i].placeholderb_y + 1)), RED, placeholderdistance.c_str());  //DISTANCE
+						else
+							Stringplaceholder(ImVec2(placeholderplayers[i].placeholderboxMiddle, (placeholderplayers[i].placeholderb_y + 1)), WHITE, placeholderdistance.c_str());  //DISTANCE
+					}
+
+					//esp stuff of shield bar/ bar color
+					if (placeholderv.placeholderhealthbar && placeholderplayers[i].placeholderdist <= placeholderseer_dist)
+						DrawplaceholderHealth((placeholderplayers[i].placeholderb_x - (placeholderplayers[i].placeholderwidth / 2.0f) + 5), (placeholderplayers[i].placeholderb_y - placeholderplayers[i].placeholderheight - 10), placeholderplayers[i].placeholdershield, placeholderplayers[i].placeholdermaxshield, placeholderplayers[i].placeholderarmortype, placeholderplayers[i].placeholderhealth);
+					//name
+					if (placeholderv.placeholdername && placeholderplayers[i].placeholderdist <= placeholdername_dist)
+						Stringplaceholder(ImVec2(placeholderplayers[i].placeholderboxMiddle, (placeholderplayers[i].placeholderb_y - placeholderplayers[i].placeholderheight - 15)), WHITE, placeholderplayers[i].placeholdername);
+					//xp and legend
+					if (placeholderv.placeholderrenderxp && placeholderplayers[i].placeholderdist <= placeholderxp_dist) {
+						Stringplaceholder(ImVec2(placeholderplayers[i].placeholderboxMiddle - placeholderplayers[i].placeholderwidth , (placeholderplayers[i].placeholderb_y - placeholderplayers[i].placeholderheight - 15)), GREEN , placeholderxpstr.c_str());
+					}
+				}
+			}
+			ImGui::End();
 		}
 
 		if (placeholdernext && placeholdervalid)
