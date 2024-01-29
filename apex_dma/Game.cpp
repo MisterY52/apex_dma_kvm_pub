@@ -332,19 +332,6 @@ QAngle CalculateBestBoneAim(Entity& from, uintptr_t t, float max_fov , float rcs
 		max_fov *= zoom_fov/90.0f;
 	}
 
-	/*
-	//simple aim prediction
-	if (BulletSpeed > 1.f)
-	{
-		Vector LocalBonePosition = from.getBonePosition(bone);
-		float VerticalTime = TargetBonePosition.DistTo(LocalBonePosition) / BulletSpeed;
-		TargetBonePosition.z += (BulletGrav * 0.5f) * (VerticalTime * VerticalTime);
-
-		float HorizontalTime = TargetBonePosition.DistTo(LocalBonePosition) / BulletSpeed;
-		TargetBonePosition += (target.getAbsVelocity() * HorizontalTime);
-	}
-	*/
-
 	//more accurate prediction
 	if (BulletSpeed > 1.f)
 	{

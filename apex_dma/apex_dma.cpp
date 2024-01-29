@@ -7,12 +7,13 @@
 #include <iostream>
 #include <cfloat>
 #include "Game.h"
+#include "Pro.h"
 #include <thread>
 
 Memory apex_mem;
 Memory client_mem;
 
-uint64_t add_off = 0x40980;
+uint64_t add_off = 0x0000;
 
 bool freecam = false;
 bool lockall_enable = false;
@@ -53,6 +54,8 @@ bool knext = false;
 bool valid = false;
 bool klock = false;
 
+bool refresh = false;
+
 typedef struct player
 {
 	float dist = 0;
@@ -77,8 +80,15 @@ typedef struct player
 typedef struct spectator{
 	bool is_spec = false;
 	int xp_level = 0;
+	int pro_level = 0;
 	char name[33] = { 0 };
 }spectator;
+
+
+typedef struct player_list{
+	uint64_t userID = 0;
+	char name[33] = { 0 };
+}player_list;
 
 struct Matrix
 {
@@ -86,6 +96,7 @@ struct Matrix
 };
 
 spectator spectator_list[toRead];
+player_list PList[toRead];
 
 float lastvis_esp[toRead]; float lastvis_aim[toRead];
 
@@ -150,6 +161,29 @@ void ProcessPlayer(Entity& LPlayer, Entity& target, uint64_t entitylist, int ind
 		}
 	}
 	lastvis_aim[index] = target.lastVisTime();
+}
+
+void refresh_list(){
+	memset(PList,0, sizeof(PList));
+
+	uint64_t LocalPlayer = 0;
+	apex_mem.Read<uint64_t>(g_Base + OFFSET_LOCAL_ENT, LocalPlayer);
+
+	Entity LPlayer = getEntity(LocalPlayer);
+	uint64_t entitylist = g_Base + OFFSET_ENTITYLIST;
+	uint64_t baseent = 0;
+	apex_mem.Read<uint64_t>(entitylist, baseent);
+	for (int i = 0; i < toRead; i++)
+	{
+		uint64_t centity = 0;
+		apex_mem.Read<uint64_t>(entitylist + ((uint64_t)i << 5), centity);
+		Entity Target = getEntity(centity);
+		if (centity == 0) continue;
+		Target.get_name(g_Base,i-1,&PList[i].name[0]);
+		uint64_t player_uid = 0;
+		apex_mem.Read<uint64_t>(centity + OFFSET_USERID, player_uid);
+		PList[i].userID = player_uid;
+	}
 }
 
 void DoActions()
@@ -231,6 +265,8 @@ void DoActions()
 			{
 				for (int i = 0; i < toRead; i++)
 				{
+
+
 					uint64_t centity = 0;
 					apex_mem.Read<uint64_t>(entitylist + ((uint64_t)i << 5), centity);
 					if (centity == 0) continue;
@@ -250,12 +286,22 @@ void DoActions()
 						apex_mem.Read<int>(centity + OFFSET_XP, xp);
 						int xp_level = calc_level(xp);
 						spectator_list[i].xp_level = xp_level;
-						if(spectator_list[i].name[0]){ //detect if this player quit
+
+						//Check ALGS Player
+						uint64_t player_uid = 0;
+						apex_mem.Read<uint64_t>(centity + OFFSET_USERID, player_uid);
+						spectator_list[i].pro_level = checkIsPro(player_uid);
+
+
+						//detect if this player left
+						if(spectator_list[i].name[0]){
 							spectator_list[i].is_spec = true;
 						}else{spectator_list[i].is_spec = false;}
-					}else{
+
+					}else{ //if that player is alive and not a spectator
 						spectator_list[i].is_spec = false;
 					}
+
 					ProcessPlayer(LPlayer, Target, entitylist, i);
 
 					int entity_team = Target.getTeamId();
@@ -264,6 +310,10 @@ void DoActions()
 						continue;
 					}
 				}
+			}
+
+			if(refresh){
+				refresh_list();
 			}
 
 			if (!spectators && !allied_spectators)
@@ -305,7 +355,8 @@ static void EspLoop()
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		while (g_Base != 0 && c_Base != 0)
 		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			//std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			//printf("sleeped1\n");
 			if (esp)
 			{
 				valid = false;
@@ -383,8 +434,8 @@ static void EspLoop()
 
 						Vector bs = Vector();
 						WorldToScreen(EntityPosition, m.matrix, 1920, 1080, bs);
-						if (bs.x > 0 && bs.y > 0)
-						{
+						//if (bs.x > 0 && bs.y > 0)
+						//{
 							Vector hs = Vector();
 							Vector HeadPosition = Target.getBonePositionByHitbox(0);
 							WorldToScreen(HeadPosition, m.matrix, 1920, 1080, hs);
@@ -425,7 +476,7 @@ static void EspLoop()
 							lastvis_esp[c] = Target.lastVisTime();
 							valid = true;
 							c++;
-						}
+						//}
 					}
 				}
 				else
@@ -479,8 +530,8 @@ static void EspLoop()
 
 						Vector bs = Vector();
 						WorldToScreen(EntityPosition, m.matrix, 1920, 1080, bs);
-						if (bs.x > 0 && bs.y > 0)
-						{
+						//if (bs.x > 0 && bs.y > 0)
+						//{
 							Vector hs = Vector();
 							Vector HeadPosition = Target.getBonePositionByHitbox(0);
 							WorldToScreen(HeadPosition, m.matrix, 1920, 1080, hs);
@@ -522,14 +573,15 @@ static void EspLoop()
 
 							lastvis_esp[i] = Target.lastVisTime();
 							valid = true;
-						}
+						//}
 					}
 				}
 
 				knext = true;
 				while (knext && g_Base != 0 && c_Base != 0 && esp)
 				{
-					std::this_thread::sleep_for(std::chrono::milliseconds(1));
+					//std::this_thread::sleep_for(std::chrono::milliseconds(1));
+				//printf("sleeped knext");
 				}
 			}
 		}
@@ -627,19 +679,30 @@ static void set_vars(uint64_t add_addr)
 	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 22, lockall_addr);
 	uint64_t firing_range_addr = 0;
 	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 23, firing_range_addr);
-    	uint64_t rcs_p_addr = 0;
-    	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 24, rcs_p_addr);
-    	uint64_t rcs_y_addr = 0;
-    	client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 25, rcs_y_addr);
+    uint64_t rcs_p_addr = 0;
+    client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 24, rcs_p_addr);
+    uint64_t rcs_y_addr = 0;
+    client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 25, rcs_y_addr);
+	uint64_t refresh_addr = 0;
+    client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 26, refresh_addr);
+        uint64_t player_list_addr = 0;
+    client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 27, player_list_addr);
+
 	uint32_t check = 0;
 	client_mem.Read<uint32_t>(check_addr, check);
 
+	int check_counter = 0;
 	if (check != 0xABCD)
 	{
-		printf("check add_off,or start client before start host\n");
-		active = false;
-		return;
+		check_counter++;
+		if(check_counter == 210){
+			printf("check add_off,or restart client before start host\n");
+			active = false;
+			check_counter = 0;
+			return;
+		}
 	}
+
 	vars_t = true;
 	while (vars_t)
 	{
@@ -657,6 +720,7 @@ static void set_vars(uint64_t add_addr)
 			client_mem.Write<int>(spectators_addr, spectators);
 			client_mem.Write<int>(allied_spectators_addr, allied_spectators);
 			client_mem.WriteArray<spectator>(spec_list_addr, spectator_list , toRead);
+			client_mem.WriteArray<player_list>(player_list_addr, PList , toRead);
 
 			client_mem.Read<int>(aim_addr, aim);
 			client_mem.Read<bool>(esp_addr, esp);
@@ -674,6 +738,7 @@ static void set_vars(uint64_t add_addr)
 			client_mem.Read<bool>(firing_range_addr, firing_range);
 			client_mem.Read<float>(rcs_p_addr, rcs_pitch);
 			client_mem.Read<float>(rcs_y_addr, rcs_yaw);
+			client_mem.Read<bool>(refresh_addr, refresh);
 
 			if (esp && knext)
 			{
@@ -737,7 +802,6 @@ int main(int argc, char* argv[])
 			if (apex_mem.get_proc_status() == process_status::FOUND_READY)
 			{
 				g_Base = apex_mem.get_proc_baseaddr();
-				printf("\nFounded Apex!\n");
 
 				aimbot_thr = std::thread(AimbotLoop);
 				esp_thr = std::thread(EspLoop);

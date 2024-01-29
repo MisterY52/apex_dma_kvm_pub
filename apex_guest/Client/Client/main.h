@@ -7,6 +7,7 @@
 //#pragma comment(lib,"lib/libcurl_a.lib")
 //#pragma comment(lib,"lib/jsoncpp.lib")
 
+#include <Winsock2.h>
 #include <windows.h>
 #include <time.h>
 #include <fstream>
