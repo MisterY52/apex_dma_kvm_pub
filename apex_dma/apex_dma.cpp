@@ -705,8 +705,7 @@ int main(int argc, char *argv[])
 {
 	if(geteuid() != 0)
 	{
-		printf("Error: %s is not running as root\n", argv[0]);
-		return 0;
+		printf("Warning: %s is not running as root\n", argv[0]);
 	}
 
 	const char* cl_proc = "client_ap.exe";

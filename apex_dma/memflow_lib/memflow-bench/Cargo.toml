@@ -1,30 +1,29 @@
 [package]
 name = "memflow-bench"
-version = "0.1.5"
-authors = ["Aurimas Blažulionis <0x60@pm.me>"]
+version = "0.2.0"
+authors = ["Aurimas Blažulionis <0x60@pm.me>", "ko1N <ko1N1337@gmail.com>"]
 edition = "2018"
 description = "benchmarks for the memflow physical memory introspection framework"
 readme = "README.md"
 homepage = "https://memflow.github.io"
 repository = "https://github.com/memflow/memflow"
-license-file = "../LICENSE"
+license = "MIT"
 keywords = [ "memflow", "introspection", "memory", "dma" ]
 categories = [ "memory-management", "os" ]
 publish = false
 
 [dependencies]
-memflow = { path = "../memflow", features = ["dummy_mem"] }
-rand = "0.7"
-rand_xorshift = "0.2"
+memflow = { version = "0.2", path = "../memflow", features = ["dummy_mem"] }
+log = "^0.4.14"
+rand = "^0.8.4"
+rand_xorshift = "^0.3"
 
 # This branch provides throughput plots
-criterion = { git = "https://github.com/h33p/criterion.rs.git", branch = "tput" }
-
-memflow-win32 = { path = "../memflow-win32" }
+criterion = { git = "https://github.com/h33p/criterion.rs.git", branch = "tput2" }
 
 [dev-dependencies]
-memflow = { path = "../memflow", features = ["dummy_mem"] }
-memflow-win32 = { path = "../memflow-win32" }
+memflow = { version = "0.2", path = "../memflow", features = ["dummy_mem", "plugins"] }
+simplelog = "^0.12.0"
 
 [features]
 default = []
@@ -33,9 +32,9 @@ default = []
 name = "read_dummy"
 harness = false
 
-#[[bench]]
-#name = "read_win32"
-#harness = false
+[[bench]]
+name = "read_win32"
+harness = false
 
 [[bench]]
 name = "batcher"

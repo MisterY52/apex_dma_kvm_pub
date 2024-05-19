@@ -1,24 +1,21 @@
-
 [profile.bench]
 debug = true
 
 [workspace]
 members = [
     "memflow",
-    "memflow-win32",
     "memflow-ffi",
-    "memflow-win32-ffi",
     "memflow-bench",
 ]
 default-members = [
     "memflow",
-    "memflow-win32",
     "memflow-ffi",
-    "memflow-win32-ffi",
     "memflow-bench",
 ]
 
 exclude = [
-    "nostd-test",
-    "memflow-qemu-procfs"
+    "nostd-test"
 ]
+
+[patch.crates-io]
+goblin = { git = "https://github.com/h33p/goblin", branch = "lossy-macho" }
