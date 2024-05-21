@@ -119,30 +119,41 @@ void Memory::open_proc(const char *name)
 		printf("Kernel initialized: %p\n", kernel.get()->container.instance.instance);
 	}
 
-	if (kernel.get()->process_by_name(name, &proc.hProcess))
+	ProcessInfo info;
+
+	if (kernel.get()->process_info_by_name(name, &info))
+	{
+		printf("Can't get process info\n");
+		return;
+	}
+
+	if (kernel.get()->process_by_info(info, &proc.hProcess))
 	{
 		status = process_status::NOT_FOUND;
 		return;
 	}
 
 	ModuleInfo module_info;
-	for (size_t dtb = 0; dtb <= SIZE_MAX; dtb += 0x1000)
+
+	if (proc.hProcess.module_by_name(name, &module_info))
 	{
-		if (!proc.hProcess.module_by_name(name, &module_info))
-			break;
+		printf("Can't find base module info for process %s. Trying with a new dtb...\n", name);
 
-		if (dtb == SIZE_MAX)
+		for (size_t dtb = 0; dtb <= SIZE_MAX; dtb += 0x1000)
 		{
-			printf("Access error for process %s\n", name);
-			status = process_status::FOUND_NO_ACCESS;
-			return;
-		}
-		else
-		{
-			if (dtb == 0)
-				printf("Can't find base module info for process %s. Trying with a new dtb...\n", name);
+			info.dtb1 = dtb;
+			info.dtb2 = Address_INVALID;
+			kernel.get()->process_by_info(info, &proc.hProcess);
 
-			proc.hProcess.set_dtb(dtb, Address_INVALID);
+			if (!proc.hProcess.module_by_name(name, &module_info))
+				break;
+
+			if (dtb == SIZE_MAX)
+			{
+				printf("Access error for process %s\n", name);
+				status = process_status::FOUND_NO_ACCESS;
+				return;
+			}
 		}
 	}
 
