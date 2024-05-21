@@ -123,7 +123,7 @@ void Memory::open_proc(const char *name)
 
 	if (kernel.get()->process_info_by_name(name, &info))
 	{
-		printf("Can't get process info\n");
+		status = process_status::NOT_FOUND;
 		return;
 	}
 
