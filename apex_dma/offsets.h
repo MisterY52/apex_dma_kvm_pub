@@ -34,6 +34,7 @@
     #define OFFSET_BREATH_ANGLES		OFFSET_VIEWANGLES - 0x10
     #define OFFSET_OBSERVER_MODE		0x34a4 //m_iObserverMode
     #define OFFSET_OBSERVING_TARGET		0x34b0 //m_hObserverTarget
+    #define OFFSET_OBSERVER_LIST        0x1EADD28
 
     #define OFFSET_MATRIX				0x11a350
     #define OFFSET_RENDER				0x74dd028
