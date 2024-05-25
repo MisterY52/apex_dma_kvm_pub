@@ -91,6 +91,7 @@ bool kernel_init(Inventory *inv, const char *connector_name)
 	{
 		printf("Unable to initialize kernel using %s connector\n", connector_name);
 		connector_drop(conn.get());
+		kernel.reset();
 		return false;
 	}
 
@@ -120,6 +121,7 @@ void Memory::open_proc(const char *name)
 	}
 
 	ProcessInfo info;
+	info.dtb2 = Address_INVALID;
 
 	if (kernel.get()->process_info_by_name(name, &info))
 	{
@@ -127,7 +129,9 @@ void Memory::open_proc(const char *name)
 		return;
 	}
 
-	if (kernel.get()->process_by_info(info, &proc.hProcess))
+	ProcessInstance<> tmp_proc;
+
+	if (kernel.get()->process_by_info(info, &tmp_proc))
 	{
 		status = process_status::NOT_FOUND;
 		return;
@@ -135,17 +139,16 @@ void Memory::open_proc(const char *name)
 
 	ModuleInfo module_info;
 
-	if (proc.hProcess.module_by_name(name, &module_info))
+	if (tmp_proc.module_by_name(name, &module_info))
 	{
 		printf("Can't find base module info for process %s. Trying with a new dtb...\n", name);
 
 		for (size_t dtb = 0; dtb <= SIZE_MAX; dtb += 0x1000)
 		{
 			info.dtb1 = dtb;
-			info.dtb2 = Address_INVALID;
-			kernel.get()->process_by_info(info, &proc.hProcess);
+			kernel.get()->process_by_info(info, &tmp_proc);
 
-			if (!proc.hProcess.module_by_name(name, &module_info))
+			if (!tmp_proc.module_by_name(name, &module_info))		
 				break;
 
 			if (dtb == SIZE_MAX)
@@ -156,6 +159,8 @@ void Memory::open_proc(const char *name)
 			}
 		}
 	}
+
+	kernel.get()->clone().into_process_by_info(info, &proc.hProcess);
 
 	proc.baseaddr = module_info.base;
 	status = process_status::FOUND_READY;

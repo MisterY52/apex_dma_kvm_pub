@@ -34,7 +34,7 @@ size_t findPattern(const PBYTE rangeStart, size_t len, const char *pattern);
 
 typedef struct Process
 {
-	ProcessInstance<> hProcess;
+	IntoProcessInstance<> hProcess;
 	uint64_t baseaddr = 0;
 } Process;
 
