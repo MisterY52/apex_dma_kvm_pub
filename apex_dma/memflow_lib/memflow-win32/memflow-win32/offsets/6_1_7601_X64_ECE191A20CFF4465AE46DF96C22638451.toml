@@ -1,0 +1,34 @@
+[header]
+pdb_file_name = "ntkrnlmp.pdb"
+pdb_guid = "ECE191A20CFF4465AE46DF96C22638451"
+nt_major_version = 6
+nt_minor_version = 1
+nt_build_number = 7601
+arch = "X64"
+
+[offsets]
+list_blink = 8
+eproc_link = 392
+phys_mem_block = 2740280
+kproc_dtb = 40
+eproc_pid = 384
+eproc_name = 736
+eproc_peb = 824
+eproc_section_base = 624
+eproc_exit_status = 1092
+eproc_thread_list = 776
+eproc_wow64 = 800
+eproc_vad_root = 1096
+kthread_teb = 184
+ethread_list_entry = 1064
+teb_peb = 96
+teb_peb_x86 = 48
+
+[offsets.mmvad]
+vad_node = 8
+starting_vpn = 24
+ending_vpn = 32
+starting_vpn_high = 0
+ending_vpn_high = 0
+u = 40
+protection_bit = 56

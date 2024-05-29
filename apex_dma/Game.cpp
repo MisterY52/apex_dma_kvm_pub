@@ -7,17 +7,24 @@ float smooth = 12.0f;
 bool aim_no_recoil = true;
 int bone = 2;
 
-bool Entity::Observing(uint64_t entitylist)
+// https://github.com/Gerosity/zap-client/blob/master/Core/Player.hpp#L161
+bool Entity::Observing(uint64_t localptr)
 {
-	/*uint64_t index = *(uint64_t*)(buffer + OFFSET_OBSERVING_TARGET);
-	index &= ENT_ENTRY_MASK;
-	if (index > 0)
-	{
-		uint64_t centity2 = apex_mem.Read<uint64_t>(entitylist + ((uint64_t)index << 5));
-		return centity2;
-	}
-	return 0;*/
-	return *(bool*)(buffer + OFFSET_OBSERVER_MODE);
+	uint64_t SpectatorList;
+	apex_mem.Read<uint64_t>(apex_mem.get_proc_baseaddr() + OFFSET_OBSERVER_LIST, SpectatorList);
+
+	int PlayerData;
+	apex_mem.Read<int>(ptr + 0x38, PlayerData);
+
+	int SpecIndex;
+	apex_mem.Read<int>(SpectatorList + PlayerData * 8 + 0x964, SpecIndex);
+
+	uint64_t SpectatorAddr;
+	apex_mem.Read<uint64_t>(apex_mem.get_proc_baseaddr() + OFFSET_ENTITYLIST + ((SpecIndex & 0xFFFF) << 5), SpectatorAddr);
+
+	if (SpectatorAddr == localptr)
+		return true;
+	return false;
 }
 
 //https://github.com/CasualX/apexbot/blob/master/src/state.cpp#L104

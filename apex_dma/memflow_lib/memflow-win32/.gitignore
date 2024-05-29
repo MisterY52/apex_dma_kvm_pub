@@ -1,0 +1,10 @@
+/target
+**/*.rs.bk
+*.swp
+*.so
+*.dll
+*.dylib
+.vscode
+*.so
+.vagrant
+TODO.md

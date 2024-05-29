@@ -2,6 +2,48 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.2.0-beta11
+- Added dtb1 and dtb2 fields to ProcessInfo structure
+- Added a function to the process trait which allows overriding dtb1/dtb2 with a custom value
+
+## 0.2.0-beta10
+- Removed all 'Inner' types and replaced them with GAT - this also shifts memflow to a minimum rust version of 1.70.0
+- Improved cache configuration when using plugins (usage: --connector kvm:::cache=true,cache_size=1kb,cache_time=10,cache_page_size=1000 where size and page_size is specified in hex)
+- Added DelayedPhysicalMemory middleware (usage: --connector kvm:::delay=200 where delay is specified in microseconds)
+- Added PhysicalMemoryMetrics middleware (usage: --connector kvm:::metrics=true)
+- Updated FileIoMemory constructor with a default identity mapped memory mapping.
+- Rewrote argument parser to properly handle quotes in complex arguments.
+
+## 0.2.0-beta9
+## 0.2.0-beta8
+- Hotfix for new bumpalo release
+
+## 0.2.0-beta7
+- Unified and simplified plugin proc macros and updated their documentation
+
+## 0.2.0-beta6
+- Added additional export/import/section helpers
+- Dependency updates
+
+## 0.2.0-beta5
+- Cleaned up plugin search paths and matched them with memflowup
+- Improved error messages
+- Plugins are resolved to their canonical path before adding
+- Added VirtualTranslate as optional trait on Os
+- Updated to latest cglue
+
+## 0.2.0-beta4
+- Added missing functions to retrieve exports/imports/sections from kernel modules
+- Added functions to retrieve primary kernel module
+
+## 0.2.0-beta3
+- Allow for PhysicalMemoryView to fill in gaps with zeros
+## 0.2.0-beta2
+- Memory API and Address rework
+
+## 0.2.0-beta1
+- Entirely new cglue based plugin architecture and various other major improvements
+
 ## 0.1.5
 - Added memflow::prelude::v1 and memflow_win32::prelude::v1 modules
 - Added new fields to FFI

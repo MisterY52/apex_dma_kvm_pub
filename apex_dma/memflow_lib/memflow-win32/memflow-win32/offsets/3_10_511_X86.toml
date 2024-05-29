@@ -1,0 +1,35 @@
+[header]
+nt_major_version = 3
+nt_minor_version = 10
+nt_build_number = 511
+arch = 'X86'
+
+[offsets]
+phys_mem_block = 0
+
+list_blink = 4
+eproc_link = 0xb4
+
+kproc_dtb = 0x38
+eproc_pid = 0xb0
+eproc_name = 0x228
+eproc_peb = 0x1c0
+eproc_section_base = 0x1c4
+eproc_exit_status = 0 #5.1+
+eproc_thread_list = 0 #5.1+
+eproc_wow64 = 0 #5.0+
+eproc_vad_root = 0x01a4 #3.10+
+
+kthread_teb = 0 #6.2+
+ethread_list_entry = 0x0 #5.0+
+teb_peb = 0 #?
+teb_peb_x86 = 0 #?
+
+[offsets.mmvad]
+vad_node = 12
+starting_vpn = 0
+ending_vpn = 4
+starting_vpn_high = 0
+ending_vpn_high = 0
+u = 20
+protection_bit = 0

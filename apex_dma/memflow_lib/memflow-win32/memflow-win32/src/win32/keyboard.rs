@@ -1,0 +1,339 @@
+/*!
+Module for reading a target's keyboard state.
+
+The `gafAsyncKeyState` array contains the current Keyboard state on Windows targets.
+This array will internally be read by the [`GetAsyncKeyState()`](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getasynckeystate) function of Windows.
+
+Although the gafAsyncKeyState array is exported by the win32kbase.sys kernel module it is only properly mapped into user mode processes.
+Therefor the Keyboard will by default find the winlogon.exe or wininit.exe process and use it as a proxy to read the data.
+
+# Examples:
+
+```
+use std::{thread, time};
+
+use memflow::mem::{PhysicalMemory, VirtualTranslate2};
+use memflow::os::{Keyboard, KeyboardState};
+use memflow_win32::win32::{Win32Kernel, Win32Keyboard};
+
+fn test<T: 'static + PhysicalMemory + Clone, V: 'static + VirtualTranslate2 + Clone>(kernel: &mut Win32Kernel<T, V>) {
+    let mut kbd = Win32Keyboard::with_kernel_ref(kernel).unwrap();
+
+    loop {
+        let kbs = kbd.state().unwrap();
+        println!("space down: {:?}", kbs.is_down(0x20)); // VK_SPACE
+        thread::sleep(time::Duration::from_millis(1000));
+    }
+}
+```
+*/
+use super::{Win32Kernel, Win32ProcessInfo, Win32VirtualTranslate};
+
+use memflow::cglue::*;
+use memflow::error::PartialResultExt;
+use memflow::error::{Error, ErrorKind, ErrorOrigin, Result};
+use memflow::mem::{MemoryView, PhysicalMemory, VirtualDma, VirtualTranslate2};
+use memflow::os::keyboard::*;
+use memflow::prelude::{ExportInfo, ModuleInfo, Os, Pid, Process};
+use memflow::types::{umem, Address};
+
+#[cfg(feature = "plugins")]
+use memflow::cglue;
+
+use log::debug;
+use std::convert::TryInto;
+
+#[cfg(feature = "plugins")]
+cglue_impl_group!(Win32Keyboard<T>, IntoKeyboard);
+
+/// Interface for accessing the target's keyboard state.
+#[derive(Clone, Debug)]
+pub struct Win32Keyboard<T> {
+    pub virt_mem: T,
+    key_state_addr: Address,
+}
+
+impl<T: 'static + PhysicalMemory + Clone, V: 'static + VirtualTranslate2 + Clone>
+    Win32Keyboard<VirtualDma<T, V, Win32VirtualTranslate>>
+{
+    pub fn with_kernel(mut kernel: Win32Kernel<T, V>) -> Result<Self> {
+        let (user_process_info, key_state_addr) = Self::find_keystate(&mut kernel)?;
+
+        let (phys_mem, vat) = kernel.virt_mem.into_inner();
+        let virt_mem = VirtualDma::with_vat(
+            phys_mem,
+            user_process_info.base_info.proc_arch,
+            user_process_info.translator(),
+            vat,
+        );
+
+        Ok(Self {
+            virt_mem,
+            key_state_addr,
+        })
+    }
+
+    /// Consumes this keyboard, returning the underlying memory and vat objects
+    pub fn into_inner(self) -> (T, V) {
+        self.virt_mem.into_inner()
+    }
+}
+
+impl<'a, T: 'static + PhysicalMemory + Clone, V: 'static + VirtualTranslate2 + Clone>
+    Win32Keyboard<VirtualDma<Fwd<&'a mut T>, Fwd<&'a mut V>, Win32VirtualTranslate>>
+{
+    /// Constructs a new keyboard object by borrowing a kernel object.
+    ///
+    /// Internally this will create a `VirtualDma` object that also
+    /// borrows the PhysicalMemory and Vat objects from the kernel.
+    ///
+    /// The resulting process object is NOT cloneable due to the mutable borrowing.
+    ///
+    /// When u need a cloneable Process u have to use the `::with_kernel` function
+    /// which will move the kernel object.
+    pub fn with_kernel_ref(kernel: &'a mut Win32Kernel<T, V>) -> Result<Self> {
+        let (user_process_info, key_state_addr) = Self::find_keystate(kernel)?;
+
+        let (phys_mem, vat) = kernel.virt_mem.mem_vat_pair();
+        let virt_mem = VirtualDma::with_vat(
+            phys_mem.forward_mut(),
+            user_process_info.base_info.proc_arch,
+            user_process_info.translator(),
+            vat.forward_mut(),
+        );
+
+        Ok(Self {
+            virt_mem,
+            key_state_addr,
+        })
+    }
+}
+
+impl<T> Win32Keyboard<T> {
+    fn find_keystate<
+        P: 'static + PhysicalMemory + Clone,
+        V: 'static + VirtualTranslate2 + Clone,
+    >(
+        kernel: &mut Win32Kernel<P, V>,
+    ) -> Result<(Win32ProcessInfo, Address)> {
+        let win32kbase_module_info = kernel.module_by_name("win32kbase.sys")?;
+        debug!("found win32kbase.sys: {:?}", win32kbase_module_info);
+
+        let procs = kernel.process_info_list()?;
+
+        let gaf = procs
+            .iter()
+            .filter(|p| {
+                p.name.as_ref() == "winlogon.exe"
+                    || p.name.as_ref() == "explorer.exe"
+                    || p.name.as_ref() == "taskhostw.exe"
+                    || p.name.as_ref() == "smartscreen.exe"
+                    || p.name.as_ref() == "dwm.exe"
+            })
+            .find_map(|p| Self::find_in_user_process(kernel, &win32kbase_module_info, p.pid).ok())
+            .ok_or_else(|| {
+                Error(ErrorOrigin::OsLayer, ErrorKind::ExportNotFound)
+                    .log_info("unable to find any proxy process that contains gafAsyncKeyState")
+            })?;
+
+        Ok((gaf.0, gaf.1))
+    }
+
+    fn find_in_user_process<
+        P: 'static + PhysicalMemory + Clone,
+        V: 'static + VirtualTranslate2 + Clone,
+    >(
+        kernel: &mut Win32Kernel<P, V>,
+        win32kbase_module_info: &ModuleInfo,
+        pid: Pid,
+    ) -> Result<(Win32ProcessInfo, Address)> {
+        let user_process_info = kernel.process_info_by_pid(pid)?;
+        let user_process_info_win32 =
+            kernel.process_info_from_base_info(user_process_info.clone())?;
+        let mut user_process = kernel.process_by_info(user_process_info)?;
+        debug!(
+            "trying to find gaf signature in user proxy process `{}`",
+            user_process.info().name.as_ref()
+        );
+
+        // TODO: lazy
+        let export_addr = Self::find_gaf_pe(&mut user_process.virt_mem, win32kbase_module_info)
+            .or_else(|_| Self::find_gaf_sig(&mut user_process.virt_mem, win32kbase_module_info))?;
+        debug!(
+            "found gaf signature in user proxy process `{}` at {:x}",
+            user_process.info().name.as_ref(),
+            export_addr
+        );
+
+        Ok((
+            user_process_info_win32,
+            win32kbase_module_info.base + export_addr,
+        ))
+    }
+
+    fn find_gaf_pe(
+        virt_mem: &mut impl MemoryView,
+        win32kbase_module_info: &ModuleInfo,
+    ) -> Result<umem> {
+        let mut offset = None;
+        let callback = &mut |export: ExportInfo| {
+            if export.name.as_ref() == "gafAsyncKeyState" {
+                offset = Some(export.offset);
+                false
+            } else {
+                true
+            }
+        };
+        memflow::os::util::module_export_list_callback(
+            virt_mem,
+            win32kbase_module_info,
+            callback.into(),
+        )?;
+        offset.ok_or_else(|| {
+            Error(ErrorOrigin::OsLayer, ErrorKind::ExportNotFound)
+                .log_info("unable to find gafAsyncKeyState")
+        })
+    }
+
+    // TODO: replace with a custom signature scanning crate
+    #[cfg(feature = "regex")]
+    fn find_gaf_sig(
+        virt_mem: &mut impl MemoryView,
+        win32kbase_module_info: &ModuleInfo,
+    ) -> Result<umem> {
+        use ::regex::bytes::*;
+
+        let module_buf = virt_mem
+            .read_raw(
+                win32kbase_module_info.base,
+                win32kbase_module_info.size.try_into().unwrap(),
+            )
+            .data_part()?;
+
+        // 48 8B 05 ? ? ? ? 48 89 81 ? ? 00 00 48 8B 8F + 0x3
+        let re = Regex::new("(?-u)\\x48\\x8B\\x05(?s:.)(?s:.)(?s:.)(?s:.)\\x48\\x89\\x81(?s:.)(?s:.)\\x00\\x00\\x48\\x8B\\x8F")
+                    .map_err(|_| Error(ErrorOrigin::OsLayer, ErrorKind::Encoding).log_info("malformed gafAsyncKeyState signature"))?;
+        let buf_offs = re
+            .find(module_buf.as_slice())
+            .ok_or_else(|| {
+                Error(ErrorOrigin::OsLayer, ErrorKind::NotFound)
+                    .log_info("unable to find gafAsyncKeyState signature")
+            })?
+            .start()
+            + 0x3;
+
+        // compute rip relative addr
+        let export_offs = buf_offs as u32
+            + u32::from_le_bytes(module_buf[buf_offs..buf_offs + 4].try_into().unwrap())
+            + 0x4;
+        debug!("gafAsyncKeyState export found at: {:x}", export_offs);
+        Ok(export_offs as umem)
+    }
+
+    #[cfg(not(feature = "regex"))]
+    fn find_gaf_sig(
+        virt_mem: &mut impl MemoryView,
+        win32kbase_module_info: &ModuleInfo,
+    ) -> Result<umem> {
+        Err(
+            Error(ErrorOrigin::OsLayer, ErrorKind::UnsupportedOptionalFeature)
+                .log_error("signature scanning requires std"),
+        )
+    }
+}
+
+macro_rules! get_ks_byte {
+    ($vk:expr) => {
+        $vk * 2 / 8
+    };
+}
+
+macro_rules! get_ks_down_bit {
+    ($vk:expr) => {
+        1 << (($vk % 4) * 2)
+    };
+}
+
+macro_rules! is_key_down {
+    ($ks:expr, $vk:expr) => {
+        ($ks[get_ks_byte!($vk) as usize] & get_ks_down_bit!($vk)) != 0
+    };
+}
+
+macro_rules! set_key_down {
+    ($ks:expr, $vk:expr, $down:expr) => {
+        if $down {
+            ($ks[get_ks_byte!($vk) as usize] |= get_ks_down_bit!($vk))
+        } else {
+            ($ks[get_ks_byte!($vk) as usize] &= !get_ks_down_bit!($vk))
+        }
+    };
+}
+
+impl<T: MemoryView> Keyboard for Win32Keyboard<T> {
+    type KeyboardStateType = Win32KeyboardState;
+
+    /// Reads the gafAsyncKeyState global from the win32kbase.sys kernel module and
+    /// returns true wether the given key was pressed.
+    /// This function accepts a valid microsoft virtual keycode.
+    /// In case of supplying a invalid key this function will just return false cleanly.
+    ///
+    /// A list of all Keycodes can be found on the [msdn](https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes).
+    fn is_down(&mut self, vk: i32) -> bool {
+        if !(0..=256).contains(&vk) {
+            false
+        } else if let Ok(buffer) = self
+            .virt_mem
+            .read::<[u8; 256 * 2 / 8]>(self.key_state_addr)
+            .data_part()
+        {
+            is_key_down!(buffer, vk)
+        } else {
+            false
+        }
+    }
+
+    /// Writes the gafAsyncKeyState global to the win32kbase.sys kernel module.
+    ///
+    /// # Remarks:
+    ///
+    /// This will not enforce key presses in all applications on Windows.
+    /// It will only modify calls to GetKeyState / GetAsyncKeyState.
+    fn set_down(&mut self, vk: i32, down: bool) {
+        if (0..=256).contains(&vk) {
+            if let Ok(mut buffer) = self.virt_mem.read::<[u8; 256 * 2 / 8]>(self.key_state_addr) {
+                set_key_down!(buffer, vk, down);
+                self.virt_mem.write(self.key_state_addr, &buffer).ok();
+            }
+        }
+    }
+
+    /// Reads the gafAsyncKeyState global from the win32kbase.sys kernel module.
+    fn state(&mut self) -> memflow::error::Result<Self::KeyboardStateType> {
+        let buffer: [u8; 256 * 2 / 8] = self.virt_mem.read(self.key_state_addr)?;
+        Ok(Win32KeyboardState { buffer })
+    }
+}
+
+/// Represents the current Keyboardstate.
+///
+/// Internally this will hold a 256 * 2 / 8 byte long copy of the gafAsyncKeyState array from the target.
+#[derive(Clone)]
+pub struct Win32KeyboardState {
+    buffer: [u8; 256 * 2 / 8],
+}
+
+impl KeyboardState for Win32KeyboardState {
+    /// Returns true wether the given key was pressed.
+    /// This function accepts a valid microsoft virtual keycode.
+    /// In case of supplying a invalid key this function will just return false cleanly.
+    ///
+    /// A list of all Keycodes can be found on the [msdn](https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes).
+    fn is_down(&self, vk: i32) -> bool {
+        if !(0..=256).contains(&vk) {
+            false
+        } else {
+            is_key_down!(self.buffer, vk)
+        }
+    }
+}

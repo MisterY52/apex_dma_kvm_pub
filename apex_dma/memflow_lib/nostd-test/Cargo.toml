@@ -1,11 +1,11 @@
 [package]
 name = "nostd-test"
-version = "0.1.5"
-authors = ["Aurimas Blažulionis <0x60@pm.me>"]
+version = "0.2.0"
+authors = ["Aurimas Blažulionis <0x60@pm.me>", "ko1N <ko1N1337@gmail.com>"]
 edition = "2018"
 homepage = "https://memflow.github.io"
 repository = "https://github.com/memflow/memflow"
-license-file = "../LICENSE"
+license = "MIT"
 publish = false
 
 [profile.release]
@@ -16,8 +16,7 @@ panic = "abort"
 
 [dependencies]
 rlibc = "1.0.0"
-uefi = "0.6.0"
-uefi-services = "0.3.0"
-log = "0.4"
-memflow = { path = "../memflow", default-features = false }
-memflow-win32 = { path = "../memflow-win32/", default-features = false, features = ["embed_offsets"] }
+uefi = "0.26.0"
+uefi-services = "0.23.0"
+log = "^0.4.14"
+memflow = { version = "0.2", path = "../memflow", default-features = false }
