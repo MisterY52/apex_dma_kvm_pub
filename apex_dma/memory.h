@@ -17,6 +17,17 @@ typedef WORD *PWORD;
 static std::unique_ptr<ConnectorInstance<>> conn = nullptr;
 static std::unique_ptr<OsInstance<>> kernel = nullptr;
 
+// set MAX_PHYADDR to a reasonable value, larger values will take more time to traverse.
+constexpr uint64_t MAX_PHYADDR = 0xFFFFFFFFF;
+
+inline uint64_t GetFurtherDistance(uint64_t A, uint64_t Min, uint64_t Max)
+{
+	uint64_t distanceToMin = (A > Min) ? (A - Min) : (Min - A);
+	uint64_t distanceToMax = (A > Max) ? (A - Max) : (Max - A);
+
+	return (distanceToMin > distanceToMax) ? distanceToMin : distanceToMax;
+}
+
 inline bool isMatch(const PBYTE addr, const PBYTE pat, const PBYTE msk)
 {
 	size_t n = 0;
@@ -51,13 +62,10 @@ private:
 	Process proc;
 	process_status status = process_status::NOT_FOUND;
 	std::mutex m;
+	uint64_t lastCorrectDtbPhysicalAddress = 0x0;
 
 public:
-	~Memory()
-	{
-		if (kernel)
-			os_drop(kernel.get());
-	}
+	~Memory() = default;
 
 	uint64_t get_proc_baseaddr();
 
@@ -82,6 +90,10 @@ public:
 	bool WriteArray(uint64_t address, const T value[], size_t len);
 
 	uint64_t ScanPointer(uint64_t ptr_address, const uint32_t offsets[], int level);
+
+	bool bruteforceDtb(uint64_t dtbStartPhysicalAddr, const uint64_t stepPage);
+
+	bool testDtbValue(const uint64_t &dtb_val);
 };
 
 template <typename T>

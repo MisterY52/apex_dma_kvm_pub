@@ -1,4 +1,5 @@
 #include "memory.h"
+#include <unistd.h>
 
 // Credits: learn_more, stevemk14ebr
 size_t findPattern(const PBYTE rangeStart, size_t len, const char *pattern)
@@ -61,7 +62,7 @@ process_status Memory::get_proc_status()
 
 void Memory::check_proc()
 {
-	if (status == process_status::FOUND_READY)
+	if (status == process_status::FOUND_READY || status == process_status::FOUND_NO_ACCESS)
 	{
 		short c;
 		Read<short>(proc.baseaddr, c);
@@ -69,7 +70,10 @@ void Memory::check_proc()
 		if (c != 0x5A4D)
 		{
 			status = process_status::FOUND_NO_ACCESS;
-			close_proc();
+		}
+		else
+		{
+			status = process_status::FOUND_READY;
 		}
 	}
 }
@@ -96,6 +100,74 @@ bool kernel_init(Inventory *inv, const char *connector_name)
 	}
 
 	return true;
+}
+
+bool Memory::testDtbValue(const uint64_t &dtb_val)
+{
+	proc.hProcess.set_dtb(dtb_val, Address_INVALID);
+	check_proc();
+	if (status == process_status::FOUND_READY)
+	{
+		lastCorrectDtbPhysicalAddress = dtb_val;
+		return true;
+	}
+
+	return false;
+}
+
+// https://www.unknowncheats.me/forum/apex-legends/670570-quick-obtain-cr3-check.html
+bool Memory::bruteforceDtb(uint64_t dtbStartPhysicalAddr, const uint64_t stepPage)
+{
+	// eac cr3 always end with 0x-----XX000
+	// dtbStartPhysicalAddr should be a multiple of 0x1000
+	if ((dtbStartPhysicalAddr & 0xFFF) != 0)
+		return false;
+	if (dtbStartPhysicalAddr > MAX_PHYADDR)
+		return false;
+
+	dtbStartPhysicalAddr -= dtbStartPhysicalAddr % stepPage;
+	dtbStartPhysicalAddr += lastCorrectDtbPhysicalAddress % stepPage;
+
+	auto start = std::chrono::high_resolution_clock::now();
+	bool result = false;
+	uint64_t furtherDistance = GetFurtherDistance(dtbStartPhysicalAddr, 0x0, MAX_PHYADDR);
+	size_t maxStep = furtherDistance / stepPage;
+	uint64_t guessDtbAddr = 0;
+
+	for (size_t step = 0; step < maxStep; step++)
+	{
+		// bruteforce dtb from middle
+		guessDtbAddr = dtbStartPhysicalAddr + step * stepPage;
+		if (guessDtbAddr < MAX_PHYADDR)
+		{
+			if (testDtbValue(guessDtbAddr))
+			{
+				result = true;
+				break;
+			}
+		}
+		// dont forget the other side
+		if (dtbStartPhysicalAddr > step * stepPage)
+		{
+			guessDtbAddr = dtbStartPhysicalAddr - step * stepPage;
+			if (testDtbValue(guessDtbAddr))
+			{
+				result = true;
+				break;
+			}
+		}
+	}
+
+	auto end = std::chrono::high_resolution_clock::now();
+	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+	printf("[+] bruteforce dtb %s to find dtb:0x%lx, time:%ldms\n", result ? "success" : "failed", result ? guessDtbAddr : 0x0, duration.count());
+
+	// In case we cannot get the dtb through this shortcut method.
+	if (result == false && stepPage != 0x1000)
+	{
+		return bruteforceDtb(dtbStartPhysicalAddr, 0x1000);
+	}
+	return result;
 }
 
 void Memory::open_proc(const char *name)
@@ -126,48 +198,48 @@ void Memory::open_proc(const char *name)
 	if (kernel.get()->process_info_by_name(name, &info))
 	{
 		status = process_status::NOT_FOUND;
+		lastCorrectDtbPhysicalAddress = 0;
 		return;
 	}
 
-	ProcessInstance<> tmp_proc;
-
-	if (kernel.get()->process_by_info(info, &tmp_proc))
+	close_proc();
+	if (kernel.get()->clone().into_process_by_info(info, &proc.hProcess))
 	{
-		status = process_status::NOT_FOUND;
+		status = process_status::FOUND_NO_ACCESS;
+		printf("Error while opening process %s\n", name);
+		close_proc();
 		return;
 	}
 
 	ModuleInfo module_info;
-
-	if (tmp_proc.module_by_name(name, &module_info))
+	if (proc.hProcess.module_by_name(name, &module_info))
 	{
-		printf("Can't find base module info for process %s. Trying with a new dtb...\n", name);
+		status = process_status::FOUND_NO_ACCESS;
+		auto base_section = std::make_unique<char[]>(8);
+		uint64_t *base_section_value = (uint64_t *)base_section.get();
+		CSliceMut<uint8_t> slice(base_section.get(), 8);
+		uint32_t EPROCESS_SectionBaseAddress_off = 0x520; // win10 >= 20H1
+		kernel.get()->read_raw_into(info.address + EPROCESS_SectionBaseAddress_off, slice);
+		proc.baseaddr = *base_section_value;
 
-		for (size_t dtb = 0; dtb <= SIZE_MAX; dtb += 0x1000)
+		if (!bruteforceDtb(0x0, 0x100000))
 		{
-			info.dtb1 = dtb;
-			kernel.get()->process_by_info(info, &tmp_proc);
-
-			if (!tmp_proc.module_by_name(name, &module_info))		
-				break;
-
-			if (dtb == SIZE_MAX)
-			{
-				printf("Access error for process %s\n", name);
-				status = process_status::FOUND_NO_ACCESS;
-				return;
-			}
+			close_proc();
+			return;
 		}
 	}
+	else
+	{
+		proc.baseaddr = module_info.base;
+	}
 
-	kernel.get()->clone().into_process_by_info(info, &proc.hProcess);
-
-	proc.baseaddr = module_info.base;
 	status = process_status::FOUND_READY;
 }
 
 void Memory::close_proc()
 {
+	std::lock_guard<std::mutex> l(m);
+	proc.hProcess.~IntoProcessInstance();
 	proc.baseaddr = 0;
 }
 
