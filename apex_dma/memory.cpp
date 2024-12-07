@@ -192,17 +192,22 @@ void Memory::open_proc(const char *name)
 		printf("Kernel initialized: %p\n", kernel.get()->container.instance.instance);
 	}
 
+	if (lastCorrectDtbPhysicalAddress && bruteforceDtb(0x0, 0x100000))
+	{
+		return;
+	}
+
+	close_proc();
+
 	ProcessInfo info;
 	info.dtb2 = Address_INVALID;
 
 	if (kernel.get()->process_info_by_name(name, &info))
 	{
 		status = process_status::NOT_FOUND;
-		lastCorrectDtbPhysicalAddress = 0;
 		return;
 	}
 
-	close_proc();
 	if (kernel.get()->clone().into_process_by_info(info, &proc.hProcess))
 	{
 		status = process_status::FOUND_NO_ACCESS;
@@ -240,6 +245,7 @@ void Memory::close_proc()
 {
 	std::lock_guard<std::mutex> l(m);
 	proc.hProcess.~IntoProcessInstance();
+	lastCorrectDtbPhysicalAddress = 0;
 	proc.baseaddr = 0;
 }
 
