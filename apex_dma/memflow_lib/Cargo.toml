@@ -5,7 +5,6 @@ debug = true
 members = [
     "memflow",
     "memflow-ffi",
-    "memflowup",
     "memflow-bench",
 ]
 default-members = [
@@ -19,3 +18,4 @@ exclude = [
 ]
 
 [patch.crates-io]
+goblin = { git = "https://github.com/h33p/goblin", branch = "lossy-macho" }
