@@ -7,9 +7,9 @@ Bone IDs reference: https://www.unknowncheats.me/wiki/Apex_Legends_Bones_and_Hit
 
 Game version (Steam & origin): v3.0.1.29
 
-That's made to work on QEMU/KVM, so we dont talk about Linux Host, Windows VM and passthrough configuration
+That's made to work on QEMU/KVM, so we dont talk about Linux Host, Windows VM, passthrough and detection configuration
 
-- Tested on Last release of Ubuntu and ProxMox
+- Tested on Last release of Fedora, Ubuntu and ProxMox
 - Working on Windows 10 20H1 (never below)
 
 - 1920*1080 (need to be changed manually - search 2560 and/or 1440 in apex_dma.cpp)
@@ -29,7 +29,7 @@ VISUALS :
  - ESP Box, XP Level, Line, Name, Distance
  - ESP Seer Health and Shield
  - Circle FOV
- - Players Glow (GREEN when visible, RED when not visible and YELLOW when knocked - Can be changed in the menu of the overlay)
+ - Players Glow (GREEN when visible, RED when not visible and YELLOW when knocked - Can be changed in the overlay's menu)
  - Items Glow (complete disable)
  - Spectators count + Name List (Name List temporary disable but you can active it)
 
