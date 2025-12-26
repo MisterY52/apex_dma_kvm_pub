@@ -1,6 +1,6 @@
 [package]
 name = "memflow-win32"
-version = "0.2.0"
+version = "0.2.3"
 authors = ["ko1N <ko1N1337@gmail.com>", "Aurimas Blažulionis <0x60@pm.me>"]
 edition = "2021"
 rust-version = "1.65"
