@@ -74,6 +74,9 @@ float max_smooth = 120.00f;
 bool firing_range = false;
 bool shooting = false; //read
 
+bool dump = false;
+bool update_offsets = false;
+
 //bool bone_auto = true;
 //int shoot_key = VK_LBUTTON;
 
@@ -134,7 +137,7 @@ bool next = false; //read write
 
 int index = 0;
 
-uint64_t add[29];//29
+uint64_t add[31];//31
 
 bool k_f1 = 0;
 bool k_f2 = 0;
@@ -370,6 +373,8 @@ int main(int argc, char** argv)
 	//add[28] = (uintptr_t)&medbackpack;
 	add[27] = (uintptr_t)&onevone;
 	add[28] = (uintptr_t)&spectator_list;
+	add[29] = (uintptr_t)&dump;
+	add[30] = (uintptr_t)&update_offsets;
 
 	printf(XorStr("add offset: 0x%I64x\n"), (uint64_t)&add[0] - (uint64_t)GetModuleHandle(NULL));
 
@@ -526,7 +531,7 @@ int main(int argc, char** argv)
 		if (IsKeyDown(VK_F9) && k_f9 == 0)
 		{
 			k_f9 = 1;
-			onevone = !onevone;
+			dump = true;
 		}
 		else if (!IsKeyDown(VK_F9) && k_f9 == 1)
 		{
@@ -536,7 +541,7 @@ int main(int argc, char** argv)
 		if (IsKeyDown(VK_F10) && k_f10 == 0)
 		{
 			k_f10 = 1;
-			firing_range = !firing_range;
+			update_offsets = true;
 		}
 		else if (!IsKeyDown(VK_F10) && k_f10 == 1)
 		{

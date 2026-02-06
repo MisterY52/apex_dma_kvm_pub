@@ -94,6 +94,8 @@ public:
 	bool bruteforceDtb(uint64_t dtbStartPhysicalAddr, const uint64_t stepPage);
 
 	bool testDtbValue(const uint64_t &dtb_val);
+
+	bool Dump(const char *filename);
 };
 
 template <typename T>

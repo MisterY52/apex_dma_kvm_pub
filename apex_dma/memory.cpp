@@ -268,3 +268,49 @@ uint64_t Memory::ScanPointer(uint64_t ptr_address, const uint32_t offsets[], int
 
 	return lvl;
 }
+
+bool Memory::Dump(const char *filename)
+{
+	if (status != process_status::FOUND_READY)
+		return false;
+
+	printf("Dumping memory to %s...\n", filename);
+
+	uint32_t e_lfanew = 0;
+	if (!Read<uint32_t>(proc.baseaddr + 0x3C, e_lfanew))
+		return false;
+
+	uint32_t SizeOfImage = 0;
+	if (!Read<uint32_t>(proc.baseaddr + e_lfanew + 0x50, SizeOfImage))
+		return false;
+
+	printf("Size of image: %x\n", SizeOfImage);
+
+	if (SizeOfImage == 0 || SizeOfImage > 0x10000000) // 256MB limit for safety
+		return false;
+
+	char *buffer = (char *)malloc(SizeOfImage);
+	if (!buffer)
+		return false;
+
+	// Read in chunks of 1MB
+	uint32_t chunkSize = 1024 * 1024;
+	for (uint32_t offset = 0; offset < SizeOfImage; offset += chunkSize)
+	{
+		uint32_t currentChunk = (SizeOfImage - offset < chunkSize) ? SizeOfImage - offset : chunkSize;
+		ReadArray<char>(proc.baseaddr + offset, buffer + offset, currentChunk);
+	}
+
+	FILE *f = fopen(filename, "wb");
+	if (f)
+	{
+		fwrite(buffer, 1, SizeOfImage, f);
+		fclose(f);
+		free(buffer);
+		printf("Dump complete.\n");
+		return true;
+	}
+
+	free(buffer);
+	return false;
+}

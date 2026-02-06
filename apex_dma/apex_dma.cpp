@@ -1222,6 +1222,37 @@ while (vars_t)
         client_mem.Read<bool>(firing_range_addr, firing_range);
         client_mem.Read<bool>(shooting_addr, shooting);
         client_mem.Read<bool>(onevone_addr, onevone);
+
+        uint64_t dump_req_addr = 0;
+        client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 29, dump_req_addr);
+        if (dump_req_addr) {
+            bool dump_req = false;
+            client_mem.Read<bool>(dump_req_addr, dump_req);
+            if (dump_req)
+            {
+                printf("Dump requested\n");
+                if (apex_mem.Dump("dump.bin"))
+                {
+                    printf("Running r5dumper...\n");
+                    system("cd r5dumper && ./r5dumper ../dump.bin");
+                }
+                client_mem.Write<bool>(dump_req_addr, false);
+            }
+        }
+
+        uint64_t update_req_addr = 0;
+        client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 30, update_req_addr);
+        if (update_req_addr) {
+            bool update_req = false;
+            client_mem.Read<bool>(update_req_addr, update_req);
+            if (update_req)
+            {
+                printf("Update offsets requested\n");
+                load_offsets_from_ini("r5dumper/_offsets.ini", "r5dumper/_convars.ini", "r5dumper/_buttons.ini");
+                client_mem.Write<bool>(update_req_addr, false);
+            }
+        }
+
         client_mem.WriteArray<spectator>(spec_list_addr, spectator_list, toRead);
 
         if (esp && next)
