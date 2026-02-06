@@ -1,0 +1,17 @@
+[package]
+name = "memflow-kvm-ioctl"
+version = "0.1.2"
+authors = ["Aurimas Blažulionis <0x60@pm.me>"]
+edition = "2021"
+build = "build.rs"
+description = "interface to memflow's KVM kernel module"
+homepage = "https://memflow.github.io/"
+repository = "https://github.com/memflow/memflow-kvm.git"
+documentation = "https://docs.rs/memflow-kvm-ioctl"
+keywords = [ "memflow", "introspection", "memory" ]
+categories = [ "api-bindings", "memory-management", "os" ]
+readme = "../README.md"
+license = "MIT"
+
+[build-dependencies]
+bindgen = "^0.69.1"

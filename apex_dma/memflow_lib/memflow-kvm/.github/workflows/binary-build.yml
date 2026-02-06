@@ -1,0 +1,65 @@
+name: Binary build
+
+on:
+  push:
+    branch:
+      - 'main'
+      - 'stable'
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+
+  cross-build:
+    name: Publish connector binary builds
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download renamer
+        run: curl -sSf https://raw.githubusercontent.com/memflow/memflowup/master/target_rename.sh > target_rename.sh
+      - name: Build artifacts
+        run: cargo build --workspace --release --all-features --verbose
+      - name: Rename and collect artifacts
+        id: artifacts
+        run: |
+          export F="libmemflow_kvm.x86_64.so"
+          mv target/release/libmemflow_kvm.so $F
+          echo "::set-output name=artifact::$F"
+      - name: Upload build artifacts
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: bin-${{ github.ref_name }}
+          files: |
+            ${{ steps.artifacts.outputs.artifact }}
+
+  kmod-build:
+    name: Publish dkms binary builds
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get install dkms linux-headers-`uname -r` build-essential devscripts dh-make
+      - run: source dkms.conf && echo "BUILT_MODULE_NAME=$BUILT_MODULE_NAME" >> $GITHUB_ENV && echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
+      - run: echo "DKMS_DIR=/usr/src/${BUILT_MODULE_NAME}-${PACKAGE_VERSION}" >> $GITHUB_ENV
+      - run: sudo mkdir $DKMS_DIR
+      - run: sudo cp -r * $DKMS_DIR
+      - run: sudo dkms build -m $BUILT_MODULE_NAME -v $PACKAGE_VERSION
+      - run: sudo dkms mktarball -m $BUILT_MODULE_NAME -v $PACKAGE_VERSION --source-only
+      - run: sudo dkms mkdeb -m $BUILT_MODULE_NAME -v $PACKAGE_VERSION --source-only
+      - name: Find tarball
+        id: tarball_path
+        run: |
+          export I="$(sudo find /var/lib/dkms/${BUILT_MODULE_NAME}/${PACKAGE_VERSION}/tarball/${BUILT_MODULE_NAME}-${PACKAGE_VERSION}*.tar.gz)"
+          export F="${BUILT_MODULE_NAME}-source-only.dkms.tar.gz"
+          cp $I $F
+          echo "::set-output name=path::$F"
+          echo "::set-output name=name::$(basename $F)"
+      - name: Upload tarball
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: bin-${{ github.ref_name }}
+          files: |
+            ${{ steps.tarball_path.outputs.path }}

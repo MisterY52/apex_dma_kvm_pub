@@ -1,0 +1,74 @@
+name: Deploy to memflow registry
+
+on:
+  push:
+    branches:
+      - "**"
+
+env:
+  RUST_BACKTRACE: 1
+  CARGO_TERM_COLOR: always
+  PLUGIN_NAME: qemu
+
+jobs:
+  deploy:
+    name: ${{ matrix.platform.os_name }} with rust ${{ matrix.toolchain }}
+    runs-on: ${{ matrix.platform.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - os_name: linux-x86_64
+            os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+          - os_name: linux-aarch64
+            os: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+          - os_name: linux-arm
+            os: ubuntu-latest
+            target: arm-unknown-linux-gnueabi
+          - os_name: linux-i686
+            os: ubuntu-latest
+            target: i686-unknown-linux-gnu
+          - os_name: windows-aarch64
+            os: windows-latest
+            target: aarch64-pc-windows-msvc
+          - os_name: windows-i686
+            os: windows-latest
+            target: i686-pc-windows-msvc
+          - os_name: windows-x86_64
+            os: windows-latest
+            target: x86_64-pc-windows-msvc
+          - os_name: macOS-x86_64
+            os: macOS-latest
+            target: x86_64-apple-darwin
+          - os_name: macOS-aarch64
+            os: macOS-latest
+            target: aarch64-apple-darwin
+        toolchain:
+          - stable
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cache cargo & target directories
+        uses: Swatinem/rust-cache@v2
+      - name: Build binary
+        uses: houseabsolute/actions-rust-cross@v0
+        with:
+          command: "build"
+          target: ${{ matrix.platform.target }}
+          toolchain: ${{ matrix.toolchain }}
+          args: "--locked --release --all-features"
+          strip: false
+
+      - name: Install memflowup
+        run: cargo install --git https://github.com/memflow/memflowup
+      - run: echo "${{ secrets.MEMFLOW_REGISTRY_SIGNING_KEY}}" > ec-secp256k1-priv-key.pem
+      - name: Upload plugin (linux)
+        run: memflowup --skip-version-check push --token ${{ secrets.MEMFLOW_REGISTRY_TOKEN }} --priv-key ec-secp256k1-priv-key.pem --file target/${{ matrix.platform.target }}/release/libmemflow_${{ env.PLUGIN_NAME }}.so
+        if: matrix.platform.os == 'ubuntu-latest'
+      - name: Upload plugin (windows)
+        run: memflowup --skip-version-check push --token ${{ secrets.MEMFLOW_REGISTRY_TOKEN }} --priv-key ec-secp256k1-priv-key.pem --file target/${{ matrix.platform.target }}/release/memflow_${{ env.PLUGIN_NAME }}.dll
+        if: matrix.platform.os == 'windows-latest'
+      - name: Upload plugin (mac)
+        run: memflowup --skip-version-check push --token ${{ secrets.MEMFLOW_REGISTRY_TOKEN }} --priv-key ec-secp256k1-priv-key.pem --file target/${{ matrix.platform.target }}/release/libmemflow_${{ env.PLUGIN_NAME }}.dylib
+        if: matrix.platform.os == 'macOS-latest'

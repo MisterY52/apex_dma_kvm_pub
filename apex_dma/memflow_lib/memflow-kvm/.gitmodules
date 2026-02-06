@@ -1,0 +1,3 @@
+[submodule "kallsyms"]
+	path = memflow-kmod/kallsyms
+	url = https://github.com/h33p/kallsyms-mod

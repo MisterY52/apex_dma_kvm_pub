@@ -1,0 +1,64 @@
+name: Build the kernel module files and put them in the release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+
+  release-kmod:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get install dkms linux-headers-`uname -r` build-essential devscripts dh-make
+      - run: source dkms.conf && echo "BUILT_MODULE_NAME=$BUILT_MODULE_NAME" >> $GITHUB_ENV && echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
+      - run: echo "DKMS_DIR=/usr/src/${BUILT_MODULE_NAME}-${PACKAGE_VERSION}" >> $GITHUB_ENV
+      - run: sudo mkdir $DKMS_DIR
+      - run: sudo cp -r * $DKMS_DIR
+      - run: sudo dkms build -m $BUILT_MODULE_NAME -v $PACKAGE_VERSION
+      - run: sudo dkms mktarball -m $BUILT_MODULE_NAME -v $PACKAGE_VERSION --source-only
+      - run: sudo dkms mkdeb -m $BUILT_MODULE_NAME -v $PACKAGE_VERSION --source-only
+      - name: Find debian package
+        id: dkms_path
+        run: |
+          export F="$(sudo find /var/lib/dkms/${BUILT_MODULE_NAME}/${PACKAGE_VERSION}/deb/${BUILT_MODULE_NAME}-dkms_${PACKAGE_VERSION}*.deb)"
+          echo "::set-output name=path::$F"
+          echo "::set-output name=name::$(basename $F)"
+      - name: Find tarball
+        id: tarball_path
+        run: |
+          export F="$(sudo find /var/lib/dkms/${BUILT_MODULE_NAME}/${PACKAGE_VERSION}/tarball/${BUILT_MODULE_NAME}-${PACKAGE_VERSION}*.tar.gz)"
+          echo "::set-output name=path::$F"
+          echo "::set-output name=name::$(basename $F)"
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+      - name: Upload Deb File
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.dkms_path.outputs.path }}
+          asset_name: ${{ steps.dkms_path.outputs.name }}
+          asset_content_type: application/vnd.debian.binary-package
+      - name: Upload Tarball File
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.tarball_path.outputs.path }}
+          asset_name: ${{ steps.tarball_path.outputs.name }}
+          asset_content_type: application/gzip

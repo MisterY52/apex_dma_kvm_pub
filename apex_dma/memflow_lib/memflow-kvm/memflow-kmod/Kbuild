@@ -1,0 +1,2 @@
+obj-m += memflow.o
+memflow-y := main.o vmtools.o
