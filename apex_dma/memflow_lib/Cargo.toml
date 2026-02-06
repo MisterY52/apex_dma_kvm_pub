@@ -2,15 +2,25 @@
 debug = true
 
 [workspace]
+resolver = "2"
 members = [
     "memflow",
     "memflow-ffi",
     "memflow-bench",
+    "memflow-derive",
+    "memflow-qemu",
+    "memflow-kvm/memflow-kvm",
+    "memflow-kvm/memflow-kvm-ioctl",
+    "memflow-win32/memflow-win32",
+    "memflow-win32/memflow-win32-defs",
 ]
 default-members = [
     "memflow",
     "memflow-ffi",
     "memflow-bench",
+    "memflow-qemu",
+    "memflow-kvm/memflow-kvm",
+    "memflow-win32/memflow-win32",
 ]
 
 exclude = [
@@ -19,3 +29,7 @@ exclude = [
 
 [patch.crates-io]
 goblin = { git = "https://github.com/h33p/goblin", branch = "lossy-macho" }
+memflow = { path = "memflow" }
+memflow-derive = { path = "memflow-derive" }
+memflow-win32 = { path = "memflow-win32/memflow-win32" }
+memflow-win32-defs = { path = "memflow-win32/memflow-win32-defs" }

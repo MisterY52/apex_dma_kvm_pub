@@ -21,7 +21,7 @@ codecov = { repository = "github", branch = "master", service = "github" }
 crate-type = ["lib", "cdylib"]
 
 [dependencies]
-memflow = { version = "0.2", default-features = false }
+memflow = { version = "0.2", path = "../../memflow", default-features = false }
 log = { version = "^0.4.14", default-features = false }
 pelite = { version = "^0.10.0", default-features = false }
 widestring = { version = "^1.0.2", default-features = false, features = ["alloc"] }
@@ -42,7 +42,7 @@ toml = "^0.7.3"
 [build_dependencies]
 toml = "^0.7.3"
 serde = { version = "^1.0.133", default-features = false, features = ["derive", "alloc"] }
-memflow = { version = "0.2", default-features = false }
+memflow = { version = "0.2", path = "../../memflow", default-features = false }
 memflow-win32-defs = { version = "0.2", path = "../memflow-win32-defs", features = ["symstore"] }
 
 [features]

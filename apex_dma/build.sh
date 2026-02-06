@@ -1,9 +1,9 @@
 #!/bin/bash
 
-cd memflow_lib/memflow-ffi/
-if cargo build --release ; then
-    cd ../../
+cd memflow_lib/
+if cargo build --release --workspace ; then
+    cd ../
     make
 else
-    echo "Error while building memflow-ffi"
+    echo "Error while building memflow libraries"
 fi
