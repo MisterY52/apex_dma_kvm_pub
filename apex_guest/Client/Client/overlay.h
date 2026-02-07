@@ -32,6 +32,7 @@ typedef struct visuals
 	bool healthbar = true;
 	bool shieldbar = true;
 	bool name = true;
+	bool skeleton = false;
 }visuals;
 
 struct GColor {
