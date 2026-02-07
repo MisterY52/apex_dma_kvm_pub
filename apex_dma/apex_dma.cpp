@@ -29,6 +29,7 @@ const int toRead = 100;
 
 int aim = false;
 bool esp = false;
+bool skeleton = false;
 //bool item_glow = false;
 bool player_glow = false;
 bool aim_no_recoil = true;
@@ -100,6 +101,9 @@ bool lock = false;
 //map
 int map = 0;
 
+int screen_width = 2560;
+int screen_height = 1440;
+
 // Déclarations au niveau global (ou dans votre classe si besoin)
 
 int tapstrafe = 0;  // Initialisé à 0, commence le comptage
@@ -124,6 +128,7 @@ typedef struct player
 	int armortype = 0;
 	int player_xp_level = 0;
 	char name[33] = { 0 };
+	float bones[15][2] = { 0 };
 }player;
 
 typedef struct spectator{
@@ -777,12 +782,12 @@ Entity LPlayer = getEntity(LocalPlayer);
 						}
 						
 						Vector bs = Vector();
-						WorldToScreen(EntityPosition, m.matrix, 2560, 1440, bs);
+						WorldToScreen(EntityPosition, m.matrix, screen_width, screen_height, bs);
 						if (bs.x > 0 && bs.y > 0)
 						{
 							Vector hs = Vector();
 							Vector HeadPosition = Target.getBonePositionByHitbox(0);
-							WorldToScreen(HeadPosition, m.matrix, 2560, 1440, hs);
+							WorldToScreen(HeadPosition, m.matrix, screen_width, screen_height, hs);
 							float height = abs(abs(hs.y) - abs(bs.y));
 							float width = height / 2.0f;
 							float boxMiddle = bs.x - (width / 2.0f);
@@ -808,6 +813,22 @@ Entity LPlayer = getEntity(LocalPlayer);
 								armortype,
 								//Target.read_xp_level()
 							};
+
+							if (skeleton)
+							{
+								int boneIDs[] = { 8, 5, 0, 33, 35, 36, 10, 12, 13, 55, 56, 58, 60, 62, 63 };
+								for (int b = 0; b < 15; b++)
+								{
+									Vector bonePos = Target.getBonePositionByHitbox(boneIDs[b]);
+									Vector boneScreen = Vector();
+									if (WorldToScreen(bonePos, m.matrix, screen_width, screen_height, boneScreen))
+									{
+										players[c].bones[b][0] = boneScreen.x;
+										players[c].bones[b][1] = boneScreen.y;
+									}
+								}
+							}
+
 							Target.get_name(g_Base, i - 1, &players[c].name[0]);
 							lastvis_esp[c] = Target.lastVisTime();
 							valid = true;
@@ -866,12 +887,12 @@ Entity LPlayer = getEntity(LocalPlayer);
 						}
 
 						Vector bs = Vector();
-						WorldToScreen(EntityPosition, m.matrix, 2560, 1440, bs);
+						WorldToScreen(EntityPosition, m.matrix, screen_width, screen_height, bs);
 						if (bs.x > 0 && bs.y > 0)
 						{
 							Vector hs = Vector();
 							Vector HeadPosition = Target.getBonePositionByHitbox(0);
-							WorldToScreen(HeadPosition, m.matrix, 2560, 1440, hs);
+							WorldToScreen(HeadPosition, m.matrix, screen_width, screen_height, hs);
 							float height = abs(abs(hs.y) - abs(bs.y));
 							float width = height / 2.0f;
 							float boxMiddle = bs.x - (width / 2.0f);
@@ -897,6 +918,22 @@ Entity LPlayer = getEntity(LocalPlayer);
 								armortype,
 								//Target.read_xp_level()
 							};
+
+							if (skeleton)
+							{
+								int boneIDs[] = { 8, 5, 0, 33, 35, 36, 10, 12, 13, 55, 56, 58, 60, 62, 63 };
+								for (int b = 0; b < 15; b++)
+								{
+									Vector bonePos = Target.getBonePositionByHitbox(boneIDs[b]);
+									Vector boneScreen = Vector();
+									if (WorldToScreen(bonePos, m.matrix, screen_width, screen_height, boneScreen))
+									{
+										players[i].bones[b][0] = boneScreen.x;
+										players[i].bones[b][1] = boneScreen.y;
+									}
+								}
+							}
+
 							Target.get_name(g_Base, i - 1, &players[i].name[0]);
 							lastvis_esp[i] = Target.lastVisTime();
 							valid = true;
@@ -1223,6 +1260,11 @@ while (vars_t)
         client_mem.Read<bool>(shooting_addr, shooting);
         client_mem.Read<bool>(onevone_addr, onevone);
 
+        uint64_t skeleton_addr = 0;
+        client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 31, skeleton_addr);
+        if (skeleton_addr)
+            client_mem.Read<bool>(skeleton_addr, skeleton);
+
         uint64_t dump_req_addr = 0;
         client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 29, dump_req_addr);
         if (dump_req_addr) {
@@ -1254,6 +1296,16 @@ while (vars_t)
         }
 
         client_mem.WriteArray<spectator>(spec_list_addr, spectator_list, toRead);
+
+        uint64_t screen_width_addr = 0;
+        client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 32, screen_width_addr);
+        if (screen_width_addr)
+            client_mem.Read<int>(screen_width_addr, screen_width);
+
+        uint64_t screen_height_addr = 0;
+        client_mem.Read<uint64_t>(add_addr + sizeof(uint64_t) * 33, screen_height_addr);
+        if (screen_height_addr)
+            client_mem.Read<int>(screen_height_addr, screen_height);
 
         if (esp && next)
         {

@@ -28,6 +28,7 @@ typedef struct player
 	int armortype = 0;
 	int xp_level = 0;
 	char name[33] = { 0 };
+	float bones[15][2] = { 0 };
 }player;
 
 typedef struct spectator {
@@ -115,6 +116,9 @@ float cfsize = max_fov;
 int spectators = 0; //write
 int allied_spectators = 0; //write
 
+int screen_width = 2560;
+int screen_height = 1440;
+
 //Player Glow Color and Brightness
 float glowr = 100.0f; //Red Value
 float glowg = 0.0f; //Green Value
@@ -137,7 +141,7 @@ bool next = false; //read write
 
 int index = 0;
 
-uint64_t add[31];//31
+uint64_t add[34];//34
 
 bool k_f1 = 0;
 bool k_f2 = 0;
@@ -327,6 +331,31 @@ void Overlay::RenderEsp()
 							String(ImVec2(players[i].boxMiddle, (players[i].b_y + 15)), GREEN, players[i].name);  // NAME in GREEN if not knocked
 					}
 
+					if (v.skeleton)
+					{
+						ImColor skelColor = players[i].visible ? GREEN : RED;
+
+						// Skeleton connections
+						// 0:Head, 1:Neck, 2:Pelvis, 3:L_Shoulder, 4:L_Elbow, 5:L_Hand, 6:R_Shoulder, 7:R_Elbow, 8:R_Hand, 9:L_Hip, 10:L_Knee, 11:L_Foot, 12:R_Hip, 13:R_Knee, 14:R_Foot
+						int skeletonLines[][2] = {
+							{0, 1}, {1, 2},
+							{1, 3}, {3, 4}, {4, 5},
+							{1, 6}, {6, 7}, {7, 8},
+							{2, 9}, {9, 10}, {10, 11},
+							{2, 12}, {12, 13}, {13, 14}
+						};
+
+						for (auto& line : skeletonLines)
+						{
+							if (players[i].bones[line[0]][0] != 0 && players[i].bones[line[1]][0] != 0)
+							{
+								DrawLine(ImVec2(players[i].bones[line[0]][0], players[i].bones[line[0]][1]),
+									ImVec2(players[i].bones[line[1]][0], players[i].bones[line[1]][1]),
+									skelColor, 1.0f);
+							}
+						}
+					}
+
 				}
 			}
 
@@ -375,6 +404,9 @@ int main(int argc, char** argv)
 	add[28] = (uintptr_t)&spectator_list;
 	add[29] = (uintptr_t)&dump;
 	add[30] = (uintptr_t)&update_offsets;
+	add[31] = (uintptr_t)&v.skeleton;
+	add[32] = (uintptr_t)&screen_width;
+	add[33] = (uintptr_t)&screen_height;
 
 	printf(XorStr("add offset: 0x%I64x\n"), (uint64_t)&add[0] - (uint64_t)GetModuleHandle(NULL));
 
@@ -399,6 +431,9 @@ int main(int argc, char** argv)
 	while (active)
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+
+		screen_width = ov1.getWidth();
+		screen_height = ov1.getHeight();
 		if (IsKeyDown(VK_F4))
 		{
 			active = false;
@@ -425,6 +460,7 @@ int main(int argc, char** argv)
 				config >> v.distance;
 				//config >> v.player_level;
 				config >> v.line;
+				config >> v.skeleton;
 				//config >> cfsize;
 				//config >> DDS;
 				//config >> aiming;

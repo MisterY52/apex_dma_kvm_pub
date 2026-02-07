@@ -8,6 +8,7 @@ struct visuals {
     bool distance;    // Whether to display the distance to players
     bool healthbar;   // Whether to display health bars
     bool shieldbar;   // Whether to display shield bars
+    bool skeleton;    // Whether to display skeletons
     // Add other members as needed
     // For example, if you have other visual features like level display, you can add:
     // bool player_level; // Whether to display player levels

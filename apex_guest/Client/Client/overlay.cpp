@@ -231,6 +231,7 @@ void Overlay::RenderMenu()
 			ImGui::Checkbox(XorStr("Distance"), &v.distance);
 			ImGui::Checkbox(XorStr("Health bar"), &v.healthbar);
 			ImGui::Checkbox(XorStr("Shield bar"), &v.shieldbar);
+			ImGui::Checkbox(XorStr("Skeleton"), &v.skeleton);
 			//test glow
 			ImGui::Dummy(ImVec2(0.0f, 10.0f));
 			ImGui::Text(XorStr("Player Glow Visable:"));
@@ -279,6 +280,7 @@ void Overlay::RenderMenu()
 					config << v.distance << "\n";
 					//config << v.player_level << "\n";
 					config << v.line << "\n";
+					config << v.skeleton << "\n";
 					//config << cfsize << "\n";
 					//config << DDS << "\n";
 					//config << aiming << "\n";
@@ -332,6 +334,7 @@ void Overlay::RenderMenu()
 					config >> v.distance;
 					//config >> v.player_level;
 					config >> v.line;
+					config >> v.skeleton;
 					//config >> cfsize;
 					//config >> DDS;
 					//config >> aiming;
