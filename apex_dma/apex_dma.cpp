@@ -7,6 +7,7 @@
 #include <iostream>
 #include <cfloat>
 #include "Game.h"
+#include "offsets_dynamic.h"
 #include <thread>
 #include <array>
 #include <fstream>
