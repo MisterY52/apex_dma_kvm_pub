@@ -176,6 +176,7 @@ void Memory::open_proc(const char *name)
 	{
 		conn = std::make_unique<ConnectorInstance<>>();
 		Inventory *inv = mf_inventory_scan();
+		mf_inventory_add_dir(inv, ".");
 
 		printf("Init with kvm connector...\n");
 		if (!kernel_init(inv, "kvm"))

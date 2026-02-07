@@ -1281,6 +1281,8 @@ vars_t = false;
 
 int main(int argc, char *argv[])
 {
+	mf_log_init(LevelFilter::LevelFilter_Info);
+
 	if(geteuid() != 0)
 	{
 		printf("Error: %s is not running as root\n", argv[0]);
