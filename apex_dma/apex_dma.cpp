@@ -6,8 +6,8 @@
 #include <chrono>
 #include <iostream>
 #include <cfloat>
-#include "Game.h"
 #include "offsets_dynamic.h"
+#include "Game.h"
 #include <thread>
 #include <array>
 #include <fstream>

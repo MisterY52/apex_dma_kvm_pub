@@ -5,6 +5,8 @@
 #include <iostream>
 #include <iterator>
 #include <map>
+#include <string>
+#include <sstream>
 #include <vector>
 
 std::string FILE_NAME;
