@@ -347,7 +347,8 @@ void Overlay::RenderEsp()
 
 						for (auto& line : skeletonLines)
 						{
-							if (players[i].bones[line[0]][0] != 0 && players[i].bones[line[1]][0] != 0)
+							if (players[i].bones[line[0]][0] != 0 && players[i].bones[line[0]][1] != 0 &&
+								players[i].bones[line[1]][0] != 0 && players[i].bones[line[1]][1] != 0)
 							{
 								DrawLine(ImVec2(players[i].bones[line[0]][0], players[i].bones[line[0]][1]),
 									ImVec2(players[i].bones[line[1]][0], players[i].bones[line[1]][1]),

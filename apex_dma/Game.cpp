@@ -569,23 +569,24 @@ bool WorldToScreen(Vector from, float* m_vMatrix, int targetWidth, int targetHei
 
 	if (w < 0.01f) return false;
 
-	to.x = m_vMatrix[0] * from.x + m_vMatrix[1] * from.y + m_vMatrix[2] * from.z + m_vMatrix[3];
-	to.y = m_vMatrix[4] * from.x + m_vMatrix[5] * from.y + m_vMatrix[6] * from.z + m_vMatrix[7];
+	float x = m_vMatrix[0] * from.x + m_vMatrix[1] * from.y + m_vMatrix[2] * from.z + m_vMatrix[3];
+	float y = m_vMatrix[4] * from.x + m_vMatrix[5] * from.y + m_vMatrix[6] * from.z + m_vMatrix[7];
 
 	float invw = 1.0f / w;
-	to.x *= invw;
-	to.y *= invw;
+	x *= invw;
+	y *= invw;
 
-	float x = targetWidth / 2;
-	float y = targetHeight / 2;
+	float screenX = targetWidth / 2;
+	float screenY = targetHeight / 2;
 
-	x += 0.5 * to.x * targetWidth + 0.5;
-	y -= 0.5 * to.y * targetHeight + 0.5;
+	screenX += 0.5 * x * targetWidth + 0.5;
+	screenY -= 0.5 * y * targetHeight + 0.5;
 
-	to.x = x;
-	to.y = y;
+	to.x = screenX;
+	to.y = screenY;
 	to.z = 0;
-	return true;
+
+	return (to.x >= 0 && to.x <= targetWidth && to.y >= 0 && to.y <= targetHeight);
 }
 
 void WeaponXEntity::update(uint64_t LocalPlayer)
