@@ -335,20 +335,30 @@ void Overlay::RenderEsp()
 					{
 						ImColor skelColor = players[i].visible ? GREEN : RED;
 
+						// 0:Pelvis, 1:UpperChest, 2:LowerChest, 3:L_Shoulder, 4:L_Elbow, 5:L_Hand, 6:R_Shoulder, 7:R_Elbow, 8:R_Hand, 9:L_Hip, 10:L_Knee, 11:L_Foot, 12:R_Hip, 13:R_Knee, 14:R_Foot
 						// Skeleton connections
-						// 0:Head, 1:Neck, 2:Pelvis, 3:L_Shoulder, 4:L_Elbow, 5:L_Hand, 6:R_Shoulder, 7:R_Elbow, 8:R_Hand, 9:L_Hip, 10:L_Knee, 11:L_Foot, 12:R_Hip, 13:R_Knee, 14:R_Foot
 						int skeletonLines[][2] = {
-							{0, 1}, {1, 2},
-							{1, 3}, {3, 4}, {4, 5},
-							{1, 6}, {6, 7}, {7, 8},
-							{2, 9}, {9, 10}, {10, 11},
-							{2, 12}, {12, 13}, {13, 14}
+							{0, 1},  // Pelvis -> UpperChest
+							{1, 3}, {3, 4}, {4, 5}, // Left arm
+							{1, 6}, {6, 7}, {7, 8}, // Right arm
+							{0, 9}, {9, 10}, {10, 11}, // Left leg
+							{0, 12}, {12, 13}, {13, 14}, // Right leg
 						};
 
-						for (auto& line : skeletonLines)
+						bool valid_skeleton = true;
+						for (int b = 0; b < 15; b++)
 						{
-							if (players[i].bones[line[0]][0] != 0 && players[i].bones[line[0]][1] != 0 &&
-								players[i].bones[line[1]][0] != 0 && players[i].bones[line[1]][1] != 0)
+							// If any bone is at (0,0) or invalid, we skip the whole skeleton to avoid "starburst" artifacts
+							if (players[i].bones[b][0] <= 1.0f || players[i].bones[b][1] <= 1.0f)
+							{
+								valid_skeleton = false;
+								break;
+							}
+						}
+
+						if (valid_skeleton)
+						{
+							for (auto& line : skeletonLines)
 							{
 								DrawLine(ImVec2(players[i].bones[line[0]][0], players[i].bones[line[0]][1]),
 									ImVec2(players[i].bones[line[1]][0], players[i].bones[line[1]][1]),
