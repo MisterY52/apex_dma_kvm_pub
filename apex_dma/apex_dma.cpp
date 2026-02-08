@@ -817,7 +817,8 @@ Entity LPlayer = getEntity(LocalPlayer);
 
 							if (skeleton)
 							{
-								int boneIDs[] = { 8, 5, 0, 33, 35, 36, 10, 12, 13, 55, 56, 58, 60, 62, 63 };
+								// 0:Pelvis, 1:UpperChest, 2:LowerChest, 3:L_Shoulder, 4:L_Elbow, 5:L_Hand, 6:R_Shoulder, 7:R_Elbow, 8:R_Hand, 9:L_Hip, 10:L_Knee, 11:L_Foot, 12:R_Hip, 13:R_Knee, 14:R_Foot
+								int boneIDs[] = { 0, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18 };
 								for (int b = 0; b < 15; b++)
 								{
 									Vector bonePos = Target.getBonePositionByHitbox(boneIDs[b]);
@@ -922,7 +923,8 @@ Entity LPlayer = getEntity(LocalPlayer);
 
 							if (skeleton)
 							{
-								int boneIDs[] = { 8, 5, 0, 33, 35, 36, 10, 12, 13, 55, 56, 58, 60, 62, 63 };
+								// 0:Pelvis, 1:UpperChest, 2:LowerChest, 3:L_Shoulder, 4:L_Elbow, 5:L_Hand, 6:R_Shoulder, 7:R_Elbow, 8:R_Hand, 9:L_Hip, 10:L_Knee, 11:L_Foot, 12:R_Hip, 13:R_Knee, 14:R_Foot
+								int boneIDs[] = { 0, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18 };
 								for (int b = 0; b < 15; b++)
 								{
 									Vector bonePos = Target.getBonePositionByHitbox(boneIDs[b]);
