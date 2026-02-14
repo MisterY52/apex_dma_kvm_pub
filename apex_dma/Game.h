@@ -64,7 +64,7 @@ public:
 	Vector GetViewAnglesV();
 	float GetYaw();
 
-	void enableGlow(int contextId);
+	void enableGlow();
 	void disableGlow();
 	void SetViewAngles(SVector angles);
 	void SetViewAngles(QAngle& angles);
